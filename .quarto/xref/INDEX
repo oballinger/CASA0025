@@ -1,0 +1,68 @@
+{
+  "index.qmd": {
+    "index.html": "01c6a971"
+  },
+  "ch1.qmd": {
+    "ch1.html": "ef6d9637"
+  },
+  "ch2.qmd": {
+    "ch2.html": "69cd45d2"
+  },
+  "F1.qmd": {
+    "F1.html": "95438597"
+  },
+  "F2.qmd": {
+    "F2.html": "7b061c46"
+  },
+  "F4.qmd": {
+    "F4.html": "2266fe03"
+  },
+  "F5.qmd": {
+    "F5.html": "ad3d58fd"
+  },
+  "lights.qmd": {
+    "lights.html": "bdef8290"
+  },
+  "refineries.qmd": {
+    "refineries.html": "1cc03571"
+  },
+  "ships.qmd": {
+    "ships.html": "801bc821"
+  },
+  "blast.qmd": {
+    "blast.html": "16734f4a"
+  },
+  "object_detection.qmd": {
+    "object_detection.html": "5d013e61"
+  },
+  "W1_intro.qmd": {
+    "W1_intro.html": "895fad94"
+  },
+  "W2_SQL.qmd": {
+    "W2_SQL.html": "c0c482d5"
+  },
+  "W3_postgis1.qmd": {
+    "W3_postgis1.html": "5e9c0488"
+  },
+  "W4_postgis2.qmd": {
+    "W4_postgis2.html": "4783f166"
+  },
+  "W5_quiz.qmd": {
+    "W5_quiz.html": "2cc31c7b"
+  },
+  "W6_RS.qmd": {
+    "W6_RS.html": "66135f20"
+  },
+  "W7_RS_data.qmd": {
+    "W7_RS_data.html": "bf582905"
+  },
+  "W8_refineries.qmd": {
+    "W8_refineries.html": "eb2304e2"
+  },
+  "W9_blast.qmd": {
+    "W9_blast.html": "4e4b894b"
+  },
+  "W10_ships.qmd": {
+    "W10_ships.html": "66242bb9"
+  }
+}

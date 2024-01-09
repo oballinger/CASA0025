@@ -1,0 +1,51 @@
+# Module Overview {.unnumbered}
+
+Geospatial analytics and dashboards are in very high remand among policymakers, NGOs, IGOs, and the private sector. Deploying these systems often requires handling data that exceeds the computational and storage capabilities of personal machines. This module will teach students how to harness and critically interrogate large quantities of geospatial data using cloud computing services, and how to design and build an interactive online application that communicates geospatial insights to wider audiences. 
+
+In line with this objective, the module is divided into two sections. In the first, database concepts and techniques are introduced, providing the students with the skills required to manipulate and derive meaning from organised datasets. SQL syntax will be taught in depth at this stage, with a strong emphasis on practical application. This will allow students to learn state of the art methods for handling large vector datasets. 
+
+The second section of the course focuses on the handling of large raster datasets. As geospatial datasets—particularly satellite imagery collections—increase in size, researchers are increasingly relying on cloud computing platforms such as Google Earth Engine (GEE) to analyze vast quantities of data. Despite the fact that it was only released in 2015, the number of geospatial journal articles using Google Earth Engine has outpaced every other major geospatial analysis software, including ArcGIS, Python, and R in just five years. Weeks 6-9 will be co-taught with CASA0023 Remote Sensing. 
+
+The module therefore spans a full, cloud-based geospatial workflow: from importing and analysing geospatial data, to building and presenting interactive data visualisations. Students will gain proficiency in working with and interrogating large spatial data sets while working towards an interactive group project that will develop their portfolio.
+
+## What is SQL?
+
+SQL (Structured Query Language) is a programming language used to communicate with databases. It is the standard language for relational database management systems. SQL statements are used to perform tasks such as update data on a database, or retrieve data from a database. Some common relational database management systems that use SQL are: Oracle, Sybase, Microsoft SQL Server, Access, Ingres, etc. Although most database systems use SQL, most of them also have their own additional proprietary extensions that are usually only used on their system. However, the standard SQL commands such as "Select", "Insert", "Update", "Delete", "Create", and "Drop" can be used to accomplish almost everything that one needs to do with a database. 
+
+The first five weeks of this module will focus on working with large vector datasets. We will use SQL to query and manipulate data stored in a PostgreSQL database. PostgreSQL is a free and open-source relational database management system emphasizing extensibility and SQL compliance. It is the most advanced open-source database system widely used for GIS applications. We will also work with DuckDB, a new, open-source, in-process SQL OLAP database management system. DuckDB is designed to be used as an embedded database library, providing C/C++, Python, R, Java, and Go bindings. It has a built-in SQL engine with support for transactions, a powerful query optimizer, and a columnar storage engine.
+
+
+## What is Google Earth Engine?
+
+As geospatial datasets—particularly satellite imagery collections—increase in size, researchers are increasingly relying on cloud computing platforms such as Google Earth Engine (GEE) to analyze vast quantities of data. 
+
+GEE is free and allows users to write open-source code that can be run by others in one click, thereby yielding fully reproducible results. These features have put GEE on the cutting edge of scientific research. The following plot visualizes the number of journal articles conducted using different geospatial analysis software platforms:
+
+![](./images/WoS%20Articles.png)
+
+Despite only being released in 2015, the number of geospatial journal articles using Google Earth Engine (shown in red above) has outpaced every other major geospatial analysis software, including ArcGIS, Python, and R in just five years. GEE applications have been developed and used to present interactive geospatial data visualizations by NGOs, Universities, the United Nations, and the European Commission. By storing and running computations on google servers, GEE is far more accessible to those who don’t have significant local computational resources; all you need is an internet connection. 
+
+## Table of Contents
+
+A) **SQL**
+    * Five initial weeks exporing spatial database systems including PostgreSQL and DuckDB.
+        * [Introduction](W1_intro.qmd)
+        * [SQL](W2_SQL.qmd)
+        * [PostGIS I](W3_postgis1.qmd)
+        * [PostGIS II](W4_postgis2.qmd)
+        * [Database Quiz](W5_quiz.qmd)
+B) **Google Earth Engine**
+    * Five weeks on Google Earth Engine, a cloud-based platform for geospatial analysis.
+        * [Introduction to GEE](W6_RS.qmd)
+        * [Classification I](W7_RS_data.qmd)
+        * [Classification II](W8_refineries.qmd)
+        * [Synthetic Aperture Radar](W9_blast.qmd)
+        * [User Interface Design](W10_ships.qmd)
+        * [Bonus: Object Detection](object_detection.qmd)
+
+**GEE Textbook**
+    * Recently, a team of over 100 scientists came together to write a book called ["Cloud-Based Remote Sensing with Google Earth Engine: Fundamentals and Applications"](https://www.eefabook.org/). It's a great resource for learning about remote sensing and Earth Engine. The material in this section is a subset of the book, edited to fit the scope of this guide. If you're interested in learning more, check out the full book.
+        * [Getting Started](F1.qmd)
+        * [Interpreting Images](F2.qmd)
+        * [Image Series](F4.qmd)
+        * [Vectors and Tables](F5.qmd)
