@@ -123,7 +123,7 @@
     "href": "W2_SQL.html",
     "title": "2  Introduction to SQL",
     "section": "",
-    "text": "3 Getting Started\nThis week we’ll be learning how to use SQL to query data from a database. To get started, work your way through the following two notebooks:\nClicking the link will take you to Google Colab, where you can run the notebook in your browser. You can also download the notebook and run it locally if you prefer.\nOnce you’ve completed these you can test your knowledge by answering the questions in the lab below.\nDatasets:\nThe following datasets are used in this lab. You don’t need to download them manually, they can be accessed directly from the notebook."
+    "text": "3 Getting Started\nThis week we’ll be learning how to use SQL to query data from a database. To get started, work your way through the following two notebooks:\nClicking the link will take you to Google Colab, where you can run the notebook in your browser. You can also download the notebook and run it locally if you prefer.\nOnce you’ve completed these you can test your knowledge by answering the questions in the lab below. You can also access it on Google Colab here.\nDatasets:\nThe following datasets are used in this lab. You don’t need to download them manually, they can be accessed directly from the notebook."
   },
   {
     "objectID": "W2_SQL.html#introduction",

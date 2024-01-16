@@ -32,12 +32,12 @@ DuckDB is a great option if you’re looking for a serverless data analytics dat
 
 This week we'll be learning how to use SQL to query data from a database. To get started, work your way through the following two notebooks:
 
-1. [Loading Data](https://colab.research.google.com/github/oballinger/CASA0025/notebooks/W02_data_import.ipynb)
-2. [Introduction to SQL](https://colab.research.google.com/github/oballinger/CASA0025/notebooks/W02_sql_basics.ipynb)
+1. [Loading Data](https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W02_data_import.ipynb)
+2. [Introduction to SQL](https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W02_sql_basics.ipynb)
 
 Clicking the link will take you to Google Colab, where you can run the notebook in your browser. You can also download the notebook and run it locally if you prefer.
 
-Once you've completed these you can test your knowledge by answering the questions in the lab below. You can also access it on Google Colab [here](https://colab.research.google.com/github/oballinger/CASA0025/notebooks/W02_lab.ipynb).
+Once you've completed these you can test your knowledge by answering the questions in the lab below. You can also access it on Google Colab [here](https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W02_lab.ipynb).
 
 # Lab
 
