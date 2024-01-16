@@ -1,0 +1,310 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "CASA0025: Building Spatial Applications with Big Data",
+    "section": "",
+    "text": "Module Overview\nGeospatial analytics and dashboards are in very high remand among policymakers, NGOs, IGOs, and the private sector. Deploying these systems often requires handling data that exceeds the computational and storage capabilities of personal machines. This module will teach students how to harness and critically interrogate large quantities of geospatial data using cloud computing services, and how to design and build an interactive online application that communicates geospatial insights to wider audiences.\nIn line with this objective, the module is divided into two sections. In the first, database concepts and techniques are introduced, providing the students with the skills required to manipulate and derive meaning from organised datasets. SQL syntax will be taught in depth at this stage, with a strong emphasis on practical application. This will allow students to learn state of the art methods for handling large vector datasets.\nThe second section of the course focuses on the handling of large raster datasets. As geospatial datasets—particularly satellite imagery collections—increase in size, researchers are increasingly relying on cloud computing platforms such as Google Earth Engine (GEE) to analyze vast quantities of data. Despite the fact that it was only released in 2015, the number of geospatial journal articles using Google Earth Engine has outpaced every other major geospatial analysis software, including ArcGIS, Python, and R in just five years. Weeks 6-9 will be co-taught with CASA0023 Remote Sensing.\nThe module therefore spans a full, cloud-based geospatial workflow: from importing and analysing geospatial data, to building and presenting interactive data visualisations. Students will gain proficiency in working with and interrogating large spatial data sets while working towards an interactive group project that will develop their portfolio."
+  },
+  {
+    "objectID": "index.html#what-is-sql",
+    "href": "index.html#what-is-sql",
+    "title": "CASA0025: Building Spatial Applications with Big Data",
+    "section": "What is SQL?",
+    "text": "What is SQL?\nSQL (Structured Query Language) is a programming language used to communicate with databases. It is the standard language for relational database management systems. SQL statements are used to perform tasks such as update data on a database, or retrieve data from a database. Some common relational database management systems that use SQL are: Oracle, Sybase, Microsoft SQL Server, Access, Ingres, etc. Although most database systems use SQL, most of them also have their own additional proprietary extensions that are usually only used on their system. However, the standard SQL commands such as “Select”, “Insert”, “Update”, “Delete”, “Create”, and “Drop” can be used to accomplish almost everything that one needs to do with a database.\nThe first five weeks of this module will focus on working with large vector datasets. We will use SQL to query and manipulate data stored in a PostgreSQL database. PostgreSQL is a free and open-source relational database management system emphasizing extensibility and SQL compliance. It is the most advanced open-source database system widely used for GIS applications. We will also work with DuckDB, a new, open-source, in-process SQL OLAP database management system. DuckDB is designed to be used as an embedded database library, providing C/C++, Python, R, Java, and Go bindings. It has a built-in SQL engine with support for transactions, a powerful query optimizer, and a columnar storage engine."
+  },
+  {
+    "objectID": "index.html#what-is-google-earth-engine",
+    "href": "index.html#what-is-google-earth-engine",
+    "title": "CASA0025: Building Spatial Applications with Big Data",
+    "section": "What is Google Earth Engine?",
+    "text": "What is Google Earth Engine?\nAs geospatial datasets—particularly satellite imagery collections—increase in size, researchers are increasingly relying on cloud computing platforms such as Google Earth Engine (GEE) to analyze vast quantities of data.\nGEE is free and allows users to write open-source code that can be run by others in one click, thereby yielding fully reproducible results. These features have put GEE on the cutting edge of scientific research. The following plot visualizes the number of journal articles conducted using different geospatial analysis software platforms:\n\nDespite only being released in 2015, the number of geospatial journal articles using Google Earth Engine (shown in red above) has outpaced every other major geospatial analysis software, including ArcGIS, Python, and R in just five years. GEE applications have been developed and used to present interactive geospatial data visualizations by NGOs, Universities, the United Nations, and the European Commission. By storing and running computations on google servers, GEE is far more accessible to those who don’t have significant local computational resources; all you need is an internet connection."
+  },
+  {
+    "objectID": "index.html#table-of-contents",
+    "href": "index.html#table-of-contents",
+    "title": "CASA0025: Building Spatial Applications with Big Data",
+    "section": "Table of Contents",
+    "text": "Table of Contents\n\nSQL\n\nFive initial weeks exporing spatial database systems including PostgreSQL and DuckDB.\n\nIntroduction\nSQL\nPostGIS I\nPostGIS II\nDatabase Quiz\n\n\nGoogle Earth Engine\n\nFive weeks on Google Earth Engine, a cloud-based platform for geospatial analysis.\n\nIntroduction to GEE\nClassification I\nClassification II\nSynthetic Aperture Radar\nUser Interface Design\nBonus: Object Detection\n\n\n\nGEE Textbook * Recently, a team of over 100 scientists came together to write a book called “Cloud-Based Remote Sensing with Google Earth Engine: Fundamentals and Applications”. It’s a great resource for learning about remote sensing and Earth Engine. The material in this section is a subset of the book, edited to fit the scope of this guide. If you’re interested in learning more, check out the full book. * Getting Started * Interpreting Images * Image Series * Vectors and Tables"
+  },
+  {
+    "objectID": "W1_intro.html",
+    "href": "W1_intro.html",
+    "title": "1  Installation",
+    "section": "",
+    "text": "2 Creating a Spatial Database\nSupported by a wide variety of libraries and applications, PostGIS provides many options for loading data.\nWe will first load our working data from a database backup file, then review some standard ways of loading different GIS data formats using common tools."
+  },
+  {
+    "objectID": "W1_intro.html#postgresql-for-microsoft-windows",
+    "href": "W1_intro.html#postgresql-for-microsoft-windows",
+    "title": "1  Installation",
+    "section": "1.1 PostgreSQL for Microsoft Windows",
+    "text": "1.1 PostgreSQL for Microsoft Windows\nFor a Windows install:\n\nGo to the Windows PostgreSQL download page.\nSelect the latest version of PostgreSQL and save the installer to disk.\nRun the installer and accept the defaults.\nFind and run the \"StackBuilder\" program that was installed with the database.\nSelect the \"Spatial Extensions\" section and choose latest \"PostGIS ..Bundle\" option.\n\nAccept the defaults and install."
+  },
+  {
+    "objectID": "W1_intro.html#postgresql-for-apple-macos",
+    "href": "W1_intro.html#postgresql-for-apple-macos",
+    "title": "1  Installation",
+    "section": "1.2 PostgreSQL for Apple MacOS",
+    "text": "1.2 PostgreSQL for Apple MacOS\nFor a MacOS install:\n\nGo to the Postgres.app site, and download the latest release.\nOpen the disk image, and drag the Postgres icon into the Applications folder.\n\nIn the Applications folder, double-click the Postgres icon to start the server.\nClick the Initialize button to create a new blank database instance.\n{.inline, .border .inline, .border}\nIn the Applications folder, go to the Utilities folder and open Terminal.\nAdd the command-line utilities to your PATH for convenience.\n\n\nsudo mkdir -p /etc/paths.d\necho /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp"
+  },
+  {
+    "objectID": "W1_intro.html#pgadmin-for-windows-and-macos",
+    "href": "W1_intro.html#pgadmin-for-windows-and-macos",
+    "title": "1  Installation",
+    "section": "1.3 PgAdmin for Windows and MacOS",
+    "text": "1.3 PgAdmin for Windows and MacOS\nPgAdmin is available for multiple platforms, at https://www.pgadmin.org/download/.\n\nDownload and install the latest version for your platform.\nStart PgAdmin!"
+  },
+  {
+    "objectID": "W1_intro.html#pgadmin",
+    "href": "W1_intro.html#pgadmin",
+    "title": "1  Installation",
+    "section": "2.1 PgAdmin",
+    "text": "2.1 PgAdmin\nPostgreSQL has a number of administrative front-ends. The primary one is psql, a command-line tool for entering SQL queries. Another popular PostgreSQL front-end is the free and open source graphical tool pgAdmin. All queries done in pgAdmin can also be done on the command line with psql. pgAdmin also includes a geometry viewer you can use to spatial view PostGIS queries.\n\nFind pgAdmin and start it up.\n\nIf this is the first time you have run pgAdmin, you probably don't have any servers configured. Right click the Servers item in the Browser panel.\nWe'll name our server PostGIS. In the Connection tab, enter the Host name/address. If you're working with a local PostgreSQL install, you'll be able to use localhost. If you're using a cloud service, you should be able to retrieve the host name from your account.\nLeave Port set at 5432, and both Maintenance database and Username as postgres. The Password should be what you specified with a local install or with your cloud service."
+  },
+  {
+    "objectID": "W1_intro.html#creating-a-database",
+    "href": "W1_intro.html#creating-a-database",
+    "title": "1  Installation",
+    "section": "2.2 Creating a Database",
+    "text": "2.2 Creating a Database\n\nOpen the Databases tree item and have a look at the available databases. The postgres database is the user database for the default postgres user and is not too interesting to us.\nRight-click on the Databases item and select New Database.\n\nFill in the Create Database form as shown below and click OK.\n\n\n\nName\nnyc\n\n\nOwner\npostgres\n\n\n\n\nSelect the new nyc database and open it up to display the tree of objects. You'll see the public schema.\n\nClick on the SQL query button indicated below (or go to Tools &gt; Query Tool).\n\nEnter the following query into the query text field to load the PostGIS spatial extension:\nCREATE EXTENSION postgis;\nClick the Play button in the toolbar (or press F5) to \"Execute the query.\"\nNow confirm that PostGIS is installed by running a PostGIS function:\nSELECT postgis_full_version();\n\nYou have successfully created a PostGIS spatial database!!"
+  },
+  {
+    "objectID": "W1_intro.html#function-list",
+    "href": "W1_intro.html#function-list",
+    "title": "1  Installation",
+    "section": "2.3 Function List",
+    "text": "2.3 Function List\nPostGIS_Full_Version: Reports full PostGIS version and build configuration info."
+  },
+  {
+    "objectID": "W1_intro.html#loading-the-backup-file",
+    "href": "W1_intro.html#loading-the-backup-file",
+    "title": "1  Installation",
+    "section": "3.1 Loading the Backup File",
+    "text": "3.1 Loading the Backup File\n\nIn the PgAdmin browser, right-click on the nyc database icon, and then select the Restore... option.\n{.inline, .border .inline, .border}\nBrowse to the location of your workshop data data directory (available in the workshop data bundle), and select the nyc_data.backup file.\n{.inline, .border .inline, .border}\nClick on the Restore options tab, scroll down to the Do not save section and toggle Owner to Yes.\n{.inline, .border .inline, .border}\nClick the Restore button. The database restore should run to completion without errors.\n{.inline, .border .inline, .border}\nAfter the load is complete, right click the nyc database, and select the Refresh option to update the client information about what tables exist in the database.\n{.inline, .border .inline, .border}\n\n\n\nNote\n\nIf you want to practice loading data from the native spatial formats, instead of using the PostgreSQL db backup files just covered, the next couple of sections will guide you thru loading using various command-line tools and QGIS DbManager. Note you can skip these sections, if you have already loaded the data with pgAdmin."
+  },
+  {
+    "objectID": "W1_intro.html#shapefiles-whats-that",
+    "href": "W1_intro.html#shapefiles-whats-that",
+    "title": "1  Installation",
+    "section": "3.2 Shapefiles? What's that?",
+    "text": "3.2 Shapefiles? What's that?\nYou may be asking yourself -- \"What's this shapefile thing?\" A \"shapefile\" commonly refers to a collection of files with .shp, .shx, .dbf, and other extensions on a common prefix name (e.g., nyc_census_blocks). The actual shapefile relates specifically to files with the .shp extension. However, the .shp file alone is incomplete for distribution without the required supporting files.\nMandatory files:\n\n.shp—shape format; the feature geometry itself\n.shx—shape index format; a positional index of the feature geometry\n.dbf—attribute format; columnar attributes for each shape, in dBase III\n\nOptional files include:\n\n.prj—projection format; the coordinate system and projection information, a plain text file describing the projection using well-known text format\n\nThe shp2pgsql utility makes shape data usable in PostGIS by converting it from binary data into a series of SQL commands that are then run in the database to load the data."
+  },
+  {
+    "objectID": "W1_intro.html#loading-with-shp2pgsql",
+    "href": "W1_intro.html#loading-with-shp2pgsql",
+    "title": "1  Installation",
+    "section": "3.3 Loading with shp2pgsql",
+    "text": "3.3 Loading with shp2pgsql\nThe shp2pgsql converts Shape files into SQL. It is a conversion utility that is part of the PostGIS code base and ships with PostGIS packages. If you installed PostgreSQL locally on your computer, you may find that shp2pgsql has been installed along with it, and it is available in the executable directory of your installation.\nUnlike ogr2ogr, shp2pgsql does not connect directly to the destination database, it just emits the SQL equivalent to the input shape file. It is up to the user to pass the SQL to the database, either with a \"pipe\" or by saving the SQL to file and then loading it.\nHere is an example invocation, loading the same data as before:\nexport PGPASSWORD=mydatabasepassword\n\nshp2pgsql \\\n  -D \\\n  -I \\\n  -s 26918 \\\n  nyc_census_blocks_2000.shp \\\n  nyc_census_blocks_2000 \\\n  | psql dbname=nyc user=postgres host=localhost\nHere is a line-by-line explanation of the command.\nshp2pgsql \\\nThe executable program! It reads the source data file, and emits SQL which can be directed to a file or piped to psql to load directly into the database.\n-D \\\nThe D flag tells the program to generate \"dump format\" which is much faster to load than the default \"insert format\".\n-I \\\nThe I flag tells the program to create a spatial index on the table after loading is complete.\n-s 26918 \\\nThe s flag tells the program what the \"spatial reference identifier (SRID)\" of the data is. The source data for this workshop is all in \"UTM 18\", for which the SRID is 26918 (see below).\nnyc_census_blocks_2000.shp \\\nThe source shape file to read.\nnyc_census_blocks_2000 \\\nThe table name to use when creating the destination table.\n| psql dbname=nyc user=postgres host=localhost\nThe utility program is generating a stream of SQL. The \"|\" operator takes that stream and uses it as input to the psql database terminal program. The arguments to psql are just the connection string for the destination database."
+  },
+  {
+    "objectID": "W1_intro.html#srid-26918-whats-with-that",
+    "href": "W1_intro.html#srid-26918-whats-with-that",
+    "title": "1  Installation",
+    "section": "3.4 SRID 26918? What's with that?",
+    "text": "3.4 SRID 26918? What's with that?\nMost of the import process is self-explanatory, but even experienced GIS professionals can trip over an SRID.\nAn \"SRID\" stands for \"Spatial Reference IDentifier.\" It defines all the parameters of our data's geographic coordinate system and projection. An SRID is convenient because it packs all the information about a map projection (which can be quite complex) into a single number.\nYou can see the definition of our workshop map projection by looking it up either in an online database,\n\nhttps://epsg.io/26918\n\nor directly inside PostGIS with a query to the spatial_ref_sys table.\nSELECT srtext FROM spatial_ref_sys WHERE srid = 26918;\n\n\nNote\n\nThe PostGIS spatial_ref_sys table is an OGC-standard table that defines all the spatial reference systems known to the database. The data shipped with PostGIS, lists over 3000 known spatial reference systems and details needed to transform/re-project between them.\n\nIn both cases, you see a textual representation of the 26918 spatial reference system (pretty-printed here for clarity):\nPROJCS[\"NAD83 / UTM zone 18N\",\n  GEOGCS[\"NAD83\",\n    DATUM[\"North_American_Datum_1983\",\n      SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],\n      AUTHORITY[\"EPSG\",\"6269\"]],\n    PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],\n    UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],\n    AUTHORITY[\"EPSG\",\"4269\"]],\n  UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],\n  PROJECTION[\"Transverse_Mercator\"],\n  PARAMETER[\"latitude_of_origin\",0],\n  PARAMETER[\"central_meridian\",-75],\n  PARAMETER[\"scale_factor\",0.9996],\n  PARAMETER[\"false_easting\",500000],\n  PARAMETER[\"false_northing\",0],\n  AUTHORITY[\"EPSG\",\"26918\"],\n  AXIS[\"Easting\",EAST],\n  AXIS[\"Northing\",NORTH]]\nIf you open up the nyc_neighborhoods.prj file from the data directory, you'll see the same projection definition.\nData you receive from local agencies—such as New York City—will usually be in a local projection noted by \"state plane\" or \"UTM\". Our projection is \"Universal Transverse Mercator (UTM) Zone 18 North\" or EPSG:26918."
+  },
+  {
+    "objectID": "W1_intro.html#things-to-try-view-data-using-qgis",
+    "href": "W1_intro.html#things-to-try-view-data-using-qgis",
+    "title": "1  Installation",
+    "section": "3.5 Things to Try: View data using QGIS",
+    "text": "3.5 Things to Try: View data using QGIS\nQGIS, is a desktop GIS viewer/editor for quickly looking at data. You can view a number of data formats including flat shapefiles and a PostGIS database. Its graphical interface allows for easy exploration of your data, as well as simple testing and fast styling.\nTry using this software to connect your PostGIS database. The application can be downloaded from https://qgis.org\nYou'll first want to create a connection to a PostGIS database using menu Layer-&gt;Add Layer-&gt;PostGIS Layers-&gt;New and then filling in the prompts. Once you have a connection, you can add Layers by clicking connect and selecting a table to display."
+  },
+  {
+    "objectID": "W1_intro.html#loading-data-using-qgis-dbmanager",
+    "href": "W1_intro.html#loading-data-using-qgis-dbmanager",
+    "title": "1  Installation",
+    "section": "3.6 Loading data using QGIS DbManager",
+    "text": "3.6 Loading data using QGIS DbManager\nQGIS comes with a tool called DbManager that allows you to connect to various different kinds of databases, including a PostGIS enabled one. After you have a PostGIS Database connection configured, go to Database-&gt;DbManager and expand to your database as shown below:\n{.inline, .border .inline, .border}\nFrom there you can use the Import Layer/File menu option to load numerous different spatial formats. In addition to being able to load data from many spatial formats and export data to many formats, you can also add ad-hoc queries to the canvas or define views in your database, using the highlighted wrench icon.\nThis section is based on the PostGIS Intro Workshop, sections 3, 4, 5,and 7"
+  },
+  {
+    "objectID": "W2_SQL.html",
+    "href": "W2_SQL.html",
+    "title": "2  Introduction to SQL",
+    "section": "",
+    "text": "3 Getting Started\nThis week we’ll be learning how to use SQL to query data from a database. To get started, work your way through the following two notebooks:\nClicking the link will take you to Google Colab, where you can run the notebook in your browser. You can also download the notebook and run it locally if you prefer.\nOnce you’ve completed these you can test your knowledge by answering the questions in the lab below.\nDatasets:\nThe following datasets are used in this lab. You don’t need to download them manually, they can be accessed directly from the notebook."
+  },
+  {
+    "objectID": "W2_SQL.html#introduction",
+    "href": "W2_SQL.html#introduction",
+    "title": "2  Introduction to SQL",
+    "section": "3.1 Introduction",
+    "text": "3.1 Introduction\nThis notebook shows how to import data into a DuckDB database. It uses the duckdb Python package to connect to a DuckDB database and import data from various formats, including CSV, JSON, DataFrame, parquet, GeoJSON, Shapefile, GeoParquet, and more."
+  },
+  {
+    "objectID": "W2_SQL.html#datasets",
+    "href": "W2_SQL.html#datasets",
+    "title": "2  Introduction to SQL",
+    "section": "3.2 Datasets",
+    "text": "3.2 Datasets\nThe following datasets are used in this notebook. You don’t need to download them, they can be accessed directly from the notebook.\n\ncities.csv\ncountries.csv"
+  },
+  {
+    "objectID": "W2_SQL.html#installation",
+    "href": "W2_SQL.html#installation",
+    "title": "2  Introduction to SQL",
+    "section": "3.3 Installation",
+    "text": "3.3 Installation\nUncomment the following cell to install the required packages if needed.\npfikbxuesly ipython3 # %pip install duckdb leafmap"
+  },
+  {
+    "objectID": "W2_SQL.html#library-import",
+    "href": "W2_SQL.html#library-import",
+    "title": "2  Introduction to SQL",
+    "section": "3.4 Library Import",
+    "text": "3.4 Library Import\npfikbxuesly ipython3 import duckdb import leafmap import pandas as pd"
+  },
+  {
+    "objectID": "W2_SQL.html#installing-extensions",
+    "href": "W2_SQL.html#installing-extensions",
+    "title": "2  Introduction to SQL",
+    "section": "3.5 Installing Extensions",
+    "text": "3.5 Installing Extensions\nDuckDB’s Python API provides functions for installing and loading extensions, which perform the equivalent operations to running the INSTALL and LOAD SQL commands, respectively. An example that installs and loads the httpfs extension looks like follows:\npfikbxuesly ipython3 con = duckdb.connect()\npfikbxuesly ipython3 con.install_extension(\"httpfs\") con.load_extension(\"httpfs\")\npfikbxuesly ipython3 con.install_extension(\"spatial\") con.load_extension(\"spatial\")"
+  },
+  {
+    "objectID": "W2_SQL.html#downloading-sample-data",
+    "href": "W2_SQL.html#downloading-sample-data",
+    "title": "2  Introduction to SQL",
+    "section": "3.6 Downloading Sample Data",
+    "text": "3.6 Downloading Sample Data\npfikbxuesly ipython3 url = \"https://open.gishub.org/data/duckdb/cities.zip\" leafmap.download_file(url, unzip=True)"
+  },
+  {
+    "objectID": "W2_SQL.html#csv-files",
+    "href": "W2_SQL.html#csv-files",
+    "title": "2  Introduction to SQL",
+    "section": "3.7 CSV Files",
+    "text": "3.7 CSV Files\nCSV files can be read using the read_csv function, called either from within Python or directly from within SQL. By default, the read_csv function attempts to auto-detect the CSV settings by sampling from the provided file.\npfikbxuesly ipython3 # read from a file using fully auto-detected settings con.read_csv('cities.csv')\npfikbxuesly ipython3 # specify options on how the CSV is formatted internally con.read_csv('cities.csv', header=True, sep=',')\npfikbxuesly ipython3 # use the (experimental) parallel CSV reader con.read_csv('cities.csv', parallel=True)\npfikbxuesly ipython3 # directly read a CSV file from within SQL con.sql(\"SELECT * FROM 'cities.csv'\")\npfikbxuesly ipython3 # call read_csv from within SQL con.sql(\"SELECT * FROM read_csv_auto('cities.csv')\")"
+  },
+  {
+    "objectID": "W2_SQL.html#json-files",
+    "href": "W2_SQL.html#json-files",
+    "title": "2  Introduction to SQL",
+    "section": "3.8 JSON Files",
+    "text": "3.8 JSON Files\nJSON files can be read using the read_json function, called either from within Python or directly from within SQL. By default, the read_json function will automatically detect if a file contains newline-delimited JSON or regular JSON, and will detect the schema of the objects stored within the JSON file.\npfikbxuesly ipython3 # read from a single JSON file con.read_json('cities.json')\npfikbxuesly ipython3 # directly read a JSON file from within SQL con.sql(\"SELECT * FROM 'cities.json'\")\npfikbxuesly ipython3 # call read_json from within SQL con.sql(\"SELECT * FROM read_json_auto('cities.json')\")"
+  },
+  {
+    "objectID": "W2_SQL.html#dataframes",
+    "href": "W2_SQL.html#dataframes",
+    "title": "2  Introduction to SQL",
+    "section": "3.9 DataFrames",
+    "text": "3.9 DataFrames\nDuckDB is automatically able to query a Pandas DataFrame.\npfikbxuesly ipython3 df = pd.read_csv('cities.csv') df\npfikbxuesly ipython3 con.sql('SELECT * FROM df').fetchall()"
+  },
+  {
+    "objectID": "W2_SQL.html#parquet-files",
+    "href": "W2_SQL.html#parquet-files",
+    "title": "2  Introduction to SQL",
+    "section": "3.10 Parquet Files",
+    "text": "3.10 Parquet Files\nParquet files can be read using the read_parquet function, called either from within Python or directly from within SQL.\npfikbxuesly ipython3 # read from a single Parquet file con.read_parquet('cities.parquet')\npfikbxuesly ipython3 # directly read a Parquet file from within SQL con.sql(\"SELECT * FROM 'cities.parquet'\")\npfikbxuesly ipython3 # call read_parquet from within SQL con.sql(\"SELECT * FROM read_parquet('cities.parquet')\")"
+  },
+  {
+    "objectID": "W2_SQL.html#geojson-files",
+    "href": "W2_SQL.html#geojson-files",
+    "title": "2  Introduction to SQL",
+    "section": "3.11 GeoJSON Files",
+    "text": "3.11 GeoJSON Files\npfikbxuesly ipython3 con.sql('SELECT * FROM ST_Drivers()')\npfikbxuesly ipython3 con.sql(\"SELECT * FROM ST_Read('cities.geojson')\")\npfikbxuesly ipython3 con.sql(\"FROM ST_Read('cities.geojson')\")\npfikbxuesly ipython3 con.sql(\"CREATE TABLE cities AS SELECT * FROM ST_Read('cities.geojson')\")\npfikbxuesly ipython3 con.table('cities')\npfikbxuesly ipython3 con.sql(\"SELECT * FROM cities\")"
+  },
+  {
+    "objectID": "W2_SQL.html#shapefiles",
+    "href": "W2_SQL.html#shapefiles",
+    "title": "2  Introduction to SQL",
+    "section": "3.12 Shapefiles",
+    "text": "3.12 Shapefiles\npfikbxuesly ipython3 con.sql(\"SELECT * FROM ST_Read('cities.shp')\")\npfikbxuesly ipython3 con.sql(\"FROM ST_Read('cities.shp')\")\npfikbxuesly ipython3 con.sql(     \"\"\"         CREATE TABLE IF NOT EXISTS cities2 AS          SELECT * FROM ST_Read('cities.shp')         \"\"\" )\npfikbxuesly ipython3 con.table('cities2')\npfikbxuesly ipython3 con.sql('SELECT * FROM cities2')"
+  },
+  {
+    "objectID": "W2_SQL.html#geoparquet-files",
+    "href": "W2_SQL.html#geoparquet-files",
+    "title": "2  Introduction to SQL",
+    "section": "3.13 GeoParquet Files",
+    "text": "3.13 GeoParquet Files\npfikbxuesly ipython3 con.sql(\"SELECT * FROM 'cities.parquet'\")\npfikbxuesly ipython3 con.sql(     \"\"\" CREATE TABLE IF NOT EXISTS cities3 AS SELECT * EXCLUDE geometry, ST_GeomFromWKB(geometry)  AS geometry FROM 'cities.parquet' \"\"\" )\npfikbxuesly ipython3 con.table('cities3')\npfikbxuesly ipython3 con.sql(     \"\"\" CREATE TABLE IF NOT EXISTS country AS SELECT * EXCLUDE geometry, ST_GeomFromWKB(geometry) FROM         's3://us-west-2.opendata.source.coop/google-research-open-buildings/v2/geoparquet-admin1/country=SSD/*.parquet' \"\"\" )\npfikbxuesly ipython3 con.table('country')\npfikbxuesly ipython3 con.sql('SELECT COUNT(*) FROM country')"
+  },
+  {
+    "objectID": "W2_SQL.html#references",
+    "href": "W2_SQL.html#references",
+    "title": "2  Introduction to SQL",
+    "section": "3.14 References",
+    "text": "3.14 References\n\nDuckDB Data Ingestion"
+  },
+  {
+    "objectID": "W2_SQL.html#question-1-creating-tables",
+    "href": "W2_SQL.html#question-1-creating-tables",
+    "title": "2  Introduction to SQL",
+    "section": "4.1 Question 1: Creating Tables",
+    "text": "4.1 Question 1: Creating Tables\nCreate a database, then write a SQL query to create a table named nyc_subway_stations and load the data from the file nyc_subway_stations.tsv into it. Similarly, create a table named nyc_neighborhoods and load the data from the file nyc_neighborhoods.tsv into it."
+  },
+  {
+    "objectID": "W2_SQL.html#question-2-column-filtering",
+    "href": "W2_SQL.html#question-2-column-filtering",
+    "title": "2  Introduction to SQL",
+    "section": "4.2 Question 2: Column Filtering",
+    "text": "4.2 Question 2: Column Filtering\nWrite a SQL query to display the ID, NAME, and BOROUGH of each subway station in the nyc_subway_stations dataset."
+  },
+  {
+    "objectID": "W2_SQL.html#question-3-row-filtering",
+    "href": "W2_SQL.html#question-3-row-filtering",
+    "title": "2  Introduction to SQL",
+    "section": "4.3 Question 3: Row Filtering",
+    "text": "4.3 Question 3: Row Filtering\nWrite a SQL query to find all subway stations in the nyc_subway_stations dataset that are located in the borough of Manhattan."
+  },
+  {
+    "objectID": "W2_SQL.html#question-4-sorting-results",
+    "href": "W2_SQL.html#question-4-sorting-results",
+    "title": "2  Introduction to SQL",
+    "section": "4.4 Question 4: Sorting Results",
+    "text": "4.4 Question 4: Sorting Results\nWrite a SQL query to list the subway stations in the nyc_subway_stations dataset in alphabetical order by their names."
+  },
+  {
+    "objectID": "W2_SQL.html#question-5-unique-values",
+    "href": "W2_SQL.html#question-5-unique-values",
+    "title": "2  Introduction to SQL",
+    "section": "4.5 Question 5: Unique Values",
+    "text": "4.5 Question 5: Unique Values\nWrite a SQL query to find the distinct boroughs represented in the nyc_subway_stations dataset."
+  },
+  {
+    "objectID": "W2_SQL.html#question-6-counting-rows",
+    "href": "W2_SQL.html#question-6-counting-rows",
+    "title": "2  Introduction to SQL",
+    "section": "4.6 Question 6: Counting Rows",
+    "text": "4.6 Question 6: Counting Rows\nWrite a SQL query to count the number of subway stations in each borough in the nyc_subway_stations dataset."
+  },
+  {
+    "objectID": "W2_SQL.html#question-7-aggregating-data",
+    "href": "W2_SQL.html#question-7-aggregating-data",
+    "title": "2  Introduction to SQL",
+    "section": "4.7 Question 7: Aggregating Data",
+    "text": "4.7 Question 7: Aggregating Data\nWrite a SQL query to list the number of subway stations in each borough, sorted in descending order by the count."
+  },
+  {
+    "objectID": "W2_SQL.html#question-8-joining-tables",
+    "href": "W2_SQL.html#question-8-joining-tables",
+    "title": "2  Introduction to SQL",
+    "section": "4.8 Question 8: Joining Tables",
+    "text": "4.8 Question 8: Joining Tables\nWrite a SQL query to join the nyc_subway_stations and nyc_neighborhoods datasets on the borough name, displaying the subway station name and the neighborhood name."
+  },
+  {
+    "objectID": "W2_SQL.html#question-9-string-manipulation",
+    "href": "W2_SQL.html#question-9-string-manipulation",
+    "title": "2  Introduction to SQL",
+    "section": "4.9 Question 9: String Manipulation",
+    "text": "4.9 Question 9: String Manipulation\nWrite a SQL query to display the names of subway stations in the nyc_subway_stations dataset that contain the word “St” in their names."
+  },
+  {
+    "objectID": "W2_SQL.html#question-10-filtering-with-multiple-conditions",
+    "href": "W2_SQL.html#question-10-filtering-with-multiple-conditions",
+    "title": "2  Introduction to SQL",
+    "section": "4.10 Question 10: Filtering with Multiple Conditions",
+    "text": "4.10 Question 10: Filtering with Multiple Conditions\nWrite a SQL query to find all subway stations in the nyc_subway_stations dataset that are in the borough of Brooklyn and have routes that include the letter “R”."
+  },
+  {
+    "objectID": "W2_SQL.html#spatial-databases",
+    "href": "W2_SQL.html#spatial-databases",
+    "title": "2  Introduction to SQL",
+    "section": "2.1 Spatial databases",
+    "text": "2.1 Spatial databases\nA database management system (DBMS) allows users to store, insert, delete, and update information in a database. Spatial databases go a step further because they record data with geographic coordinates.\nFrom Esri Geodatabase to PostGIS, spatial databases have quickly become the primary method of managing spatial data.\nTo learn more about spatial databases, check out the resources below:\n\nWikipedia: Spatial database\n7 Spatial Databases for Your Enterprise\nGISGeography: Spatial Databases – Build Your Spatial Data Empire\nEsri: What is a geodatabase?\nIntroduction to PostGIS\nPostGEESE? Introducing The DuckDB Spatial Extension"
+  },
+  {
+    "objectID": "W2_SQL.html#duckdb",
+    "href": "W2_SQL.html#duckdb",
+    "title": "2  Introduction to SQL",
+    "section": "2.2 DuckDB",
+    "text": "2.2 DuckDB\nDuckDB is an in-process SQL OLAP database management system. It is designed to be used as an embedded database in applications, but it can also be used as a standalone SQL database.\n\nIn-process SQL means that DuckDB’s features run in your application, not an external process to which your application connects. In other words: there is no client sending instructions nor a server to read and process them. SQLite works the same way, while PostgreSQL, MySQL…, do not.\nOLAP stands for OnLine Analytical Processing, and Microsoft defines it as a technology that organizes large business databases and supports complex analysis. It can be used to perform complex analytical queries without negatively affecting transactional systems.\n\nDuckDB is a great option if you’re looking for a serverless data analytics database management system."
+  }
+]

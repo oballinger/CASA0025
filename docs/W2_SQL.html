@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 2&nbsp; SQL</title>
+<title>CASA0025: Building Spatial Applications with Big Data - 2&nbsp; Introduction to SQL</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -86,7 +86,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W1_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W2_SQL.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">SQL</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W1_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W2_SQL.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -178,7 +178,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W2_SQL.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">SQL</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -289,14 +289,36 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#spatial-databases" id="toc-spatial-databases" class="nav-link active" data-scroll-target="#spatial-databases"><span class="header-section-number">2.1</span> Spatial databases</a></li>
+  <li><a href="#duckdb" id="toc-duckdb" class="nav-link" data-scroll-target="#duckdb"><span class="header-section-number">2.2</span> DuckDB</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">3</span> Getting Started</a></li>
+  <li><a href="#lab" id="toc-lab" class="nav-link" data-scroll-target="#lab"><span class="header-section-number">4</span> Lab</a>
+  <ul class="collapse">
+  <li><a href="#question-1-creating-tables" id="toc-question-1-creating-tables" class="nav-link" data-scroll-target="#question-1-creating-tables"><span class="header-section-number">4.1</span> Question 1: Creating Tables</a></li>
+  <li><a href="#question-2-column-filtering" id="toc-question-2-column-filtering" class="nav-link" data-scroll-target="#question-2-column-filtering"><span class="header-section-number">4.2</span> Question 2: Column Filtering</a></li>
+  <li><a href="#question-3-row-filtering" id="toc-question-3-row-filtering" class="nav-link" data-scroll-target="#question-3-row-filtering"><span class="header-section-number">4.3</span> Question 3: Row Filtering</a></li>
+  <li><a href="#question-4-sorting-results" id="toc-question-4-sorting-results" class="nav-link" data-scroll-target="#question-4-sorting-results"><span class="header-section-number">4.4</span> Question 4: Sorting Results</a></li>
+  <li><a href="#question-5-unique-values" id="toc-question-5-unique-values" class="nav-link" data-scroll-target="#question-5-unique-values"><span class="header-section-number">4.5</span> Question 5: Unique Values</a></li>
+  <li><a href="#question-6-counting-rows" id="toc-question-6-counting-rows" class="nav-link" data-scroll-target="#question-6-counting-rows"><span class="header-section-number">4.6</span> Question 6: Counting Rows</a></li>
+  <li><a href="#question-7-aggregating-data" id="toc-question-7-aggregating-data" class="nav-link" data-scroll-target="#question-7-aggregating-data"><span class="header-section-number">4.7</span> Question 7: Aggregating Data</a></li>
+  <li><a href="#question-8-joining-tables" id="toc-question-8-joining-tables" class="nav-link" data-scroll-target="#question-8-joining-tables"><span class="header-section-number">4.8</span> Question 8: Joining Tables</a></li>
+  <li><a href="#question-9-string-manipulation" id="toc-question-9-string-manipulation" class="nav-link" data-scroll-target="#question-9-string-manipulation"><span class="header-section-number">4.9</span> Question 9: String Manipulation</a></li>
+  <li><a href="#question-10-filtering-with-multiple-conditions" id="toc-question-10-filtering-with-multiple-conditions" class="nav-link" data-scroll-target="#question-10-filtering-with-multiple-conditions"><span class="header-section-number">4.10</span> Question 10: Filtering with Multiple Conditions</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">5</span> References</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W2_SQL.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">SQL</span></h1>
+<h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></h1>
 </div>
 
 
@@ -311,8 +333,105 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 </header>
 
+<section id="spatial-databases" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="spatial-databases"><span class="header-section-number">2.1</span> Spatial databases</h2>
+<p>A database management system (DBMS) allows users to store, insert, delete, and update information in a database. Spatial databases go a step further because they record data with geographic coordinates.</p>
+<p>From Esri Geodatabase to PostGIS, spatial databases have quickly become the primary method of managing spatial data.</p>
+<p>To learn more about spatial databases, check out the resources below:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Spatial_database">Wikipedia: Spatial database</a></li>
+<li><a href="https://engage.safe.com/blog/2021/11/7-spatial-databases-enterprise">7 Spatial Databases for Your Enterprise</a></li>
+<li><a href="https://gisgeography.com/spatial-databases/">GISGeography: Spatial Databases – Build Your Spatial Data Empire</a></li>
+<li><a href="https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/overview/what-is-a-geodatabase-.htm">Esri: What is a geodatabase?</a></li>
+<li><a href="https://postgis.net/workshops/postgis-intro">Introduction to PostGIS</a></li>
+<li><a href="https://duckdb.org/2023/04/28/spatial.html">PostGEESE? Introducing The DuckDB Spatial Extension</a></li>
+</ul>
+</section>
+<section id="duckdb" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="duckdb"><span class="header-section-number">2.2</span> DuckDB</h2>
+<p><a href="https://duckdb.org">DuckDB</a> is an in-process SQL OLAP database management system. It is designed to be used as an embedded database in applications, but it can also be used as a standalone SQL database.</p>
+<ul>
+<li><em>In-process SQL</em> means that DuckDB’s features run in your application, not an external process to which your application connects. In other words: there is no client sending instructions nor a server to read and process them. SQLite works the same way, while PostgreSQL, MySQL…, do not.</li>
+<li><em>OLAP</em> stands for OnLine Analytical Processing, and Microsoft defines it as a technology that organizes large business databases and supports complex analysis. It can be used to perform complex analytical queries without negatively affecting transactional systems.</li>
+</ul>
+<p>DuckDB is a great option if you’re looking for a serverless data analytics database management system.</p>
+<p><img src="https://i.imgur.com/BEDGstx.png" class="img-fluid"></p>
+<p><img src="https://i.imgur.com/mFpqp5I.png" class="img-fluid"></p>
+</section>
+<section id="getting-started" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Getting Started</h1>
+<p>This week we’ll be learning how to use SQL to query data from a database. To get started, work your way through the following two notebooks:</p>
+<ol type="1">
+<li><a href="https://colab.research.google.com/github/oballinger/CASA0025/notebooks/04_data_import.ipynb">Loading Data</a></li>
+<li><a href="https://colab.research.google.com/github/oballinger/CASA0025/notebooks/02_sql_basics.ipynb.ipynb">Introduction to SQL</a></li>
+</ol>
+<p>Clicking the link will take you to Google Colab, where you can run the notebook in your browser. You can also download the notebook and run it locally if you prefer.</p>
+<p>Once you’ve completed these you can test your knowledge by answering the questions in the lab below.</p>
+</section>
+<section id="lab" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Lab</h1>
+<p><strong>Datasets</strong>:</p>
+<p>The following datasets are used in this lab. You don’t need to download them manually, they can be accessed directly from the notebook.</p>
+<ul>
+<li><a href="https://open.gishub.org/data/duckdb/nyc_subway_stations.tsv">nyc_subway_stations.tsv</a></li>
+<li><a href="https://open.gishub.org/data/duckdb/nyc_neighborhoods.tsv">nyc_neighborhoods.tsv</a></li>
+</ul>
+<pre class="ipython3"><code># %pip install duckdb duckdb-engine jupysql</code></pre>
+<pre class="ipython3"><code>import duckdb
+
+%load_ext sql</code></pre>
+<pre class="ipython3"><code>%config SqlMagic.autopandas = True
+%config SqlMagic.feedback = False
+%config SqlMagic.displaycon = False</code></pre>
+<section id="question-1-creating-tables" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="question-1-creating-tables"><span class="header-section-number">4.1</span> Question 1: Creating Tables</h2>
+<p>Create a database, then write a SQL query to create a table named <code>nyc_subway_stations</code> and load the data from the file <code>nyc_subway_stations.tsv</code> into it. Similarly, create a table named <code>nyc_neighborhoods</code> and load the data from the file <code>nyc_neighborhoods.tsv</code> into it.</p>
+</section>
+<section id="question-2-column-filtering" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="question-2-column-filtering"><span class="header-section-number">4.2</span> Question 2: Column Filtering</h2>
+<p>Write a SQL query to display the <code>ID</code>, <code>NAME</code>, and <code>BOROUGH</code> of each subway station in the <code>nyc_subway_stations</code> dataset.</p>
+</section>
+<section id="question-3-row-filtering" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="question-3-row-filtering"><span class="header-section-number">4.3</span> Question 3: Row Filtering</h2>
+<p>Write a SQL query to find all subway stations in the <code>nyc_subway_stations</code> dataset that are located in the borough of Manhattan.</p>
+</section>
+<section id="question-4-sorting-results" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="question-4-sorting-results"><span class="header-section-number">4.4</span> Question 4: Sorting Results</h2>
+<p>Write a SQL query to list the subway stations in the <code>nyc_subway_stations</code> dataset in alphabetical order by their names.</p>
+</section>
+<section id="question-5-unique-values" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="question-5-unique-values"><span class="header-section-number">4.5</span> Question 5: Unique Values</h2>
+<p>Write a SQL query to find the distinct boroughs represented in the <code>nyc_subway_stations</code> dataset.</p>
+</section>
+<section id="question-6-counting-rows" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="question-6-counting-rows"><span class="header-section-number">4.6</span> Question 6: Counting Rows</h2>
+<p>Write a SQL query to count the number of subway stations in each borough in the <code>nyc_subway_stations</code> dataset.</p>
+</section>
+<section id="question-7-aggregating-data" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="question-7-aggregating-data"><span class="header-section-number">4.7</span> Question 7: Aggregating Data</h2>
+<p>Write a SQL query to list the number of subway stations in each borough, sorted in descending order by the count.</p>
+</section>
+<section id="question-8-joining-tables" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="question-8-joining-tables"><span class="header-section-number">4.8</span> Question 8: Joining Tables</h2>
+<p>Write a SQL query to join the <code>nyc_subway_stations</code> and <code>nyc_neighborhoods</code> datasets on the borough name, displaying the subway station name and the neighborhood name.</p>
+</section>
+<section id="question-9-string-manipulation" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="question-9-string-manipulation"><span class="header-section-number">4.9</span> Question 9: String Manipulation</h2>
+<p>Write a SQL query to display the names of subway stations in the <code>nyc_subway_stations</code> dataset that contain the word “St” in their names.</p>
+</section>
+<section id="question-10-filtering-with-multiple-conditions" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="question-10-filtering-with-multiple-conditions"><span class="header-section-number">4.10</span> Question 10: Filtering with Multiple Conditions</h2>
+<p>Write a SQL query to find all subway stations in the <code>nyc_subway_stations</code> dataset that are in the borough of Brooklyn and have routes that include the letter “R”.</p>
+</section>
+</section>
+<section id="references" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> References</h1>
+<ul>
+<li><a href="https://geog-414.gishub.org/">Qiusheng Wu</a></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -679,4 +798,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W2_SQL.qmd" class="toc-action">Edit this page</a></p></div></div></div></div></footer></body></html>
+</body></html>

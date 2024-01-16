@@ -11,7 +11,7 @@ On August 4th, 2020, a warehouse full of fertilizer in the port of Beirut explod
 </div>
 
 
-Assessing blast damage is a common task for open source investigators, and satellite imagery analysis is one of the best tools we have at our disposal to analyze this sort of phenomenon. [NASA](https://earthobservatory.nasa.gov/images/147098/scientists-map-beirut-blast-damage) used Sentinel-1 imagery in the aftermath of the explosion to generate an estimated damage map. They explain that Sentinel-1 Synthetic Aperture Radar (SAR) imagery is good for this sort of task:
+[NASA](https://earthobservatory.nasa.gov/images/147098/scientists-map-beirut-blast-damage) used Sentinel-1 imagery in the aftermath of the explosion to generate an estimated damage map. They explain that Sentinel-1 Synthetic Aperture Radar (SAR) imagery is good for this sort of task:
 
 "SAR instruments send pulses of microwaves toward Earth’s surface and listen for the reflections of those waves. The radar waves can penetrate cloud cover, vegetation, and the dark of night to detect changes that might not show up in visible light imagery. When Earth’s crust moves due to an earthquake, when dry land is suddenly covered by flood water, or when buildings have been damaged or toppled, the amplitude and phase of radar wave reflections changes in those areas and indicates to the satellite that something on the ground has changed."
 
