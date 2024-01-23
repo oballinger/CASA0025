@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 3&nbsp; PostGIS I</title>
+<title>CASA0025: Building Spatial Applications with Big Data - 3&nbsp; Spatial SQL I</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -86,7 +86,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W1_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W3_postgis1.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PostGIS I</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W1_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W3_postgis1.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial SQL I</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -178,13 +178,13 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W2_SQL.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">SQL</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W3_postgis1.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PostGIS I</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial SQL I</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -289,14 +289,31 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">3.1</span> Introduction</a></li>
+  <li><a href="#learning-objectives" id="toc-learning-objectives" class="nav-link" data-scroll-target="#learning-objectives"><span class="header-section-number">3.2</span> Learning Objectives</a></li>
+  <li><a href="#materials" id="toc-materials" class="nav-link" data-scroll-target="#materials"><span class="header-section-number">3.3</span> Materials</a></li>
+  <li><a href="#geometry-exercises" id="toc-geometry-exercises" class="nav-link" data-scroll-target="#geometry-exercises"><span class="header-section-number">4</span> Geometry Exercises</a>
+  <ul class="collapse">
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">4.1</span> Exercises</a></li>
+  </ul></li>
+  <li><a href="#spatial-relationships-exercises" id="toc-spatial-relationships-exercises" class="nav-link" data-scroll-target="#spatial-relationships-exercises"><span class="header-section-number">5</span> Spatial Relationships Exercises</a>
+  <ul class="collapse">
+  <li><a href="#exercises-1" id="toc-exercises-1" class="nav-link" data-scroll-target="#exercises-1"><span class="header-section-number">5.1</span> Exercises</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">6</span> References</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W3_postgis1.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PostGIS I</span></h1>
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial SQL I</span></h1>
 </div>
 
 
@@ -311,8 +328,155 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 </header>
 
+<section id="introduction" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">3.1</span> Introduction</h2>
+<p>In this lesson, you will learn how to use SQL to query spatial data. You will learn how to use the <code>duckdb</code> Python library to connect to a DuckDB database and run SQL queries. You will also learn how to use the <code>leafmap</code> Python library to visualize spatial data.</p>
+</section>
+<section id="learning-objectives" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="learning-objectives"><span class="header-section-number">3.2</span> Learning Objectives</h2>
+<p>By the end of this lesson, you will be able to:</p>
+<ul>
+<li>Connect to a DuckDB database using Python</li>
+<li>Run SQL queries to query spatial data</li>
+<li>Visualize spatial data using Leafmap</li>
+<li>Run spatial SQL queries using PgAdmin</li>
+</ul>
+</section>
+<section id="materials" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="materials"><span class="header-section-number">3.3</span> Materials</h2>
+<p>To get started, work your way through the following two notebooks:</p>
+<ol type="1">
+<li><a href="https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W03_geometries.ipynb">Geometries</a></li>
+<li><a href="https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W03_spatial_relationships.ipynb">Spatial Relationships</a></li>
+</ol>
+<p>Clicking the link will take you to Google Colab, where you can run the notebook in your browser. These workbooks use the <code>duckdb</code> Python library to connect to a DuckDB database and run SQL queries. They also use the <code>leafmap</code> Python library to visualize spatial data. Most of the spatial functions and syntax are the same or very similar to their PostGIS equivalents.</p>
+<p>Once you’ve completed these you can test your knowledge by answering the questions in the lab below. To complete this lab, open PgAdmin and connect to the <code>nyc</code> database. Then, open a new query window and write your SQL queries there.</p>
+</section>
+<section id="geometry-exercises" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Geometry Exercises</h1>
+<p>Here's a reminder of all the functions we have seen so far. They should be useful for the exercises!</p>
+<ul>
+<li><code class="interpreted-text" role="command">sum(expression)</code> aggregate to return a sum for a set of records</li>
+<li><code class="interpreted-text" role="command">count(expression)</code> aggregate to return the size of a set of records</li>
+<li><code class="interpreted-text" role="command">ST_GeometryType(geometry)</code> returns the type of the geometry</li>
+<li><code class="interpreted-text" role="command">ST_NDims(geometry)</code> returns the number of dimensions of the geometry</li>
+<li><code class="interpreted-text" role="command">ST_SRID(geometry)</code> returns the spatial reference identifier number of the geometry</li>
+<li><code class="interpreted-text" role="command">ST_X(point)</code> returns the X ordinate</li>
+<li><code class="interpreted-text" role="command">ST_Y(point)</code> returns the Y ordinate</li>
+<li><code class="interpreted-text" role="command">ST_Length(linestring)</code> returns the length of the linestring</li>
+<li><code class="interpreted-text" role="command">ST_StartPoint(geometry)</code> returns the first coordinate as a point</li>
+<li><code class="interpreted-text" role="command">ST_EndPoint(geometry)</code> returns the last coordinate as a point</li>
+<li><code class="interpreted-text" role="command">ST_NPoints(geometry)</code> returns the number of coordinates in the linestring</li>
+<li><code class="interpreted-text" role="command">ST_Area(geometry)</code> returns the area of the polygons</li>
+<li><code class="interpreted-text" role="command">ST_NRings(geometry)</code> returns the number of rings (usually 1, more if there are holes)</li>
+<li><code class="interpreted-text" role="command">ST_ExteriorRing(polygon)</code> returns the outer ring as a linestring</li>
+<li><code class="interpreted-text" role="command">ST_InteriorRingN(polygon, integer)</code> returns a specified interior ring as a linestring</li>
+<li><code class="interpreted-text" role="command">ST_Perimeter(geometry)</code> returns the length of all the rings</li>
+<li><code class="interpreted-text" role="command">ST_NumGeometries(multi/geomcollection)</code> returns the number of parts in the collection</li>
+<li><code class="interpreted-text" role="command">ST_GeometryN(geometry, integer)</code> returns the specified part of the collection</li>
+<li><code class="interpreted-text" role="command">ST_GeomFromText(text)</code> returns <code>geometry</code></li>
+<li><code class="interpreted-text" role="command">ST_AsText(geometry)</code> returns WKT <code>text</code></li>
+<li><code class="interpreted-text" role="command">ST_AsEWKT(geometry)</code> returns EWKT <code>text</code></li>
+<li><code class="interpreted-text" role="command">ST_GeomFromWKB(bytea)</code> returns <code>geometry</code></li>
+<li><code class="interpreted-text" role="command">ST_AsBinary(geometry)</code> returns WKB <code>bytea</code></li>
+<li><code class="interpreted-text" role="command">ST_AsEWKB(geometry)</code> returns EWKB <code>bytea</code></li>
+<li><code class="interpreted-text" role="command">ST_GeomFromGML(text)</code> returns <code>geometry</code></li>
+<li><code class="interpreted-text" role="command">ST_AsGML(geometry)</code> returns GML <code>text</code></li>
+<li><code class="interpreted-text" role="command">ST_GeomFromKML(text)</code> returns <code>geometry</code></li>
+<li><code class="interpreted-text" role="command">ST_AsKML(geometry)</code> returns KML <code>text</code></li>
+<li><code class="interpreted-text" role="command">ST_AsGeoJSON(geometry)</code> returns JSON <code>text</code></li>
+<li><code class="interpreted-text" role="command">ST_AsSVG(geometry)</code> returns SVG <code>text</code></li>
+</ul>
+<p>Also remember the tables we have available:</p>
+<ul>
+<li><code>nyc_census_blocks</code>
+<ul>
+<li>blkid, popn_total, boroname, geom</li>
+</ul></li>
+<li><code>nyc_streets</code>
+<ul>
+<li>name, type, geom</li>
+</ul></li>
+<li><code>nyc_subway_stations</code>
+<ul>
+<li>name, geom</li>
+</ul></li>
+<li><code>nyc_neighborhoods</code>
+<ul>
+<li>name, boroname, geom</li>
+</ul></li>
+</ul>
+<section id="exercises" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="exercises"><span class="header-section-number">4.1</span> Exercises</h2>
+<ul>
+<li><p><strong>What is the area of the 'West Village' neighborhood?</strong> (Hint: The area is given in square meters. To get an area in hectares, divide by 10000. To get an area in acres, divide by 4047.)</p></li>
+<li><p><strong>What is the geometry type of ‘Pelham St’? The length?</strong></p></li>
+<li><p><strong>What is the GeoJSON representation of the 'Broad St' subway station?</strong></p></li>
+<li><p><strong>What is the total length of streets (in kilometers) in New York City?</strong> (Hint: The units of measurement of the spatial data are meters, there are 1000 meters in a kilometer.)</p></li>
+<li><p><strong>What is the area of Manhattan in acres?</strong> (Hint: both <code>nyc_census_blocks</code> and <code>nyc_neighborhoods</code> have a <code>boroname</code> in them.)</p></li>
+<li><p><strong>What is the most westerly subway station?</strong></p></li>
+<li><p><strong>How long is 'Columbus Cir' (aka Columbus Circle)?</strong></p></li>
+<li><p><strong>What is the length of streets in New York City, summarized by type?</strong></p></li>
+</ul>
+<p><a href="https://postgis.net/workshops/postgis-intro/geometries_exercises.html">Answers</a> (only check after you’ve given it your best shot!)</p>
+</section>
+</section>
+<section id="spatial-relationships-exercises" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Spatial Relationships Exercises</h1>
+<p>Here's a reminder of the functions we saw in the last section. They should be useful for the exercises!</p>
+<ul>
+<li><code class="interpreted-text" role="command">sum(expression)</code> aggregate to return a sum for a set of records</li>
+<li><code class="interpreted-text" role="command">count(expression)</code> aggregate to return the size of a set of records</li>
+<li><code class="interpreted-text" role="command">ST_Contains(geometry A, geometry B)</code> returns true if geometry A contains geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Crosses(geometry A, geometry B)</code> returns true if geometry A crosses geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Disjoint(geometry A , geometry B)</code> returns true if the geometries do not "spatially intersect"</li>
+<li><code class="interpreted-text" role="command">ST_Distance(geometry A, geometry B)</code> returns the minimum distance between geometry A and geometry B</li>
+<li><code class="interpreted-text" role="command">ST_DWithin(geometry A, geometry B, radius)</code> returns true if geometry A is radius distance or less from geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Equals(geometry A, geometry B)</code> returns true if geometry A is the same as geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Intersects(geometry A, geometry B)</code> returns true if geometry A intersects geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Overlaps(geometry A, geometry B)</code> returns true if geometry A and geometry B share space, but are not completely contained by each other.</li>
+<li><code class="interpreted-text" role="command">ST_Touches(geometry A, geometry B)</code> returns true if the boundary of geometry A touches geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Within(geometry A, geometry B)</code> returns true if geometry A is within geometry B</li>
+</ul>
+<p>Also remember the tables we have available:</p>
+<ul>
+<li><code>nyc_census_blocks</code>
+<ul>
+<li>blkid, popn_total, boroname, geom</li>
+</ul></li>
+<li><code>nyc_streets</code>
+<ul>
+<li>name, type, geom</li>
+</ul></li>
+<li><code>nyc_subway_stations</code>
+<ul>
+<li>name, geom</li>
+</ul></li>
+<li><code>nyc_neighborhoods</code>
+<ul>
+<li>name, boroname, geom</li>
+</ul></li>
+</ul>
+<section id="exercises-1" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="exercises-1"><span class="header-section-number">5.1</span> Exercises</h2>
+<ul>
+<li><p><strong>What is the geometry value for the street named 'Atlantic Commons'?</strong></p></li>
+<li><p><strong>What neighborhood and borough is Atlantic Commons in?</strong></p></li>
+<li><p><strong>What streets does Atlantic Commons join with?</strong></p></li>
+<li><p><strong>Approximately how many people live on (within 50 meters of) Atlantic Commons?</strong></p></li>
+</ul>
+<p><a href="https://postgis.net/workshops/postgis-intro/spatial_relationships_exercises.html">Answers</a> (only check after you’ve given it your best shot!)</p>
+</section>
+</section>
+<section id="references" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> References</h1>
+<ul>
+<li><a href="https://geog-414.gishub.org/">Qiusheng Wu</a></li>
+<li><a href="https://postgis.net/workshops/postgis-intro/">PostGIS Workshop</a></li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -666,7 +830,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./W2_SQL.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">SQL</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -679,4 +843,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W3_postgis1.qmd" class="toc-action">Edit this page</a></p></div></div></div></div></footer></body></html>
+</body></html>

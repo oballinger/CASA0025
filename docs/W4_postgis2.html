@@ -178,13 +178,13 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W2_SQL.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">SQL</span></span></a>
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W3_postgis1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PostGIS I</span></span></a>
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial SQL I</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -289,7 +289,21 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#lab-4" id="toc-lab-4" class="nav-link active" data-scroll-target="#lab-4"><span class="header-section-number">5</span> Lab 4</a>
+  <ul class="collapse">
+  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">5.1</span> Setup</a></li>
+  <li><a href="#question-1" id="toc-question-1" class="nav-link" data-scroll-target="#question-1"><span class="header-section-number">5.2</span> Question 1</a></li>
+  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2"><span class="header-section-number">5.3</span> Question 2</a></li>
+  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3"><span class="header-section-number">5.4</span> Question 3</a></li>
+  <li><a href="#question-4" id="toc-question-4" class="nav-link" data-scroll-target="#question-4"><span class="header-section-number">5.5</span> Question 4</a></li>
+  <li><a href="#question-5" id="toc-question-5" class="nav-link" data-scroll-target="#question-5"><span class="header-section-number">5.6</span> Question 5</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W4_postgis2.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -311,8 +325,50 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 </header>
 
+<section id="lab-4" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Lab 4</h1>
+<section id="setup" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">5.1</span> Setup</h2>
+<p>Uncomment and run the following cell to install the required packages.</p>
+<p><code>wgkruzvfmij ipython3 # %pip install duckdb leafmap lonboard</code></p>
+<p><code>wgkruzvfmij ipython3 import duckdb import leafmap</code></p>
+</section>
+<section id="question-1" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="question-1"><span class="header-section-number">5.2</span> Question 1</h2>
+<p>Download the <a href="https://github.com/opengeos/data/raw/main/duckdb/nyc_data.zip">nyc_data.zip</a> dataset using leafmap. The zip file contains the following datasets. Create a new DuckDB database and import the datasets into the database. Each dataset should be imported into a separate table.</p>
+<ul>
+<li>nyc_census_blocks</li>
+<li>nyc_homicides</li>
+<li>nyc_neighborhoods</li>
+<li>nyc_streets</li>
+<li>nyc_subway_stations</li>
+</ul>
+<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+</section>
+<section id="question-2" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="question-2"><span class="header-section-number">5.3</span> Question 2</h2>
+<p>+++</p>
+<p>Visualize the <code>nyc_subway_stations</code> and <code>nyc_streets</code> datasets on the same map using leafmap and lonboard.</p>
+<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+</section>
+<section id="question-3" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="question-3"><span class="header-section-number">5.4</span> Question 3</h2>
+<p>Find out what neighborhood the <code>BLUE</code> subway stations are in.</p>
+<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+</section>
+<section id="question-4" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="question-4"><span class="header-section-number">5.5</span> Question 4</h2>
+<p>Find out what streets are within 200 meters of the <code>BLUE</code> subway stations.</p>
+<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+</section>
+<section id="question-5" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="question-5"><span class="header-section-number">5.6</span> Question 5</h2>
+<p>Visualize the <code>BLUE</code> subway stations and the streets within 200 meters of the <code>BLUE</code> subway stations on the same map using leafmap and lonboard.</p>
+<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -666,7 +722,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./W3_postgis1.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PostGIS I</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Spatial SQL I</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
@@ -679,4 +735,4 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W4_postgis2.qmd" class="toc-action">Edit this page</a></p></div></div></div></div></footer></body></html>
+</body></html>
