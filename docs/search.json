@@ -361,28 +361,28 @@
     "href": "W4_postgis2.html",
     "title": "4  PostGIS II",
     "section": "",
-    "text": "5 Lab 4"
+    "text": "5 Spatial Joins Exercises\nHere's a reminder of some of the functions we have seen. Hint: they should be useful for the exercises!\nAlso remember the tables we have available:\nNow for a less structured exercise. We’re going to look at ship-to-ship transfers. The idea is that two ships meet up in the middle of the ocean, and one ship transfers cargo to the other. This is a common way to avoid sanctions, and is often used to transfer oil from sanctioned countries to other countries. We’re going to look at a few different ways to detect these transfers using AIS data."
   },
   {
     "objectID": "W4_postgis2.html#setup",
     "href": "W4_postgis2.html#setup",
     "title": "4  PostGIS II",
     "section": "5.1 Setup",
-    "text": "5.1 Setup\nUncomment and run the following cell to install the required packages.\nwgkruzvfmij ipython3 # %pip install duckdb leafmap lonboard\nwgkruzvfmij ipython3 import duckdb import leafmap"
+    "text": "5.1 Setup\nUncomment and run the following cell to install the required packages.\nnidbblocduu ipython3 # %pip install duckdb leafmap lonboard\nnidbblocduu ipython3 import duckdb import leafmap"
   },
   {
     "objectID": "W4_postgis2.html#question-1",
     "href": "W4_postgis2.html#question-1",
     "title": "4  PostGIS II",
     "section": "5.2 Question 1",
-    "text": "5.2 Question 1\nDownload the nyc_data.zip dataset using leafmap. The zip file contains the following datasets. Create a new DuckDB database and import the datasets into the database. Each dataset should be imported into a separate table.\n\nnyc_census_blocks\nnyc_homicides\nnyc_neighborhoods\nnyc_streets\nnyc_subway_stations\n\nwgkruzvfmij ipython3 # Add your code here"
+    "text": "5.2 Question 1\nDownload the nyc_data.zip dataset using leafmap. The zip file contains the following datasets. Create a new DuckDB database and import the datasets into the database. Each dataset should be imported into a separate table.\n\nnyc_census_blocks\nnyc_homicides\nnyc_neighborhoods\nnyc_streets\nnyc_subway_stations\n\nnidbblocduu ipython3 # Add your code here"
   },
   {
     "objectID": "W4_postgis2.html#question-2",
     "href": "W4_postgis2.html#question-2",
     "title": "4  PostGIS II",
     "section": "5.3 Question 2",
-    "text": "5.3 Question 2\n+++\nVisualize the nyc_subway_stations and nyc_streets datasets on the same map using leafmap and lonboard.\nwgkruzvfmij ipython3 # Add your code here"
+    "text": "5.3 Question 2\n+++\nVisualize the nyc_subway_stations and nyc_streets datasets on the same map using leafmap and lonboard.\nnidbblocduu ipython3 # Add your code here"
   },
   {
     "objectID": "W4_postgis2.html#question-3",
@@ -418,5 +418,19 @@
     "title": "3  Spatial SQL I",
     "section": "5.1 Exercises",
     "text": "5.1 Exercises\n\nWhat is the geometry value for the street named 'Atlantic Commons'?\nWhat neighborhood and borough is Atlantic Commons in?\nWhat streets does Atlantic Commons join with?\nApproximately how many people live on (within 50 meters of) Atlantic Commons?\n\nAnswers (only check after you’ve given it your best shot!)"
+  },
+  {
+    "objectID": "W4_postgis2.html#step-1",
+    "href": "W4_postgis2.html#step-1",
+    "title": "4  PostGIS II",
+    "section": "7.1 Step 1",
+    "text": "7.1 Step 1\nCreate a spatial database using the following AIS data:\nhttps://storage.googleapis.com/qm2/casa0025_ships.csv\nEach row in this dataset is an AIS ‘ping’ indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.\nIt contains the following columns: * vesselid: A unique numerical identifier for each ship, like a license plate * vessel_name: The ship’s name * vsl_descr: The ship’s type * dwt: The ship’s Deadweight Tonnage (how many tons it can carry) * v_length: The ship’s length in meters * draught: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying * sog: Speed over Ground (in knots) * date: A timestamp for the AIS signal * lat: The latitude of the AIS signal (EPSG:4326) * lon: The longitude of the AIS signal (EPSG:4326)\nCreate a table called ‘ais’ where each row is a different AIS ping, with no superfluous information. Construct a geometry column.\nCreate a second table called ‘vinfo’ which contains vessel-level information with no superfluous information."
+  },
+  {
+    "objectID": "W4_postgis2.html#step-2",
+    "href": "W4_postgis2.html#step-2",
+    "title": "4  PostGIS II",
+    "section": "7.2 Step 2",
+    "text": "7.2 Step 2\nUse a spatial join to identify ship-to-ship transfers in this dataset. Two ships are considered to be conducting a ship to ship transfer IF:\n\nThey are within 500 meters of each other\nFor more than two hours\nAnd their speed is lower than 1 knot\n\nSome things to consider: make sure you’re not joining ships with themselves. Try working with subsets of the data first while you try different things out."
   }
 ]

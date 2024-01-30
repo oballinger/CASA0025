@@ -293,14 +293,12 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#lab-4" id="toc-lab-4" class="nav-link active" data-scroll-target="#lab-4"><span class="header-section-number">5</span> Lab 4</a>
+  <li><a href="#spatial-joins-exercises" id="toc-spatial-joins-exercises" class="nav-link active" data-scroll-target="#spatial-joins-exercises"><span class="header-section-number">5</span> Spatial Joins Exercises</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">6</span> Exercises</a></li>
+  <li><a href="#ship-to-ship-transfer-detection" id="toc-ship-to-ship-transfer-detection" class="nav-link" data-scroll-target="#ship-to-ship-transfer-detection"><span class="header-section-number">7</span> Ship-to-Ship Transfer Detection</a>
   <ul class="collapse">
-  <li><a href="#setup" id="toc-setup" class="nav-link" data-scroll-target="#setup"><span class="header-section-number">5.1</span> Setup</a></li>
-  <li><a href="#question-1" id="toc-question-1" class="nav-link" data-scroll-target="#question-1"><span class="header-section-number">5.2</span> Question 1</a></li>
-  <li><a href="#question-2" id="toc-question-2" class="nav-link" data-scroll-target="#question-2"><span class="header-section-number">5.3</span> Question 2</a></li>
-  <li><a href="#question-3" id="toc-question-3" class="nav-link" data-scroll-target="#question-3"><span class="header-section-number">5.4</span> Question 3</a></li>
-  <li><a href="#question-4" id="toc-question-4" class="nav-link" data-scroll-target="#question-4"><span class="header-section-number">5.5</span> Question 4</a></li>
-  <li><a href="#question-5" id="toc-question-5" class="nav-link" data-scroll-target="#question-5"><span class="header-section-number">5.6</span> Question 5</a></li>
+  <li><a href="#step-1" id="toc-step-1" class="nav-link" data-scroll-target="#step-1"><span class="header-section-number">7.1</span> Step 1</a></li>
+  <li><a href="#step-2" id="toc-step-2" class="nav-link" data-scroll-target="#step-2"><span class="header-section-number">7.2</span> Step 2</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W4_postgis2.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
@@ -325,46 +323,83 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 </header>
 
-<section id="lab-4" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Lab 4</h1>
-<section id="setup" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="setup"><span class="header-section-number">5.1</span> Setup</h2>
-<p>Uncomment and run the following cell to install the required packages.</p>
-<p><code>wgkruzvfmij ipython3 # %pip install duckdb leafmap lonboard</code></p>
-<p><code>wgkruzvfmij ipython3 import duckdb import leafmap</code></p>
-</section>
-<section id="question-1" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="question-1"><span class="header-section-number">5.2</span> Question 1</h2>
-<p>Download the <a href="https://github.com/opengeos/data/raw/main/duckdb/nyc_data.zip">nyc_data.zip</a> dataset using leafmap. The zip file contains the following datasets. Create a new DuckDB database and import the datasets into the database. Each dataset should be imported into a separate table.</p>
+<p>This week we’re going to be looking at Spatial Joins. We’ll be working with DuckDB (though if you want to work with Postgres/PgAdmin, go ahead!). The notebook below contains some exercises on spatial joins using the NYC data we’ve been working with, as well as an extension that looks at ship-to-ship transfer detection using AIS data.</p>
+<ol type="1">
+<li><a href="https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W04_postgis2.ipynb">Spatial Joins</a></li>
+</ol>
+<section id="spatial-joins-exercises" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Spatial Joins Exercises</h1>
+<p>Here's a reminder of some of the functions we have seen. Hint: they should be useful for the exercises!</p>
 <ul>
-<li>nyc_census_blocks</li>
-<li>nyc_homicides</li>
-<li>nyc_neighborhoods</li>
-<li>nyc_streets</li>
-<li>nyc_subway_stations</li>
+<li><code class="interpreted-text" role="command">sum(expression)</code>: aggregate to return a sum for a set of records</li>
+<li><code class="interpreted-text" role="command">count(expression)</code>: aggregate to return the size of a set of records</li>
+<li><code class="interpreted-text" role="command">ST_Area(geometry)</code> returns the area of the polygons</li>
+<li><code class="interpreted-text" role="command">ST_AsText(geometry)</code> returns WKT <code>text</code></li>
+<li><code class="interpreted-text" role="command">ST_Contains(geometry A, geometry B)</code> returns the true if geometry A contains geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Distance(geometry A, geometry B)</code> returns the minimum distance between geometry A and geometry B</li>
+<li><code class="interpreted-text" role="command">ST_DWithin(geometry A, geometry B, radius)</code> returns the true if geometry A is radius distance or less from geometry B</li>
+<li><code class="interpreted-text" role="command">ST_GeomFromText(text)</code> returns <code>geometry</code></li>
+<li><code class="interpreted-text" role="command">ST_Intersects(geometry A, geometry B)</code> returns the true if geometry A intersects geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Length(linestring)</code> returns the length of the linestring</li>
+<li><code class="interpreted-text" role="command">ST_Touches(geometry A, geometry B)</code> returns the true if the boundary of geometry A touches geometry B</li>
+<li><code class="interpreted-text" role="command">ST_Within(geometry A, geometry B)</code> returns the true if geometry A is within geometry B</li>
 </ul>
-<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+<p>Also remember the tables we have available:</p>
+<ul>
+<li><code>nyc_census_blocks</code>
+<ul>
+<li>name, popn_total, boroname, geom</li>
+</ul></li>
+<li><code>nyc_streets</code>
+<ul>
+<li>name, type, geom</li>
+</ul></li>
+<li><code>nyc_subway_stations</code>
+<ul>
+<li>name, routes, geom</li>
+</ul></li>
+<li><code>nyc_neighborhoods</code>
+<ul>
+<li>name, boroname, geom</li>
+</ul></li>
+</ul>
 </section>
-<section id="question-2" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="question-2"><span class="header-section-number">5.3</span> Question 2</h2>
-<p>+++</p>
-<p>Visualize the <code>nyc_subway_stations</code> and <code>nyc_streets</code> datasets on the same map using leafmap and lonboard.</p>
-<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+<section id="exercises" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Exercises</h1>
+<ul>
+<li><p><strong>What subway station is in 'Little Italy'? What subway route is it on?</strong></p></li>
+<li><p><strong>What are all the neighborhoods served by the 6-train?</strong> (Hint: The <code>routes</code> column in the <code>nyc_subway_stations</code> table has values like 'B,D,6,V' and 'C,6')</p></li>
+<li><p><strong>After 9/11, the 'Battery Park' neighborhood was off limits for several days. How many people had to be evacuated?</strong></p></li>
+<li><p><strong>What neighborhood has the highest population density (persons/km2)?</strong></p></li>
+</ul>
 </section>
-<section id="question-3" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="question-3"><span class="header-section-number">5.4</span> Question 3</h2>
-<p>Find out what neighborhood the <code>BLUE</code> subway stations are in.</p>
-<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+<section id="ship-to-ship-transfer-detection" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Ship-to-Ship Transfer Detection</h1>
+<p>Now for a less structured exercise. We’re going to look at ship-to-ship transfers. The idea is that two ships meet up in the middle of the ocean, and one ship transfers cargo to the other. This is a common way to avoid sanctions, and is often used to transfer oil from sanctioned countries to other countries. We’re going to look at a few different ways to detect these transfers using AIS data.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="STS.gif" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Ship-to-Ship Transfer</figcaption><p></p>
+</figure>
+</div>
+<section id="step-1" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="step-1"><span class="header-section-number">7.1</span> Step 1</h2>
+<p>Create a spatial database using the following AIS data:</p>
+<p>https://storage.googleapis.com/qm2/casa0025_ships.csv</p>
+<p>Each row in this dataset is an AIS ‘ping’ indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.</p>
+<p>It contains the following columns: * <code>vesselid</code>: A unique numerical identifier for each ship, like a license plate * <code>vessel_name</code>: The ship’s name * <code>vsl_descr</code>: The ship’s type * <code>dwt</code>: The ship’s Deadweight Tonnage (how many tons it can carry) * <code>v_length</code>: The ship’s length in meters * <code>draught</code>: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying * <code>sog</code>: Speed over Ground (in knots) * <code>date</code>: A timestamp for the AIS signal * <code>lat</code>: The latitude of the AIS signal (EPSG:4326) * <code>lon</code>: The longitude of the AIS signal (EPSG:4326)</p>
+<p>Create a table called ‘ais’ where each row is a different AIS ping, with no superfluous information. Construct a geometry column.</p>
+<p>Create a second table called ‘vinfo’ which contains vessel-level information with no superfluous information.</p>
 </section>
-<section id="question-4" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="question-4"><span class="header-section-number">5.5</span> Question 4</h2>
-<p>Find out what streets are within 200 meters of the <code>BLUE</code> subway stations.</p>
-<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
-</section>
-<section id="question-5" class="level2" data-number="5.6">
-<h2 data-number="5.6" class="anchored" data-anchor-id="question-5"><span class="header-section-number">5.6</span> Question 5</h2>
-<p>Visualize the <code>BLUE</code> subway stations and the streets within 200 meters of the <code>BLUE</code> subway stations on the same map using leafmap and lonboard.</p>
-<p><code>wgkruzvfmij ipython3 # Add your code here</code></p>
+<section id="step-2" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="step-2"><span class="header-section-number">7.2</span> Step 2</h2>
+<p>Use a spatial join to identify ship-to-ship transfers in this dataset. Two ships are considered to be conducting a ship to ship transfer IF:</p>
+<ul>
+<li>They are within 500 meters of each other</li>
+<li>For more than two hours</li>
+<li>And their speed is lower than 1 knot</li>
+</ul>
+<p>Some things to consider: make sure you’re not joining ships with themselves. Try working with subsets of the data first while you try different things out.</p>
 
 
 </section>
