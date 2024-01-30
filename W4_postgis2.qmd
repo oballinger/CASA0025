@@ -76,15 +76,25 @@ https://storage.googleapis.com/qm2/casa0025_ships.csv
 Each row in this dataset is an AIS 'ping' indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.
 
 It contains the following columns: 
+
 * `vesselid`: A unique numerical identifier for each ship, like a license plate
+
 * `vessel_name`: The ship's name
+
 * `vsl_descr`: The ship's type
+
 * `dwt`: The ship's Deadweight Tonnage (how many tons it can carry)
+
 * `v_length`: The ship's length in meters
+
 * `draught`: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying
+
 * `sog`: Speed over Ground (in knots)
+
 * `date`: A timestamp for the AIS signal 
+
 * `lat`: The latitude of the AIS signal (EPSG:4326)
+
 * `lon`: The longitude of the AIS signal (EPSG:4326)
 
 Create a table called 'ais' where each row is a different AIS ping, with no superfluous information. Construct a geometry column. 
