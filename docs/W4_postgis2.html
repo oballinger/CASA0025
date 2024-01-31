@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 4&nbsp; PostGIS II</title>
+<title>CASA0025: Building Spatial Applications with Big Data - 4&nbsp; Spatial SQL II</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -86,7 +86,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W1_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W4_postgis2.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PostGIS II</span></a></li></ol></nav>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W1_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W4_postgis2.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial SQL II</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -190,7 +190,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W4_postgis2.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PostGIS II</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial SQL II</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -308,7 +308,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">PostGIS II</span></h1>
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial SQL II</span></h1>
 </div>
 
 
@@ -378,7 +378,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <p>Now for a less structured exercise. We’re going to look at ship-to-ship transfers. The idea is that two ships meet up in the middle of the ocean, and one ship transfers cargo to the other. This is a common way to avoid sanctions, and is often used to transfer oil from sanctioned countries to other countries. We’re going to look at a few different ways to detect these transfers using AIS data.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="STS.gif" class="img-fluid figure-img"></p>
+<p><img src="PS_AIS.png" class="img-fluid figure-img"></p>
 <p></p><figcaption class="figure-caption">Ship-to-Ship Transfer</figcaption><p></p>
 </figure>
 </div>
@@ -387,7 +387,19 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <p>Create a spatial database using the following AIS data:</p>
 <p>https://storage.googleapis.com/qm2/casa0025_ships.csv</p>
 <p>Each row in this dataset is an AIS ‘ping’ indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.</p>
-<p>It contains the following columns: * <code>vesselid</code>: A unique numerical identifier for each ship, like a license plate * <code>vessel_name</code>: The ship’s name * <code>vsl_descr</code>: The ship’s type * <code>dwt</code>: The ship’s Deadweight Tonnage (how many tons it can carry) * <code>v_length</code>: The ship’s length in meters * <code>draught</code>: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying * <code>sog</code>: Speed over Ground (in knots) * <code>date</code>: A timestamp for the AIS signal * <code>lat</code>: The latitude of the AIS signal (EPSG:4326) * <code>lon</code>: The longitude of the AIS signal (EPSG:4326)</p>
+<p>It contains the following columns:</p>
+<ul>
+<li><p><code>vesselid</code>: A unique numerical identifier for each ship, like a license plate</p></li>
+<li><p><code>vessel_name</code>: The ship’s name</p></li>
+<li><p><code>vsl_descr</code>: The ship’s type</p></li>
+<li><p><code>dwt</code>: The ship’s Deadweight Tonnage (how many tons it can carry)</p></li>
+<li><p><code>v_length</code>: The ship’s length in meters</p></li>
+<li><p><code>draught</code>: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying</p></li>
+<li><p><code>sog</code>: Speed over Ground (in knots)</p></li>
+<li><p><code>date</code>: A timestamp for the AIS signal</p></li>
+<li><p><code>lat</code>: The latitude of the AIS signal (EPSG:4326)</p></li>
+<li><p><code>lon</code>: The longitude of the AIS signal (EPSG:4326)</p></li>
+</ul>
 <p>Create a table called ‘ais’ where each row is a different AIS ping, with no superfluous information. Construct a geometry column.</p>
 <p>Create a second table called ‘vinfo’ which contains vessel-level information with no superfluous information.</p>
 </section>

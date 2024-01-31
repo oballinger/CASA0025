@@ -359,7 +359,7 @@
   {
     "objectID": "W4_postgis2.html",
     "href": "W4_postgis2.html",
-    "title": "4  PostGIS II",
+    "title": "4  Spatial SQL II",
     "section": "",
     "text": "5 Spatial Joins Exercises\nHere's a reminder of some of the functions we have seen. Hint: they should be useful for the exercises!\nAlso remember the tables we have available:\nNow for a less structured exercise. We’re going to look at ship-to-ship transfers. The idea is that two ships meet up in the middle of the ocean, and one ship transfers cargo to the other. This is a common way to avoid sanctions, and is often used to transfer oil from sanctioned countries to other countries. We’re going to look at a few different ways to detect these transfers using AIS data."
   },
@@ -422,14 +422,14 @@
   {
     "objectID": "W4_postgis2.html#step-1",
     "href": "W4_postgis2.html#step-1",
-    "title": "4  PostGIS II",
+    "title": "4  Spatial SQL II",
     "section": "7.1 Step 1",
-    "text": "7.1 Step 1\nCreate a spatial database using the following AIS data:\nhttps://storage.googleapis.com/qm2/casa0025_ships.csv\nEach row in this dataset is an AIS ‘ping’ indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.\nIt contains the following columns: * vesselid: A unique numerical identifier for each ship, like a license plate * vessel_name: The ship’s name * vsl_descr: The ship’s type * dwt: The ship’s Deadweight Tonnage (how many tons it can carry) * v_length: The ship’s length in meters * draught: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying * sog: Speed over Ground (in knots) * date: A timestamp for the AIS signal * lat: The latitude of the AIS signal (EPSG:4326) * lon: The longitude of the AIS signal (EPSG:4326)\nCreate a table called ‘ais’ where each row is a different AIS ping, with no superfluous information. Construct a geometry column.\nCreate a second table called ‘vinfo’ which contains vessel-level information with no superfluous information."
+    "text": "7.1 Step 1\nCreate a spatial database using the following AIS data:\nhttps://storage.googleapis.com/qm2/casa0025_ships.csv\nEach row in this dataset is an AIS ‘ping’ indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.\nIt contains the following columns:\n\nvesselid: A unique numerical identifier for each ship, like a license plate\nvessel_name: The ship’s name\nvsl_descr: The ship’s type\ndwt: The ship’s Deadweight Tonnage (how many tons it can carry)\nv_length: The ship’s length in meters\ndraught: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying\nsog: Speed over Ground (in knots)\ndate: A timestamp for the AIS signal\nlat: The latitude of the AIS signal (EPSG:4326)\nlon: The longitude of the AIS signal (EPSG:4326)\n\nCreate a table called ‘ais’ where each row is a different AIS ping, with no superfluous information. Construct a geometry column.\nCreate a second table called ‘vinfo’ which contains vessel-level information with no superfluous information."
   },
   {
     "objectID": "W4_postgis2.html#step-2",
     "href": "W4_postgis2.html#step-2",
-    "title": "4  PostGIS II",
+    "title": "4  Spatial SQL II",
     "section": "7.2 Step 2",
     "text": "7.2 Step 2\nUse a spatial join to identify ship-to-ship transfers in this dataset. Two ships are considered to be conducting a ship to ship transfer IF:\n\nThey are within 500 meters of each other\nFor more than two hours\nAnd their speed is lower than 1 knot\n\nSome things to consider: make sure you’re not joining ships with themselves. Try working with subsets of the data first while you try different things out."
   }
