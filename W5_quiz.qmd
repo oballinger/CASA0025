@@ -1,4 +1,0 @@
-# Quiz
-
-Placeholder for the quiz. This will be administered on Moodle, under the "Assessments" tab.
-

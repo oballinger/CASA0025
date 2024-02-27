@@ -1,0 +1,113 @@
+# Spatial SQL II
+
+This week we're going to be looking at Spatial Joins. We'll be working with DuckDB (though if you want to work with Postgres/PgAdmin, go ahead!). The notebook below contains some exercises on spatial joins using the NYC data we've been working with, as well as an extension that looks at ship-to-ship transfer detection using AIS data.
+
+1. [Spatial Joins](https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W04_postgis2.ipynb)
+
+# Spatial Joins Exercises
+
+Here\'s a reminder of some of the functions we have seen. Hint: they
+should be useful for the exercises!
+
+-   `sum(expression)`{.interpreted-text role="command"}: aggregate to
+    return a sum for a set of records
+-   `count(expression)`{.interpreted-text role="command"}: aggregate to
+    return the size of a set of records
+-   `ST_Area(geometry)`{.interpreted-text role="command"} returns the
+    area of the polygons
+-   `ST_AsText(geometry)`{.interpreted-text role="command"} returns WKT
+    `text`
+-   `ST_Contains(geometry A, geometry B)`{.interpreted-text
+    role="command"} returns the true if geometry A contains geometry B
+-   `ST_Distance(geometry A, geometry B)`{.interpreted-text
+    role="command"} returns the minimum distance between geometry A and
+    geometry B
+-   `ST_DWithin(geometry A, geometry B, radius)`{.interpreted-text
+    role="command"} returns the true if geometry A is radius distance or
+    less from geometry B
+-   `ST_GeomFromText(text)`{.interpreted-text role="command"} returns
+    `geometry`
+-   `ST_Intersects(geometry A, geometry B)`{.interpreted-text
+    role="command"} returns the true if geometry A intersects geometry B
+-   `ST_Length(linestring)`{.interpreted-text role="command"} returns
+    the length of the linestring
+-   `ST_Touches(geometry A, geometry B)`{.interpreted-text
+    role="command"} returns the true if the boundary of geometry A
+    touches geometry B
+-   `ST_Within(geometry A, geometry B)`{.interpreted-text
+    role="command"} returns the true if geometry A is within geometry B
+
+Also remember the tables we have available:
+
+-   `nyc_census_blocks`
+    -   name, popn_total, boroname, geom
+-   `nyc_streets`
+    -   name, type, geom
+-   `nyc_subway_stations`
+    -   name, routes, geom
+-   `nyc_neighborhoods`
+    -   name, boroname, geom
+
+# Exercises
+
+-   **What subway station is in \'Little Italy\'? What subway route is it on?**
+
+
+-   **What are all the neighborhoods served by the 6-train?** (Hint: The `routes` column in the `nyc_subway_stations` table has values like \'B,D,6,V\' and \'C,6\')
+
+
+-   **After 9/11, the \'Battery Park\' neighborhood was off limits for several days. How many people had to be evacuated?**
+
+-   **What neighborhood has the highest population density (persons/km2)?**
+
+
+# Ship-to-Ship Transfer Detection
+
+Now for a less structured exercise. We're going to look at ship-to-ship transfers. The idea is that two ships meet up in the middle of the ocean, and one ship transfers cargo to the other. This is a common way to avoid sanctions, and is often used to transfer oil from sanctioned countries to other countries. We're going to look at a few different ways to detect these transfers using AIS data. 
+
+![Ship-to-Ship Transfer](PS_AIS.png)
+
+## Step 1
+
+Create a spatial database using the following AIS data:
+
+https://storage.googleapis.com/qm2/casa0025_ships.csv
+
+Each row in this dataset is an AIS 'ping' indicating the position of a ship at a particular date/time, alongside vessel-level characteristics.
+
+It contains the following columns: 
+
+* `vesselid`: A unique numerical identifier for each ship, like a license plate
+
+* `vessel_name`: The ship's name
+
+* `vsl_descr`: The ship's type
+
+* `dwt`: The ship's Deadweight Tonnage (how many tons it can carry)
+
+* `v_length`: The ship's length in meters
+
+* `draught`: How many meters deep the ship is draughting (how low it sits in the water). Effectively indicates how much cargo the ship is carrying
+
+* `sog`: Speed over Ground (in knots)
+
+* `date`: A timestamp for the AIS signal 
+
+* `lat`: The latitude of the AIS signal (EPSG:4326)
+
+* `lon`: The longitude of the AIS signal (EPSG:4326)
+
+Create a table called 'ais' where each row is a different AIS ping, with no superfluous information. Construct a geometry column. 
+
+Create a second table called 'vinfo' which contains vessel-level information with no superfluous information. 
+
+## Step 2
+
+Use a spatial join to identify ship-to-ship transfers in this dataset.
+Two ships are considered to be conducting a ship to ship transfer IF: 
+
+* They are within 500 meters of each other 
+* For more than two hours 
+* And their speed is lower than 1 knot
+
+Some things to consider: make sure you're not joining ships with themselves. Try working with subsets of the data first while you try different things out. 

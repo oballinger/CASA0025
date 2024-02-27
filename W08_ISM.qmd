@@ -1,0 +1,653 @@
+# Informal Settlement Classification
+
+## Problem Statement
+
+Information on informal settlements is often missing from official statistics, and many times, these populations face greater vulnerability to urban food insecurity, disease, and other health risks. The goal of this project is to map informal settlements in Dar es Salaam, Tanzania, using satellite imagery and machine learning. The project will use a combination of supervised and unsupervised classification techniques to identify informal settlements in the city. The project will also use a variety of data sources, including open-access satellite imagery and building footprints. 
+
+The final application, which I originally developed as part of a collaboration between the Rhodes AI Lab and the World Food Programme, is displayed below: 
+
+:::{.column-page}
+
+<iframe src='https://ollielballinger.users.earthengine.app/view/ism' width='100%' height='700px'></iframe>
+
+:::
+
+# Classification Workflow 
+
+## Pre processing 
+
+The first step in the classification process is to pre-process the satellite imagery. This involves the following steps:
+
+```js
+
+var wards=ee.FeatureCollection("users/ollielballinger/Tanzania_Wards")
+
+// // Sentinel-2 multispectral imagery collection and processing
+
+function maskS2clouds(image) {
+  var qa = image.select('QA60')
+
+  var cloudBitMask = 1 << 10;
+  var cirrusBitMask = 1 << 11;
+
+  var mask = qa.bitwiseAnd(cloudBitMask).eq(0).and(
+             qa.bitwiseAnd(cirrusBitMask).eq(0))
+
+  return image.updateMask(mask)
+      .select("B.*")
+      .copyProperties(image, ["system:time_start"])
+}
+
+var collection = ee.ImageCollection('COPERNICUS/S2')
+    .filterDate('2020-01-01', '2020-12-31')
+    .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', 20))
+    .map(maskS2clouds)
+    .median()
+
+
+Map.addLayer(collection.toUint16(), {bands:['B4','B3','B2'], max:4000},'Sentinel-2')
+
+
+var glcm=collection.toUint16().select('B8').glcmTexture({size: 4})
+
+// Using OpenStreetMap (OSM) building footprints
+
+var OSM=ee.FeatureCollection("users/ollielballinger/Tanzania_OSM_clean")
+
+var empty = ee.Image().byte();
+
+//calculate reciprocal of each building footprint's area 
+var OSM=OSM.map(function(feature) {
+              return feature.set({area: ee.Number(1).divide(feature.geometry().area()).multiply(100)}).set({const: 1})})
+
+//convert to raster using reciprocal area as the band  
+var empty = ee.Image().byte();
+var OSM_color = empty.paint({
+  featureCollection: OSM,
+  color: 'area',
+}).unmask(0)  
+  
+  
+// define kernel
+var gaussian = ee.Kernel.gaussian({
+  radius: 60, units: 'meters', normalize: true, sigma:15
+});
+
+// calculate density of small buildings
+var density= OSM_color.reduceNeighborhood({
+  reducer: ee.Reducer.sum(),
+  kernel: gaussian
+})
+
+//i've saved the "density" layer as a raster, imported below. Using it speeds up the RF classification 
+var Tanzania_Density = ee.Image("users/ollielballinger/Tanzania_Density")
+
+Map.addLayer(Tanzania_Density,{palette:["0034f5","1e7d83","4da910","b3c120","fcc228","ff8410","fd3000"], min:0, max:1}, 'OSM Density', false);
+
+
+// We can now use the Sentinel-2 imagery to filter out non-urban areas
+// using the Normalized Difference Vegetation Index (NDVI) and Normalized Difference Built-up Index (NDBI)
+
+//Normalized Difference Vegetation Index     
+var ndvi=(collection.select('B8')
+          .subtract(collection.select('B4')))
+          .divide(collection.select('B8')
+          .add(collection.select('B4')))
+          .select(['B8'],['NDVI'])
+
+
+// Normalized Difference Built-Up Index          
+var ndbi=(collection.select('B11')
+          .subtract(collection.select('B8')))
+          .divide(collection.select('B11')
+          .add(collection.select('B8')))
+          .select(['B11'],['NDBI'])
+
+
+// add bands from all analysis layers 
+var image = collection.addBands(Tanzania_Density)//OSM density
+                      .addBands(ndvi)
+                      .addBands(ndbi)
+                      .addBands(glcm)
+                      .clip(wards)
+                      .updateMask(ndvi.lt(0.3).and(ndbi.gt(0)))//filter out non-urban landcover
+                      
+
+
+//input bands used for classification 
+var bands = ['B2', 'B3', 'B4', 'B8', 'B8A', 'B11', 'B12',
+            'NDVI','B8_contrast']
+
+```
+
+
+## Step 2: Classification 
+
+
+```js
+var metal_roof_points=ee.FeatureCollection.randomPoints(metal_roof_poly, 500).map(function(i){
+  return i.set({'class': 0})})
+  
+var apartment_points=ee.FeatureCollection.randomPoints(apartments_poly, 500).map(function(i){
+  return i.set({'class': 1})})
+  
+var suburban_points=ee.FeatureCollection.randomPoints(suburban_poly, 500).map(function(i){
+  return i.set({'class': 2})})
+
+var road_points=ee.FeatureCollection.randomPoints(road, 500).map(function(i){
+  return i.set({'class': 3})})
+  
+  
+var sample=ee.FeatureCollection([metal_roof_points,
+                                  suburban_points,
+                                  apartment_points,
+                                  road_points])
+                                  .flatten()
+                                  .randomColumn();
+
+
+// assign 70% of training points to validation 
+var split=0.7
+var training_sample = sample.filter(ee.Filter.lt('random', split));
+var validation_sample = sample.filter(ee.Filter.gte('random', split));
+
+
+
+
+// take samples from image for training and validation  
+var training = image.select(bands).sampleRegions({
+  collection: training_sample,
+  properties: ['class'],
+  scale: 10,
+});
+
+var validation = image.select(bands).sampleRegions({
+  collection: validation_sample,
+  properties: ['class'],
+  scale: 10
+});
+
+// Random Forest Classification
+
+var rf1 = ee.Classifier.smileRandomForest(100)
+    .train(training, 'class');
+   
+var rf2 = image.classify(rf1);
+
+Map.addLayer(rf2,{palette:palette, min:0 , max:3},'Random Forest', false)
+```
+
+
+## Step 3: Validation 
+
+```js
+
+// Calculate the confusion matrix for the training data
+var trainAccuracy = rf1.confusionMatrix();
+print('Resubstitution error matrix: ', trainAccuracy);
+print('Training overall accuracy: ', trainAccuracy.accuracy());
+
+// Calculate the confusion matrix for the validation data
+var validated = validation.classify(rf1);
+var testAccuracy = validated.errorMatrix('class', 'classification');
+var consumers=testAccuracy.consumersAccuracy()
+
+print('Validation error matrix: ', testAccuracy);
+print('Validation overall accuracy: ', testAccuracy.accuracy())
+print('Validation consumer accuracy: ', consumers);
+
+
+// Consumer's accuracy can be interpreted in a sentence as follows:
+print(ee.Number(consumers.get([0,0])).multiply(100),'% of the areas identified as informal settlements \nin the classification are actually informal settlements \n(according to the verification data)')
+
+var resub = rf2.sample({
+  region: validation_sample,
+  geometries:true,
+  scale:10
+}).map(function(feature){return feature.buffer(10)})
+
+var resub_color = empty.paint({
+  featureCollection: resub,
+  color: 'classification',
+  width:4
+})
+var palette =['#ff6200','#a126ff','#4a26ff','#00c3ff']
+
+Map.addLayer(resub_color,{min:0, max:3, palette:palette},'Validation Error', false)
+```
+
+
+## Step 4: Build a User Interface 
+
+```js
+//function to add the core layers 
+
+function core_layers(){
+Map.addLayer(Classified.clip(wards),{min:1, max:9, palette: Vis, format:'png'},'RF Sentinel',false);
+Map.addLayer(Classified2.clip(wards),{min:1, max:9, palette: Vis, format:'png'},'RF Sentinel+OSM');
+Map.addLayer(subwards_outline,{color:'black'}, 'Sub-Wards',false);
+Map.addLayer(image, {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2', false)
+Map.addLayer(Tanzania_Density,{palette:palette, min:0, max:1}, 'Reciprocal Area Density', false);
+Map.addLayer(wards_outline,{color:'red'}, 'Wards');
+}
+
+core_layers()
+
+
+/// User interface
+
+// create the main panel 
+
+var console = ui.Panel({
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    position: 'top-right',
+    padding: '8px 15px',
+    width: '350px',
+    height: '450px'
+    
+  }
+});
+
+ 
+// Create legend title
+var title = ui.Label({
+  value: 'Informal Settlement Mapper',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    }
+});
+
+// add text labels
+
+var intro1= ui.Label('This tool uses machine learning to map informal settlements in Dar es Salaam. Data layers can be toggled using the "Layers" tab. To compare the model\'s prediction to high-resolution imagery, click \"Zoom to Informal Settlement\": ', {whiteSpace: 'wrap'})
+
+var stats_label= ui.Label('To explore Ward-level data on informal settlements, click \"Ward Statistics\": ', {whiteSpace: 'wrap'})
+
+var info_label= ui.Label('For more information about the model or any of its input layers, click \"How it Works\": ', {whiteSpace: 'wrap'})
+
+var intro2= ui.Label('These maps were generated by a Random Forest algorithm built to identify informal settlements. The identification strategy exploits two characteristics of informal settlements: variation in roofing material, and the spatial distribution of structures. Further details about the data layers can be found below:', {whiteSpace: 'wrap'})
+
+var contact= ui.Label('Please direct queries to ollie.ballinger@sant.ox.ac.uk', {whiteSpace: 'wrap'})
+
+
+// add "how it works" viz checkboxes
+
+var rfs_label=ui.Checkbox({
+  label: 'RF Sentinel',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 6px 0',
+    padding: '0'
+    },
+  onChange: function(checked) {
+  Map.layers().get(0).setShown(checked)
+  Map.layers().get(1).setShown(false)
+  Map.layers().get(2).setShown(false)
+  Map.layers().get(3).setShown(false)
+  Map.layers().get(4).setShown(false)
+  }
+})
+
+var rfs_desc=ui.Label("The \"RF Sentinel\" layer predicts the locations of informal settlements using freely available Sentinel-2 satellite imagery as its sole input. Accuracy: 81%", {whiteSpace: 'wrap'})
+
+var rfsosm_label=ui.Checkbox({
+  label: 'RF Sentinel+OSM',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    },
+  onChange: function(checked) {
+  Map.layers().get(1).setShown(checked)
+  Map.layers().get(0).setShown(false)
+  Map.layers().get(2).setShown(false)
+  Map.layers().get(3).setShown(false)
+  Map.layers().get(4).setShown(false)
+  }
+})
+
+var rfsosm_desc=ui.Label("The \"RF Sentinel+OSM\" layer utilizes an additional input layer on housing density derived from Open Street Maps. Accuracy: 92%", {whiteSpace: 'wrap'})
+
+var s_label=ui.Checkbox({
+  label: 'Sentinel-2',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    },
+  onChange: function(checked) {
+  Map.layers().get(3).setShown(checked)
+  Map.layers().get(0).setShown(false)
+  Map.layers().get(1).setShown(false)
+  Map.layers().get(2).setShown(false)
+  Map.layers().get(4).setShown(false)
+  }
+})
+
+var s_desc=ui.Label("Satellite images from Sentinel-2 are the primary input for supervised classification. Images have a resolution of 10 meters per pixel, and are split into 12 spectral bands. Despite its low resolution, multispectral imagery allows us to distinguish materials based on how they reflect light. Here, we exploit the fact that the roofing of informal settlements are primarily built using corrugated iron and plastic rather than concrete.", {whiteSpace: 'wrap'})
+
+var rad_label=ui.Checkbox({
+  label: 'Reciprocal Area Density',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    },
+  onChange: function(checked) {
+  Map.layers().get(4).setShown(checked)
+  Map.layers().get(0).setShown(false)
+  Map.layers().get(1).setShown(false)
+  Map.layers().get(2).setShown(false)
+  Map.layers().get(3).setShown(false)
+  }
+})
+
+var rad_desc=ui.Label("Data extracted from Open Street Maps provide information on a second important characteristic of informal settlements. Unlike planned developments, which are mainly composed of larger structures that are spaced apart, informal settlements are composed of smaller structures that are closer together. This layer uses freely available data from Open Street Maps to detect clusters of small structures", {whiteSpace: 'wrap'})
+
+
+// home panel config 
+var home= function(){
+  Map.setCenter(39.2854, -6.8167, 14)
+  Map.setOptions("Terrain")
+  console.clear()
+  console.add(title);
+  console.add(intro1);
+  console.add(zoom);
+  console.add(stats_label)
+  console.add(ward_stats);
+  console.add(info_label)
+  console.add(details)
+  console.add(contact)
+}
+
+
+//home button config
+var home_button = ui.Button({
+  style:{stretch: 'horizontal'},
+  label: 'Home',
+  onClick: function(){
+    home()
+    Map.layers().get(1).setShown(true)
+    Map.remove(Map.layers().get(6))
+    
+  }
+})
+
+
+// "Zoom to informal settlement" button config 
+
+var zoom = ui.Button({
+  style:{stretch: 'horizontal'},
+  label: 'Zoom to Informal Settlement',
+  onClick: 
+  function() {
+    Map.setOptions("Satellite")
+    console.clear()
+    console.add(title);
+    
+    Map.addLayer(drone, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'Drone')
+    
+    Map.setCenter(39.27145, -6.771062, 17)
+    
+    console.add(ui.Label('This is a sample informal settlement identified in the Namanga area of Dar es Salaam. Use the slider below to compare drone imagery to the model prediction:', {whiteSpace: 'wrap'}))
+   
+    console.add(ui.Label({
+      value: 'Drone Layer Opacity:',
+      style: {
+      fontWeight: 'bold',
+      fontSize: '14px',
+      padding: '0'}}))
+   
+    var slider = ui.Slider({style:{stretch: 'horizontal'}});
+    slider.setValue(0.9);
+    slider.onChange(function(value) {
+      Map.layers().get(6).setOpacity(value);
+    });
+    
+    console.add(slider)
+    console.add(ui.Label('The informal settlement on the left and the suburban neighborhood on the right are both located in the Msasani Ward of Dar es Salaam. Because most statistics are aggregated at the ward level, data on population density, income, health outcomes, and other developmental indicators are likely to be highly biased by variation within city wards. By identifying the geographic extent of informal settlements, policy interventions and crisis responses can be targeted with a high degree of precision.', {whiteSpace: 'wrap'}))
+    console.add(home_button)
+
+  }
+});
+
+
+// "How it Works" button config
+var details = ui.Button({
+  style:{stretch: 'horizontal'},
+  label: 'How it Works',
+  onClick: 
+  function() {
+    console.clear()
+    console.add(title);
+      console.add(intro2);
+      console.add(rfs_label);
+      console.add(rfs_desc);
+      console.add(rfsosm_label);
+      console.add(rfsosm_desc)
+      console.add(s_label)
+      console.add(s_desc)
+      console.add(rad_label)
+      console.add(rad_desc)
+    console.add(home_button)
+
+  }
+});
+
+
+//"Ward Statistics" button config
+var ward_stats = ui.Button({
+  style:{stretch: 'horizontal'},
+  label: 'Ward Statistics',
+  onClick: 
+  function ward_stats_panel() {
+    
+    Map.setOptions("Satellite")
+    Map.addLayer(buildings,{color:'red', max:1}, 'Informal Dwellings',false)
+    
+    console.clear()
+    console.add(title)
+    console.add(ui.Label('Click on the map to get a rough estimate of the number of informal dwellings in a given Ward.', {whiteSpace: 'wrap'}))
+    
+    // select a ward to return statistics on by clicking on the map 
+      
+      Map.onClick(function(coords) {
+          
+          Map.layers().get(1).setShown(false)
+          ward_stats_panel()
+          
+          //select ward based on click 
+          var point = ee.Geometry.Point(coords.lon, coords.lat);
+          
+          var saveAllJoin = ee.Join.saveAll({
+                matchesKey: 'Ward_Name',
+                outer:true
+              });
+
+          var ward_name = ee.Feature(ee.List(saveAllJoin.apply(point, wards, spatialFilter).first().get("Ward_Name")).getInfo()[0]).get('Ward_Name')
+          ward_name.evaluate(function(val){ward_name.setValue(val)});
+          ward_stats(ward_name) 
+      })
+        
+      // get ward level IS/normal building counts 
+      
+      function ward_stats(ward_name){
+        
+        var ward=wards.filter(ee.Filter.eq('Ward_Name', ward_name))
+        var centroid=ward.geometry().centroid()
+        
+        // count number of OSM features within the bounds of the IS vector in the selected ward 
+        var sum=buildings.filterBounds(ward).size()
+        
+        //count all OSM features in ward 
+        var allBuildings=OSM.filterBounds(ward).size()
+        
+        //get % area of ward landcover that is IS
+        var mean = ee.Number(ee.Image(is).reduceRegions({collection: ward, reducer: ee.Reducer.mean()}).first().get('mean')).multiply(100)
+        
+
+        var sumLabel = ui.Label({
+            value: 'Calculating...'
+          })
+        var allLabel = ui.Label({
+            value: 'Calculating...'
+          })
+        var meanLabel = ui.Label({
+            value: 'Calculating...'
+          })
+        
+        
+        //grab server-side info      
+        
+        sum.evaluate(function(val){sumLabel.setValue(val)});
+        
+        allBuildings.evaluate(function(val){allLabel.setValue(val)});
+        
+        mean.evaluate(function(val){meanLabel.setValue(val)});
+
+        console.add(ui.Label({
+          value: ward_name.getInfo(),
+          style: {
+          fontWeight: 'bold',
+          fontSize: '18px',
+          padding: '0'}}))
+          
+        //add labels and values   
+        
+        console.add(ui.Label('Total number of buildings:', {whiteSpace: 'wrap'}))
+        console.add(allLabel, {whiteSpace: 'wrap'})
+        console.add(ui.Label('Estimated number of informal dwellings:', {whiteSpace: 'wrap'}))
+        console.add(sumLabel, {whiteSpace: 'wrap'})
+        console.add(ui.Label('Percent of ward under informal settlement:', {whiteSpace: 'wrap'}))
+        console.add(meanLabel, {whiteSpace: 'wrap'})
+        
+        //return IS footprint layer, clear old layer
+        Map.remove(Map.layers().get(6))
+        Map.addLayer(buildings.filterBounds(ward),{color:'red', max:1}, 'Informal Dwellings')
+        Map.remove(Map.layers().get(6))
+        
+        //zoom to ward center
+        Map.setCenter(ee.Number(centroid.coordinates().get(0)).getInfo(), 
+                    ee.Number(centroid.coordinates().get(1)).getInfo(), 15);
+          }
+      console.add(home_button)     
+        }
+      });
+
+
+// set position of panel
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '8px 15px'
+  }
+});
+ 
+// Create legend title
+var legendTitle = ui.Label({
+  value: 'Legend',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    }
+});
+
+
+
+// Creates and styles 1 row of the legend.
+var makeRow = function(color, name) {
+ 
+      // Create the label filled with the description text.
+      var description = ui.Label({
+        value: name,
+        style: {margin: '0 0 4px 6px'}
+      });
+ 
+      // return the panel
+      return ui.Panel({
+        widgets: [colorBox, description],
+        layout: ui.Panel.Layout.Flow('horizontal')
+      });
+};
+ 
+
+// set position of panel
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '8px 15px'
+  }
+});
+ 
+// Create legend title
+var legendTitle = ui.Label({
+  value: 'Legend',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '0'
+    }
+});
+ 
+// Add the title to the panel
+legend.add(legendTitle);
+ 
+// Creates and styles 1 row of the legend.
+var makeRow = function(color, name, border) {
+ 
+      // Create the label that is actually the colored box.
+      var colorBox = ui.Label({
+        style: {
+          backgroundColor: '#' + color,
+          // Use padding to give the box height and width.
+          padding: '7px',
+          margin: '0 0 4px 0',
+          border: '3px solid #'+border
+        }
+      });
+ 
+      // Create the label filled with the description text.
+      var description = ui.Label({
+        value: name,
+        style: {margin: '0 0 4px 6px'}
+      });
+ 
+      // return the panel
+      return ui.Panel({
+        widgets: [colorBox, description],
+        layout: ui.Panel.Layout.Flow('horizontal')
+      });
+};
+ 
+// palette with the colors
+
+var palette_vis= [
+  '49cc47', 
+  '0008ff',
+  'fff700']
+
+// name of the legend
+var names = ['vegetation','urban','informal settlement'];
+ 
+legend.add(makeRow('49cc47', 'vegetation', '000000'));
+legend.add(makeRow('2ff5ff', 'urban','0008ff'));
+legend.add(makeRow('fff700', 'informal settlement','ff0000'));
+
+// add legend, main panel with home configuration
+
+Map.add(console)
+Map.add(legend);
+
+home()
+```

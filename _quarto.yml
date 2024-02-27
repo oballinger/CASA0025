@@ -9,19 +9,18 @@ book:
     - index.qmd
     - part: "A. SQL"
       chapters:
-        - W1_intro.qmd
-        - W2_SQL.qmd
-        - W3_postgis1.qmd
-        - W4_postgis2.qmd
-        - W5_quiz.qmd
+        - W01_intro.qmd
+        - W02_SQL.qmd
+        - W03_postgis1.qmd
+        - W04_postgis2.qmd
+        - W05_quiz.qmd
     - part: "B. Google Earth Engine"
       chapters:
-        - W6_RS.qmd
-        - W7_RS_data.qmd
-        - W8_refineries.qmd
-        - W9_blast.qmd
+        - W06_RS.qmd
+        - W07_refineries.qmd
+        - W08_ISM.qmd
+        - W09_blast.qmd
         - W10_ships.qmd
-        - object_detection.qmd
     - part: "GEE Textbook"
       chapters:
         - F1.qmd
@@ -36,8 +35,7 @@ book:
   favicon: favicon.ico
   sidebar:
     logo: logo_white.png
-    collapse-level: 1
-
+    collapse-level: 2
 
 bibliography: references.bib
 

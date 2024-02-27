@@ -64,5 +64,32 @@
   },
   "W10_ships.qmd": {
     "W10_ships.html": "66242bb9"
+  },
+  "W01_intro.qmd": {
+    "W01_intro.html": "a51fe7ad"
+  },
+  "W02_SQL.qmd": {
+    "W02_SQL.html": "4b2b8fb7"
+  },
+  "W03_postgis1.qmd": {
+    "W03_postgis1.html": "6e39ccb8"
+  },
+  "W04_postgis2.qmd": {
+    "W04_postgis2.html": "ad131d4d"
+  },
+  "W05_quiz.qmd": {
+    "W05_quiz.html": "a3b4dc28"
+  },
+  "W06_RS.qmd": {
+    "W06_RS.html": "1055d4ca"
+  },
+  "W07_refineries.qmd": {
+    "W07_refineries.html": "d8d1a572"
+  },
+  "W08_ISM.qmd": {
+    "W08_ISM.html": "7bd4d649"
+  },
+  "W09_blast.qmd": {
+    "W09_blast.html": "8dc4e7ed"
   }
 }
