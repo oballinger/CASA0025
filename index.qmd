@@ -29,19 +29,19 @@ Despite only being released in 2015, the number of geospatial journal articles u
 
 A) **SQL**
     * Five initial weeks exporing spatial database systems including PostgreSQL and DuckDB.
-        * [Introduction](W1_intro.qmd)
-        * [SQL](W2_SQL.qmd)
-        * [PostGIS I](W3_postgis1.qmd)
-        * [PostGIS II](W4_postgis2.qmd)
-        * [Database Quiz](W5_quiz.qmd)
+        * [Introduction](W01_intro.qmd)
+        * [SQL](W02_SQL.qmd)
+        * [PostGIS I](W03_postgis1.qmd)
+        * [PostGIS II](W04_postgis2.qmd)
+        * [Database Quiz](W05_quiz.qmd)
 B) **Google Earth Engine**
     * Five weeks on Google Earth Engine, a cloud-based platform for geospatial analysis.
-        * [Introduction to GEE](W6_RS.qmd)
-        * [Classification I](W7_RS_data.qmd)
-        * [Classification II](W8_refineries.qmd)
-        * [Synthetic Aperture Radar](W9_blast.qmd)
+        * [Introduction to GEE](W06_RS.qmd)
+        * [Classification I](W07_refineries.qmd)
+        * [Classification II](W08_ISM.qmd)
+        * [Synthetic Aperture Radar](W09_blast.qmd)
         * [User Interface Design](W10_ships.qmd)
-        * [Bonus: Object Detection](object_detection.qmd)
+
 
 **GEE Textbook**
     * Recently, a team of over 100 scientists came together to write a book called ["Cloud-Based Remote Sensing with Google Earth Engine: Fundamentals and Applications"](https://www.eefabook.org/). It's a great resource for learning about remote sensing and Earth Engine. The material in this section is a subset of the book, edited to fit the scope of this guide. If you're interested in learning more, check out the full book.

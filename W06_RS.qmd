@@ -43,7 +43,7 @@ To illustrate why this is important, consider Astroturf (fake plastic grass). As
 
 In other words, even though these fields are all green and indistinguishable to the human eye, their *spectral profiles* beyond the visible light spectrum differ, and we can use this information to distinguish between them. 
 
-Astroturf is a trivial example. But suppose we were interested in identifying makeshift oil refineries in Northern Syria that constitute a key source of rents for whichever group controls them. As demonstrated in the ['Refinery Identification'](refineries.qmd) case study, we can train an algorithm to identify the spectral signatures of oil, and use that to automatically detect them in satellite imagery.
+Astroturf is a trivial example. But suppose we were interested in identifying makeshift oil refineries in Northern Syria that constitute a key source of rents for whichever group controls them. As demonstrated in the ['Refinery Identification'](W07_refineries.qmd) case study, we can train an algorithm to identify the spectral signatures of oil, and use that to automatically detect them in satellite imagery.
 
 
 ### Temporal Resolution 
@@ -66,7 +66,7 @@ This allows SkySat to achieve a revisit rate of 2-3 *hours*. The catch, however,
 
 ## Summary
 
-You should hopefully have a better understanding of what satellite imagery is, and how it can be used to answer questions about the world. In the [next section](ch2.qmd), we'll look at the various types of satellite imagery stored in the Google Earth Engine catalogue. 
+You should hopefully have a better understanding of what satellite imagery is, and how it can be used to answer questions about the world. In the next section, we'll look at the various types of satellite imagery stored in the Google Earth Engine catalogue. 
 
 
 # Data Acquisition
