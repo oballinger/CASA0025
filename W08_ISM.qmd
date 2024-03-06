@@ -1,8 +1,20 @@
 # Informal Settlement Classification
 
+:::{.column-screen}
+
+![](images/Namanga.jpg)
+
+:::
+
 ## Problem Statement
 
-Information on informal settlements is often missing from official statistics, and many times, these populations face greater vulnerability to urban food insecurity, disease, and other health risks. The goal of this project is to map informal settlements in Dar es Salaam, Tanzania, using satellite imagery and machine learning. The project will use a combination of supervised and unsupervised classification techniques to identify informal settlements in the city. The project will also use a variety of data sources, including open-access satellite imagery and building footprints. 
+Information on informal settlements is often missing from official statistics, and many times, these populations face greater vulnerability to urban food insecurity, disease, and other health risks. The goal of this project is to map informal settlements in Dar es Salaam, Tanzania, using satellite imagery and machine learning. 
+
+If I asked you to describe the differences between the area on the left (informal settlement) and the area on the right (a suburb) in the image above, you would probably note two main things. The first is the difference in building materials: the informal settlement is made up of metal roofs, while the suburban housing uses tile and concrete. The second is the difference in building density: the informal settlement is much more densely packed than the suburban area.
+
+If we had to articulate this using GIS and remote sensing vocabulary, we would say that we could distinguish the two areas based on their spectral characteristics (i.e. the way they reflect light), and their morphologogy. We can quantify both of these using two main sources of data. 
+
+The first is Sentinel-2 multispectral imagery, which will be used to identify the spectral characteristics of different land cover types. The second is OpenStreetMap (OSM) building footprints, which we will use to calculate the density of small buildings in the area.
 
 The final application, which I originally developed as part of a collaboration between the Rhodes AI Lab and the World Food Programme, is displayed below: 
 
@@ -14,13 +26,16 @@ The final application, which I originally developed as part of a collaboration b
 
 # Classification Workflow 
 
+The classification process involves several steps, including pre-processing the satellite imagery, training a machine learning model, validating the model's predictions, and building a user interface. The full earth engine code is available [here](https://code.earthengine.google.com/065e25995dbe069beec41883b79b2ca9).
+
 ## Pre processing 
 
-The first step in the classification process is to pre-process the satellite imagery. This involves the following steps:
+The first step in the classification process is to pre-process the satellite imagery. This involves several steps, including masking out clouds, calculating the Normalized Difference Vegetation Index (NDVI) and Normalized Difference Built-up Index (NDBI), and using these indices to filter out non-urban areas.
 
 ```js
 
 var wards=ee.FeatureCollection("users/ollielballinger/Tanzania_Wards")
+
 
 // // Sentinel-2 multispectral imagery collection and processing
 
@@ -45,11 +60,44 @@ var collection = ee.ImageCollection('COPERNICUS/S2')
     .median()
 
 
-Map.addLayer(collection.toUint16(), {bands:['B4','B3','B2'], max:4000},'Sentinel-2')
-
-
 var glcm=collection.toUint16().select('B8').glcmTexture({size: 4})
 
+
+// We can now use the Sentinel-2 imagery to filter out non-urban areas
+// using the Normalized Difference Vegetation Index (NDVI) and Normalized Difference Built-up Index (NDBI)
+
+//Normalized Difference Vegetation Index     
+var ndvi=(collection.select('B8')
+          .subtract(collection.select('B4')))
+          .divide(collection.select('B8')
+          .add(collection.select('B4')))
+          .select(['B8'],['NDVI'])
+
+// Normalized Difference Built-Up Index          
+var ndbi=(collection.select('B11')
+          .subtract(collection.select('B8')))
+          .divide(collection.select('B11')
+          .add(collection.select('B8')))
+          .select(['B11'],['NDBI'])
+
+// add bands from all analysis layers 
+var image = collection.addBands(Tanzania_Density)//OSM density
+                      .addBands(ndvi)
+                      .addBands(ndbi)
+                      .addBands(glcm)
+                      .clip(wards)
+                      .updateMask(ndvi.lt(0.3).and(ndbi.gt(0)))//filter out non-urban landcover
+                      
+
+```
+
+Once we've pre-processed the imagery, we can move on to the next step, which is to calculate the density of small buildings in the area using OpenStreetMap (OSM) building footprints. Here's what the footprints look like, overlaid on top of the image above. 
+
+![](images/ism_fp1.jpeg)
+
+First, we want to add a column to the OSM building footprints that contains the reciprocal of each building footprint's area. Then, we can convert the building footprints to a raster and use a Gaussian kernel to calculate the density of small buildings in a given area. 
+
+```js
 // Using OpenStreetMap (OSM) building footprints
 
 var OSM=ee.FeatureCollection("users/ollielballinger/Tanzania_OSM_clean")
@@ -82,49 +130,40 @@ var density= OSM_color.reduceNeighborhood({
 //i've saved the "density" layer as a raster, imported below. Using it speeds up the RF classification 
 var Tanzania_Density = ee.Image("users/ollielballinger/Tanzania_Density")
 
-Map.addLayer(Tanzania_Density,{palette:["0034f5","1e7d83","4da910","b3c120","fcc228","ff8410","fd3000"], min:0, max:1}, 'OSM Density', false);
-
-
-// We can now use the Sentinel-2 imagery to filter out non-urban areas
-// using the Normalized Difference Vegetation Index (NDVI) and Normalized Difference Built-up Index (NDBI)
-
-//Normalized Difference Vegetation Index     
-var ndvi=(collection.select('B8')
-          .subtract(collection.select('B4')))
-          .divide(collection.select('B8')
-          .add(collection.select('B4')))
-          .select(['B8'],['NDVI'])
-
-
-// Normalized Difference Built-Up Index          
-var ndbi=(collection.select('B11')
-          .subtract(collection.select('B8')))
-          .divide(collection.select('B11')
-          .add(collection.select('B8')))
-          .select(['B11'],['NDBI'])
-
-
-// add bands from all analysis layers 
-var image = collection.addBands(Tanzania_Density)//OSM density
-                      .addBands(ndvi)
-                      .addBands(ndbi)
-                      .addBands(glcm)
-                      .clip(wards)
-                      .updateMask(ndvi.lt(0.3).and(ndbi.gt(0)))//filter out non-urban landcover
-                      
-
-
-//input bands used for classification 
-var bands = ['B2', 'B3', 'B4', 'B8', 'B8A', 'B11', 'B12',
-            'NDVI','B8_contrast']
-
 ```
 
+When the Gaussian kernel is applied to an are with lots of small buildings (informal settlement), it will register a high value because it's summing up the values of the pixels in the kernel:
+
+![](images/ism_fp2.jpeg)
+
+When it is applied to an area with few small buildings, or large buildings spaced far apart (e.g., suburban settlement), it will register a low value:
+
+![](images/ism_fp3.jpeg)
+
+The end result is a raster that can be used to identify areas with high building density, which are likely to be informal settlements:
+
+![](images/ism_fp4.jpeg)
+
+Now that we've generated input data that allows us to quantify spectral differences and building density, we can move on to the next step, which is to train a machine learning model to classify the image into different land cover types.
 
 ## Step 2: Classification 
 
+The workflow is very similar to the one employed in last week's lab, though the nature of the task is slightly different. Here, we are classifying the image into four classes: metal roof, apartment, suburban, and road. The "metal roof" class is used to identify informal settlements. 
+
+I've drawn polygons for each of the classes, which you can see under the "Geometry Imports" tab on the top left of the code editor: 
+
+![](images/ism_sample.jpg)
+
+These polygons are used to generate training data for the machine learning model; using the `ee.FeatureCollection.randomPoints` function, I've generated 500 random points for each class, and assigned a class label to each point. 
 
 ```js
+
+//input bands used for classification 
+var bands = ['B2', 'B3', 'B4', 'B8', 'B8A', 'B11', 'B12',
+            'NDVI','B8_contrast',
+            'constant_sum' // this is the OSM density layer
+            ]
+
 var metal_roof_points=ee.FeatureCollection.randomPoints(metal_roof_poly, 500).map(function(i){
   return i.set({'class': 0})})
   
@@ -137,7 +176,7 @@ var suburban_points=ee.FeatureCollection.randomPoints(suburban_poly, 500).map(fu
 var road_points=ee.FeatureCollection.randomPoints(road, 500).map(function(i){
   return i.set({'class': 3})})
   
-  
+// Create a single feature collection from the four classes  
 var sample=ee.FeatureCollection([metal_roof_points,
                                   suburban_points,
                                   apartment_points,
@@ -150,9 +189,6 @@ var sample=ee.FeatureCollection([metal_roof_points,
 var split=0.7
 var training_sample = sample.filter(ee.Filter.lt('random', split));
 var validation_sample = sample.filter(ee.Filter.gte('random', split));
-
-
-
 
 // take samples from image for training and validation  
 var training = image.select(bands).sampleRegions({
@@ -167,18 +203,20 @@ var validation = image.select(bands).sampleRegions({
   scale: 10
 });
 
-// Random Forest Classification
-
+// Train a Random Forest classifier
 var rf1 = ee.Classifier.smileRandomForest(100)
     .train(training, 'class');
    
+// Apply the RF classifier to the image
 var rf2 = image.classify(rf1);
 
-Map.addLayer(rf2,{palette:palette, min:0 , max:3},'Random Forest', false)
-```
 
+```
+The process of training a model in this way is iterative. I started with a binary classification problem (informal settlement vs. everything else), but it kept mixing up informal settlements with general high density urban areas such as the central business district. I then added the "apartment", "suburban", and "road" classes to the training data, which helped the model to better distinguish between informal settlements and other urban areas. This basically involves telling the algorithm explicitly "NO. This is not an informal settlement. It's a different type of urban area." After a few iterations, the model was able to distinguish between the four classes with a high degree of accuracy. 
 
 ## Step 3: Validation 
+
+Once again, a crucial step in the process of classification is to validate the model's predictions. This is done by comparing the model's predictions to the validation set we created earlier. 
 
 ```js
 
@@ -200,41 +238,126 @@ print('Validation consumer accuracy: ', consumers);
 // Consumer's accuracy can be interpreted in a sentence as follows:
 print(ee.Number(consumers.get([0,0])).multiply(100),'% of the areas identified as informal settlements \nin the classification are actually informal settlements \n(according to the verification data)')
 
-var resub = rf2.sample({
-  region: validation_sample,
-  geometries:true,
-  scale:10
-}).map(function(feature){return feature.buffer(10)})
-
-var resub_color = empty.paint({
-  featureCollection: resub,
-  color: 'classification',
-  width:4
-})
-var palette =['#ff6200','#a126ff','#4a26ff','#00c3ff']
-
-Map.addLayer(resub_color,{min:0, max:3, palette:palette},'Validation Error', false)
 ```
+
+Once again, the model reports high accuracy statistics. Remember, however, that spatial autocorrelation is probably inflating these statistics significantly; even though we are separating the data into training and validation sets, the validation points are still likely to be extremely close to the training points, and the model is likely to be overfitting to the training data. 
+
+It's always good to do some qualitative validation too-- zip around the map and see if the model's predictions make sense, pretend you're the end user. Doing so reveals that the classification process is indeed working quite well. Consider this small pocket of informal settlements in the north of the city: 
+
+![](images/ism_pocket1.jpg)
+
+It's nestled in a large suburban area, and would be very easy to miss if you were, for example, running a food aid programme using only official statistics. The model that we trained successfully detects it as an informal settlement, and we didn't train the model anywhere near this settlement:
+
+![](images/ism_pocket2.jpg)
+
+
+Now, we've finished the classification portion of this lab. The next step is to build a user interface that will allow users to interact with the model and get statistics on informal settlements in a given area. Before moving on to that, try your hand at the following exercises. 
+
+## EXERCISES
+
+1. Try running the classification procedure without the OSM density layer (you can do this by removing "constant_sum" from the list of bands used to train the model.). How does the model's accuracy change? What if you only use the OSM density layer?
+
+2. Try conducting the same classification for Nairobi, Kenya. You'll need to create your own geometry imports to train the model, and load building footprints from a different source: 
+
+`var feature = ee.FeatureCollection('projects/sat-io/open-datasets/MSBuildings/Kenya')`
 
 
 ## Step 4: Build a User Interface 
 
+The user interface in this application is again similar to last week's, in that it involves getting areal statistics for a given area. This week's objective will be to get the estimated number of informal settlement dwellings in a given ward (these are administrative units in Tanzania, similar to boroughs in London). 
+
+We'll begin by doing a couple things that will help speed things up later; Similar to last week, I've stored the output of the machine learning model as an image (it's called 'Classified2' in the code below), and I've also stored the OSM building footprints as a raster. This means that we can skip the classification step and the OSM density calculation step when we run the app. 
+
 ```js
-//function to add the core layers 
+
+
+var Classified = ee.Image("users/ollielballinger/Tanzania_Classified"),
+    Tanzania_Density = ee.Image("users/ollielballinger/Tanzania_Density"),
+    Classified2 = ee.Image("users/ollielballinger/Tanzania_RF_OSM_Sentinel"),
+    wards=ee.FeatureCollection("users/ollielballinger/Tanzania_Wards"),
+    subwards=ee.FeatureCollection("users/ollielballinger/Tanzania_SubWards")
+
+///this part generates the estimated number of informal settlement dwellings in a ward
+
+//create binary raster from the RF+OSM layer, 1=Informal settlement, 0=everything else
+var is=Classified2.gt(3).and(Classified2.lt(6))
+
+// create a masked version of the binary raster (i.e. remove all 0 values so that we are left with only the informal settlements)
+var is2=is.updateMask(is.neq(0))
+
+// reduce the masked raster to vectors, and filter out small areas
+var vectors = is2.reduceToVectors({
+  geometry: wards,
+  scale: 5,
+  geometryType: 'polygon',
+  eightConnected: true,
+  labelProperty: 'zone',
+  maxPixels:1653602926
+  }).map(function(feature) {
+  return feature.set({area: feature.geometry().area(10)})
+  })
+  .filter(ee.Filter.gt('area',10000))
+
+//spatially join this vector with the filtered OSM footprints
+var spatialFilter = ee.Filter.intersects({
+  leftField: '.geo',
+  rightField: '.geo',
+  maxError: 10
+});
+
+var saveAllJoin = ee.Join.saveAll({
+  matchesKey: 'zone',
+  outer:false
+});
+
+//join the vectors with the OSM footprints. This gives us a feature collection of just the building footprints that are in informal settlements
+var buildings = saveAllJoin.apply(OSM, vectors, spatialFilter)
+
+// add palettes for visualization
+  
+  var Vis= [
+  '49cc47', 
+  '0008ff',
+  '2ff5ff',
+  'ff0000',
+  'fff700', 
+  'ffffff',
+  '47b2ff',
+  '2700ff',
+  '00a1ff']
+
+var palette =["0034f5","1e7d83","4da910","b3c120","fcc228","ff8410","fd3000"]
+
+// create outlines for wards and subwards
+var subwards_outline = ee.Image().byte().paint({
+  featureCollection: subwards,
+  width: 1
+});
+
+var wards_outline = ee.Image().byte().paint({
+  featureCollection: wards,
+  width: 2
+});
+
+// function to add the core layers to the map 
 
 function core_layers(){
-Map.addLayer(Classified.clip(wards),{min:1, max:9, palette: Vis, format:'png'},'RF Sentinel',false);
-Map.addLayer(Classified2.clip(wards),{min:1, max:9, palette: Vis, format:'png'},'RF Sentinel+OSM');
-Map.addLayer(subwards_outline,{color:'black'}, 'Sub-Wards',false);
-Map.addLayer(image, {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2', false)
-Map.addLayer(Tanzania_Density,{palette:palette, min:0, max:1}, 'Reciprocal Area Density', false);
-Map.addLayer(wards_outline,{color:'red'}, 'Wards');
+  Map.addLayer(Classified.clip(wards),{min:1, max:9, palette: Vis, format:'png'},'RF Sentinel',false);
+  Map.addLayer(Classified2.clip(wards),{min:1, max:9, palette: Vis, format:'png'},'RF Sentinel+OSM');
+  Map.addLayer(subwards_outline,{color:'black'}, 'Sub-Wards',false);
+  Map.addLayer(image, {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.3}, 'Sentinel-2', false)
+  Map.addLayer(Tanzania_Density,{palette:palette, min:0, max:1}, 'Reciprocal Area Density', false);
+  Map.addLayer(wards_outline,{color:'red'}, 'Wards');
 }
 
+
+//run the function 
 core_layers()
+```
 
+OK. Now that we've pre-loaded the layers, we can start building the user interface. The first thing we'll do is create a main panel that will contain all the other elements of the interface. This panel will be positioned in the top-right corner of the map, and will contain a title, some introductory text, and a button that will allow the user to get statistics on informal settlements in a given ward by clicking on the map.
 
-/// User interface
+```js
 
 // create the main panel 
 
@@ -243,8 +366,7 @@ var console = ui.Panel({
   style: {
     position: 'top-right',
     padding: '8px 15px',
-    width: '350px',
-    height: '450px'
+    width: '350px'
     
   }
 });
@@ -263,113 +385,12 @@ var title = ui.Label({
 
 // add text labels
 
-var intro1= ui.Label('This tool uses machine learning to map informal settlements in Dar es Salaam. Data layers can be toggled using the "Layers" tab. To compare the model\'s prediction to high-resolution imagery, click \"Zoom to Informal Settlement\": ', {whiteSpace: 'wrap'})
+var intro1= ui.Label('This tool uses machine learning to map informal settlements in Dar es Salaam. Data layers can be toggled using the "Layers" tab.', {whiteSpace: 'wrap'})
 
 var stats_label= ui.Label('To explore Ward-level data on informal settlements, click \"Ward Statistics\": ', {whiteSpace: 'wrap'})
 
-var info_label= ui.Label('For more information about the model or any of its input layers, click \"How it Works\": ', {whiteSpace: 'wrap'})
 
-var intro2= ui.Label('These maps were generated by a Random Forest algorithm built to identify informal settlements. The identification strategy exploits two characteristics of informal settlements: variation in roofing material, and the spatial distribution of structures. Further details about the data layers can be found below:', {whiteSpace: 'wrap'})
-
-var contact= ui.Label('Please direct queries to ollie.ballinger@sant.ox.ac.uk', {whiteSpace: 'wrap'})
-
-
-// add "how it works" viz checkboxes
-
-var rfs_label=ui.Checkbox({
-  label: 'RF Sentinel',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '0 0 6px 0',
-    padding: '0'
-    },
-  onChange: function(checked) {
-  Map.layers().get(0).setShown(checked)
-  Map.layers().get(1).setShown(false)
-  Map.layers().get(2).setShown(false)
-  Map.layers().get(3).setShown(false)
-  Map.layers().get(4).setShown(false)
-  }
-})
-
-var rfs_desc=ui.Label("The \"RF Sentinel\" layer predicts the locations of informal settlements using freely available Sentinel-2 satellite imagery as its sole input. Accuracy: 81%", {whiteSpace: 'wrap'})
-
-var rfsosm_label=ui.Checkbox({
-  label: 'RF Sentinel+OSM',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '0 0 4px 0',
-    padding: '0'
-    },
-  onChange: function(checked) {
-  Map.layers().get(1).setShown(checked)
-  Map.layers().get(0).setShown(false)
-  Map.layers().get(2).setShown(false)
-  Map.layers().get(3).setShown(false)
-  Map.layers().get(4).setShown(false)
-  }
-})
-
-var rfsosm_desc=ui.Label("The \"RF Sentinel+OSM\" layer utilizes an additional input layer on housing density derived from Open Street Maps. Accuracy: 92%", {whiteSpace: 'wrap'})
-
-var s_label=ui.Checkbox({
-  label: 'Sentinel-2',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '0 0 4px 0',
-    padding: '0'
-    },
-  onChange: function(checked) {
-  Map.layers().get(3).setShown(checked)
-  Map.layers().get(0).setShown(false)
-  Map.layers().get(1).setShown(false)
-  Map.layers().get(2).setShown(false)
-  Map.layers().get(4).setShown(false)
-  }
-})
-
-var s_desc=ui.Label("Satellite images from Sentinel-2 are the primary input for supervised classification. Images have a resolution of 10 meters per pixel, and are split into 12 spectral bands. Despite its low resolution, multispectral imagery allows us to distinguish materials based on how they reflect light. Here, we exploit the fact that the roofing of informal settlements are primarily built using corrugated iron and plastic rather than concrete.", {whiteSpace: 'wrap'})
-
-var rad_label=ui.Checkbox({
-  label: 'Reciprocal Area Density',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '0 0 4px 0',
-    padding: '0'
-    },
-  onChange: function(checked) {
-  Map.layers().get(4).setShown(checked)
-  Map.layers().get(0).setShown(false)
-  Map.layers().get(1).setShown(false)
-  Map.layers().get(2).setShown(false)
-  Map.layers().get(3).setShown(false)
-  }
-})
-
-var rad_desc=ui.Label("Data extracted from Open Street Maps provide information on a second important characteristic of informal settlements. Unlike planned developments, which are mainly composed of larger structures that are spaced apart, informal settlements are composed of smaller structures that are closer together. This layer uses freely available data from Open Street Maps to detect clusters of small structures", {whiteSpace: 'wrap'})
-
-
-// home panel config 
-var home= function(){
-  Map.setCenter(39.2854, -6.8167, 14)
-  Map.setOptions("Terrain")
-  console.clear()
-  console.add(title);
-  console.add(intro1);
-  console.add(zoom);
-  console.add(stats_label)
-  console.add(ward_stats);
-  console.add(info_label)
-  console.add(details)
-  console.add(contact)
-}
-
-
-//home button config
+//home button config. this will be used to return to the main panel after the user has clicked on the map and gotten ward-level statistics
 var home_button = ui.Button({
   style:{stretch: 'horizontal'},
   label: 'Home',
@@ -380,70 +401,15 @@ var home_button = ui.Button({
     
   }
 })
+```
 
+Next, we'll create a button that will allow the user to get statistics on informal settlements in a given ward by clicking on the map. This button will be configured to display a panel with the statistics when clicked. First, we define a 
 
-// "Zoom to informal settlement" button config 
+Upon clicking the button and then clicking on the map, the user will be shown the estimated number of informal dwellings in the selected ward, as well as the total number of buildings and the percentage of the ward that is covered by informal settlements. This is achieved by using the `Map.onClick` function to get the coordinates of the user's click, and then using the `ee.Join` class to join the building footprints with the ward polygons.
 
-var zoom = ui.Button({
-  style:{stretch: 'horizontal'},
-  label: 'Zoom to Informal Settlement',
-  onClick: 
-  function() {
-    Map.setOptions("Satellite")
-    console.clear()
-    console.add(title);
-    
-    Map.addLayer(drone, {bands: ['b1', 'b2', 'b3'], min: 0, max: 255}, 'Drone')
-    
-    Map.setCenter(39.27145, -6.771062, 17)
-    
-    console.add(ui.Label('This is a sample informal settlement identified in the Namanga area of Dar es Salaam. Use the slider below to compare drone imagery to the model prediction:', {whiteSpace: 'wrap'}))
-   
-    console.add(ui.Label({
-      value: 'Drone Layer Opacity:',
-      style: {
-      fontWeight: 'bold',
-      fontSize: '14px',
-      padding: '0'}}))
-   
-    var slider = ui.Slider({style:{stretch: 'horizontal'}});
-    slider.setValue(0.9);
-    slider.onChange(function(value) {
-      Map.layers().get(6).setOpacity(value);
-    });
-    
-    console.add(slider)
-    console.add(ui.Label('The informal settlement on the left and the suburban neighborhood on the right are both located in the Msasani Ward of Dar es Salaam. Because most statistics are aggregated at the ward level, data on population density, income, health outcomes, and other developmental indicators are likely to be highly biased by variation within city wards. By identifying the geographic extent of informal settlements, policy interventions and crisis responses can be targeted with a high degree of precision.', {whiteSpace: 'wrap'}))
-    console.add(home_button)
+```js
 
-  }
-});
-
-
-// "How it Works" button config
-var details = ui.Button({
-  style:{stretch: 'horizontal'},
-  label: 'How it Works',
-  onClick: 
-  function() {
-    console.clear()
-    console.add(title);
-      console.add(intro2);
-      console.add(rfs_label);
-      console.add(rfs_desc);
-      console.add(rfsosm_label);
-      console.add(rfsosm_desc)
-      console.add(s_label)
-      console.add(s_desc)
-      console.add(rad_label)
-      console.add(rad_desc)
-    console.add(home_button)
-
-  }
-});
-
-
-//"Ward Statistics" button config
+//"Ward Statistics" button config. This 
 var ward_stats = ui.Button({
   style:{stretch: 'horizontal'},
   label: 'Ward Statistics',
@@ -451,6 +417,7 @@ var ward_stats = ui.Button({
   function ward_stats_panel() {
     
     Map.setOptions("Satellite")
+    // add the "buildings" layer to the map, which we computed earlier and containts the building footprints in informal settlements
     Map.addLayer(buildings,{color:'red', max:1}, 'Informal Dwellings',false)
     
     console.clear()
@@ -472,9 +439,14 @@ var ward_stats = ui.Button({
                 outer:true
               });
 
+          // join the coordinates of the clicked point with the ward polygons to get the name of the ward
           var ward_name = ee.Feature(ee.List(saveAllJoin.apply(point, wards, spatialFilter).first().get("Ward_Name")).getInfo()[0]).get('Ward_Name')
-          ward_name.evaluate(function(val){ward_name.setValue(val)});
+
+          //run the function to get statistics on the selected ward
           ward_stats(ward_name) 
+          
+          //ward_name.evaluate(function(val){ward_name.setValue(val)});
+
       })
         
       // get ward level IS/normal building counts 
@@ -506,11 +478,8 @@ var ward_stats = ui.Button({
         
         
         //grab server-side info      
-        
         sum.evaluate(function(val){sumLabel.setValue(val)});
-        
         allBuildings.evaluate(function(val){allLabel.setValue(val)});
-        
         mean.evaluate(function(val){meanLabel.setValue(val)});
 
         console.add(ui.Label({
@@ -542,7 +511,18 @@ var ward_stats = ui.Button({
         }
       });
 
+```
+There's a lot going on here, so let's break it down. 
 
+First, we define a function called `ward_stats_panel` that will be called when the user clicks the "Ward Statistics" button. This function will clear the main panel, add a title and some introductory text giving the user instructions on what to do next, and then add a click event to the map. This click event will get the coordinates of the user's click, and then use `ee.Join` to get the name of the ward that the user clicked on.
+
+Next, we define a function called `ward_stats` that will be called when the user clicks on the map. This function takes the name of the ward returned by the `ward_stats_panel` function to isolate the ward polygon, and then uses the `size` and `reduceRegions` functions to get the estimated number of informal dwellings in the ward, the total number of buildings, and the percentage of the ward that is covered by informal settlements. These statistics are then added to the main panel, the map is zoomed to the center of the ward, and the corresponding informal settlement building footprints are added to the map.
+
+This set of functions comprises the core functionalities of the user interface.
+
+One of the last things on the agenda is to make a legend panel that lets the user know what the colors on the map represent. This is done using the `ui.Panel` class, which allows us to create a panel with a title and a series of rows, each of which contains a color and a label. 
+
+```js
 // set position of panel
 var legend = ui.Panel({
   style: {
@@ -644,10 +624,24 @@ legend.add(makeRow('49cc47', 'vegetation', '000000'));
 legend.add(makeRow('2ff5ff', 'urban','0008ff'));
 legend.add(makeRow('fff700', 'informal settlement','ff0000'));
 
+```
+
+Finally, we can define a function called `home` that will center the view of the map on Dar es Salaam, set the map to a hybrid view, and add the requisite widgets to our main panel. This function will be called when the app is first loaded, and will also be called when the user clicks the "Home" button. We will finish by adding the legend and main panel to the map, and running the `home` function to initialize the app.
+
+```js
+
+// home panel config 
+var home= function(){
+  Map.setCenter(39.2854, -6.8167, 14)
+  Map.setOptions("Hybrid")
+  console.clear()
+  console.add(title);
+  console.add(intro1);
+  console.add(stats_label)
+  console.add(ward_stats);
+}
 // add legend, main panel with home configuration
-
-Map.add(console)
 Map.add(legend);
-
+Map.add(console)
 home()
 ```

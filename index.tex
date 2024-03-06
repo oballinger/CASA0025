@@ -220,7 +220,7 @@
 
 \begin{document}
 \maketitle
-\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[interior hidden, frame hidden, boxrule=0pt, borderline west={3pt}{0pt}{shadecolor}, enhanced, sharp corners, breakable]}{\end{tcolorbox}}\fi
+\ifdefined\Shaded\renewenvironment{Shaded}{\begin{tcolorbox}[borderline west={3pt}{0pt}{shadecolor}, interior hidden, frame hidden, boxrule=0pt, enhanced, breakable, sharp corners]}{\end{tcolorbox}}\fi
 
 \renewcommand*\contentsname{Table of contents}
 {
@@ -376,7 +376,8 @@ resources; all you need is an internet connection.
     \item
       \protect\hyperlink{refinery-identification}{Classification I}
     \item
-      \href{W08_ISM.qmd.qmd}{Classification II}
+      \protect\hyperlink{informal-settlement-classification}{Classification
+      II}
     \item
       \protect\hyperlink{blast-damage-assessment}{Synthetic Aperture
       Radar}
@@ -3390,6 +3391,14 @@ satellite imagery. You can do this by changing the \texttt{start} and
 \chapter{Informal Settlement
 Classification}\label{informal-settlement-classification}}
 
+\begin{figure*}
+
+{\centering \includegraphics{images/Namanga.jpg}
+
+}
+
+\end{figure*}
+
 \hypertarget{problem-statement}{%
 \section{Problem Statement}\label{problem-statement}}
 
@@ -3397,11 +3406,26 @@ Information on informal settlements is often missing from official
 statistics, and many times, these populations face greater vulnerability
 to urban food insecurity, disease, and other health risks. The goal of
 this project is to map informal settlements in Dar es Salaam, Tanzania,
-using satellite imagery and machine learning. The project will use a
-combination of supervised and unsupervised classification techniques to
-identify informal settlements in the city. The project will also use a
-variety of data sources, including open-access satellite imagery and
-building footprints.
+using satellite imagery and machine learning.
+
+If I asked you to describe the differences between the area on the left
+(informal settlement) and the area on the right (a suburb) in the image
+above, you would probably note two main things. The first is the
+difference in building materials: the informal settlement is made up of
+metal roofs, while the suburban housing uses tile and concrete. The
+second is the difference in building density: the informal settlement is
+much more densely packed than the suburban area.
+
+If we had to articulate this using GIS and remote sensing vocabulary, we
+would say that we could distinguish the two areas based on their
+spectral characteristics (i.e.~the way they reflect light), and their
+morphologogy. We can quantify both of these using two main sources of
+data.
+
+The first is Sentinel-2 multispectral imagery, which will be used to
+identify the spectral characteristics of different land cover types. The
+second is OpenStreetMap (OSM) building footprints, which we will use to
+calculate the density of small buildings in the area.
 
 The final application, which I originally developed as part of a
 collaboration between the Rhodes AI Lab and the World Food Programme, is
@@ -3414,16 +3438,26 @@ displayed below:
 \hypertarget{classification-workflow}{%
 \chapter{Classification Workflow}\label{classification-workflow}}
 
+The classification process involves several steps, including
+pre-processing the satellite imagery, training a machine learning model,
+validating the model's predictions, and building a user interface. The
+full earth engine code is available
+\href{https://code.earthengine.google.com/065e25995dbe069beec41883b79b2ca9}{here}.
+
 \hypertarget{pre-processing-1}{%
 \section{Pre processing}\label{pre-processing-1}}
 
 The first step in the classification process is to pre-process the
-satellite imagery. This involves the following steps:
+satellite imagery. This involves several steps, including masking out
+clouds, calculating the Normalized Difference Vegetation Index (NDVI)
+and Normalized Difference Built-up Index (NDBI), and using these indices
+to filter out non-urban areas.
 
 \begin{Shaded}
 \begin{Highlighting}[]
 
 \KeywordTok{var}\NormalTok{ wards}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\FunctionTok{FeatureCollection}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_Wards"}\NormalTok{)}
+
 
 \CommentTok{// // Sentinel{-}2 multispectral imagery collection and processing}
 
@@ -3448,11 +3482,51 @@ satellite imagery. This involves the following steps:
     \OperatorTok{.}\FunctionTok{median}\NormalTok{()}
 
 
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{toUint16}\NormalTok{()}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{bands}\OperatorTok{:}\NormalTok{[}\StringTok{\textquotesingle{}B4\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}B3\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}B2\textquotesingle{}}\NormalTok{]}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{4000}\NormalTok{\}}\OperatorTok{,}\StringTok{\textquotesingle{}Sentinel{-}2\textquotesingle{}}\NormalTok{)}
-
-
 \KeywordTok{var}\NormalTok{ glcm}\OperatorTok{=}\NormalTok{collection}\OperatorTok{.}\FunctionTok{toUint16}\NormalTok{()}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)}\OperatorTok{.}\FunctionTok{glcmTexture}\NormalTok{(\{}\DataTypeTok{size}\OperatorTok{:} \DecValTok{4}\NormalTok{\})}
 
+
+\CommentTok{// We can now use the Sentinel{-}2 imagery to filter out non{-}urban areas}
+\CommentTok{// using the Normalized Difference Vegetation Index (NDVI) and Normalized Difference Built{-}up Index (NDBI)}
+
+\CommentTok{//Normalized Difference Vegetation Index     }
+\KeywordTok{var}\NormalTok{ ndvi}\OperatorTok{=}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)}
+          \OperatorTok{.}\FunctionTok{subtract}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B4\textquotesingle{}}\NormalTok{)))}
+          \OperatorTok{.}\FunctionTok{divide}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)}
+          \OperatorTok{.}\FunctionTok{add}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B4\textquotesingle{}}\NormalTok{)))}
+          \OperatorTok{.}\FunctionTok{select}\NormalTok{([}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{]}\OperatorTok{,}\NormalTok{[}\StringTok{\textquotesingle{}NDVI\textquotesingle{}}\NormalTok{])}
+
+\CommentTok{// Normalized Difference Built{-}Up Index          }
+\KeywordTok{var}\NormalTok{ ndbi}\OperatorTok{=}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B11\textquotesingle{}}\NormalTok{)}
+          \OperatorTok{.}\FunctionTok{subtract}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)))}
+          \OperatorTok{.}\FunctionTok{divide}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B11\textquotesingle{}}\NormalTok{)}
+          \OperatorTok{.}\FunctionTok{add}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)))}
+          \OperatorTok{.}\FunctionTok{select}\NormalTok{([}\StringTok{\textquotesingle{}B11\textquotesingle{}}\NormalTok{]}\OperatorTok{,}\NormalTok{[}\StringTok{\textquotesingle{}NDBI\textquotesingle{}}\NormalTok{])}
+
+\CommentTok{// add bands from all analysis layers }
+\KeywordTok{var}\NormalTok{ image }\OperatorTok{=}\NormalTok{ collection}\OperatorTok{.}\FunctionTok{addBands}\NormalTok{(Tanzania\_Density)}\CommentTok{//OSM density}
+                      \OperatorTok{.}\FunctionTok{addBands}\NormalTok{(ndvi)}
+                      \OperatorTok{.}\FunctionTok{addBands}\NormalTok{(ndbi)}
+                      \OperatorTok{.}\FunctionTok{addBands}\NormalTok{(glcm)}
+                      \OperatorTok{.}\FunctionTok{clip}\NormalTok{(wards)}
+                      \OperatorTok{.}\FunctionTok{updateMask}\NormalTok{(ndvi}\OperatorTok{.}\FunctionTok{lt}\NormalTok{(}\FloatTok{0.3}\NormalTok{)}\OperatorTok{.}\FunctionTok{and}\NormalTok{(ndbi}\OperatorTok{.}\FunctionTok{gt}\NormalTok{(}\DecValTok{0}\NormalTok{)))}\CommentTok{//filter out non{-}urban landcover}
+                      
+\end{Highlighting}
+\end{Shaded}
+
+Once we've pre-processed the imagery, we can move on to the next step,
+which is to calculate the density of small buildings in the area using
+OpenStreetMap (OSM) building footprints. Here's what the footprints look
+like, overlaid on top of the image above.
+
+\includegraphics{images/ism_fp1.jpeg}
+
+First, we want to add a column to the OSM building footprints that
+contains the reciprocal of each building footprint's area. Then, we can
+convert the building footprints to a raster and use a Gaussian kernel to
+calculate the density of small buildings in a given area.
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \CommentTok{// Using OpenStreetMap (OSM) building footprints}
 
 \KeywordTok{var}\NormalTok{ OSM}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\FunctionTok{FeatureCollection}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_OSM\_clean"}\NormalTok{)}
@@ -3484,50 +3558,59 @@ satellite imagery. This involves the following steps:
 
 \CommentTok{//i\textquotesingle{}ve saved the "density" layer as a raster, imported below. Using it speeds up the RF classification }
 \KeywordTok{var}\NormalTok{ Tanzania\_Density }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Image}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_Density"}\NormalTok{)}
-
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Tanzania\_Density}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{palette}\OperatorTok{:}\NormalTok{[}\StringTok{"0034f5"}\OperatorTok{,}\StringTok{"1e7d83"}\OperatorTok{,}\StringTok{"4da910"}\OperatorTok{,}\StringTok{"b3c120"}\OperatorTok{,}\StringTok{"fcc228"}\OperatorTok{,}\StringTok{"ff8410"}\OperatorTok{,}\StringTok{"fd3000"}\NormalTok{]}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:}\DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{1}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}OSM Density\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}\OperatorTok{;}
-
-
-\CommentTok{// We can now use the Sentinel{-}2 imagery to filter out non{-}urban areas}
-\CommentTok{// using the Normalized Difference Vegetation Index (NDVI) and Normalized Difference Built{-}up Index (NDBI)}
-
-\CommentTok{//Normalized Difference Vegetation Index     }
-\KeywordTok{var}\NormalTok{ ndvi}\OperatorTok{=}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)}
-          \OperatorTok{.}\FunctionTok{subtract}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B4\textquotesingle{}}\NormalTok{)))}
-          \OperatorTok{.}\FunctionTok{divide}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)}
-          \OperatorTok{.}\FunctionTok{add}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B4\textquotesingle{}}\NormalTok{)))}
-          \OperatorTok{.}\FunctionTok{select}\NormalTok{([}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{]}\OperatorTok{,}\NormalTok{[}\StringTok{\textquotesingle{}NDVI\textquotesingle{}}\NormalTok{])}
-
-
-\CommentTok{// Normalized Difference Built{-}Up Index          }
-\KeywordTok{var}\NormalTok{ ndbi}\OperatorTok{=}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B11\textquotesingle{}}\NormalTok{)}
-          \OperatorTok{.}\FunctionTok{subtract}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)))}
-          \OperatorTok{.}\FunctionTok{divide}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B11\textquotesingle{}}\NormalTok{)}
-          \OperatorTok{.}\FunctionTok{add}\NormalTok{(collection}\OperatorTok{.}\FunctionTok{select}\NormalTok{(}\StringTok{\textquotesingle{}B8\textquotesingle{}}\NormalTok{)))}
-          \OperatorTok{.}\FunctionTok{select}\NormalTok{([}\StringTok{\textquotesingle{}B11\textquotesingle{}}\NormalTok{]}\OperatorTok{,}\NormalTok{[}\StringTok{\textquotesingle{}NDBI\textquotesingle{}}\NormalTok{])}
-
-
-\CommentTok{// add bands from all analysis layers }
-\KeywordTok{var}\NormalTok{ image }\OperatorTok{=}\NormalTok{ collection}\OperatorTok{.}\FunctionTok{addBands}\NormalTok{(Tanzania\_Density)}\CommentTok{//OSM density}
-                      \OperatorTok{.}\FunctionTok{addBands}\NormalTok{(ndvi)}
-                      \OperatorTok{.}\FunctionTok{addBands}\NormalTok{(ndbi)}
-                      \OperatorTok{.}\FunctionTok{addBands}\NormalTok{(glcm)}
-                      \OperatorTok{.}\FunctionTok{clip}\NormalTok{(wards)}
-                      \OperatorTok{.}\FunctionTok{updateMask}\NormalTok{(ndvi}\OperatorTok{.}\FunctionTok{lt}\NormalTok{(}\FloatTok{0.3}\NormalTok{)}\OperatorTok{.}\FunctionTok{and}\NormalTok{(ndbi}\OperatorTok{.}\FunctionTok{gt}\NormalTok{(}\DecValTok{0}\NormalTok{)))}\CommentTok{//filter out non{-}urban landcover}
-                      
-
-
-\CommentTok{//input bands used for classification }
-\KeywordTok{var}\NormalTok{ bands }\OperatorTok{=}\NormalTok{ [}\StringTok{\textquotesingle{}B2\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B3\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B4\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B8\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B8A\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B11\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B12\textquotesingle{}}\OperatorTok{,}
-            \StringTok{\textquotesingle{}NDVI\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}B8\_contrast\textquotesingle{}}\NormalTok{]}
 \end{Highlighting}
 \end{Shaded}
+
+When the Gaussian kernel is applied to an are with lots of small
+buildings (informal settlement), it will register a high value because
+it's summing up the values of the pixels in the kernel:
+
+\includegraphics{images/ism_fp2.jpeg}
+
+When it is applied to an area with few small buildings, or large
+buildings spaced far apart (e.g., suburban settlement), it will register
+a low value:
+
+\includegraphics{images/ism_fp3.jpeg}
+
+The end result is a raster that can be used to identify areas with high
+building density, which are likely to be informal settlements:
+
+\includegraphics{images/ism_fp4.jpeg}
+
+Now that we've generated input data that allows us to quantify spectral
+differences and building density, we can move on to the next step, which
+is to train a machine learning model to classify the image into
+different land cover types.
 
 \hypertarget{step-2-classification}{%
 \section{Step 2: Classification}\label{step-2-classification}}
 
+The workflow is very similar to the one employed in last week's lab,
+though the nature of the task is slightly different. Here, we are
+classifying the image into four classes: metal roof, apartment,
+suburban, and road. The ``metal roof'' class is used to identify
+informal settlements.
+
+I've drawn polygons for each of the classes, which you can see under the
+``Geometry Imports'' tab on the top left of the code editor:
+
+\includegraphics{images/ism_sample.jpg}
+
+These polygons are used to generate training data for the machine
+learning model; using the \texttt{ee.FeatureCollection.randomPoints}
+function, I've generated 500 random points for each class, and assigned
+a class label to each point.
+
 \begin{Shaded}
 \begin{Highlighting}[]
+
+\CommentTok{//input bands used for classification }
+\KeywordTok{var}\NormalTok{ bands }\OperatorTok{=}\NormalTok{ [}\StringTok{\textquotesingle{}B2\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B3\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B4\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B8\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B8A\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B11\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B12\textquotesingle{}}\OperatorTok{,}
+            \StringTok{\textquotesingle{}NDVI\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}B8\_contrast\textquotesingle{}}\OperatorTok{,}
+            \StringTok{\textquotesingle{}constant\_sum\textquotesingle{}} \CommentTok{// this is the OSM density layer}
+\NormalTok{            ]}
+
 \KeywordTok{var}\NormalTok{ metal\_roof\_points}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\AttributeTok{FeatureCollection}\OperatorTok{.}\FunctionTok{randomPoints}\NormalTok{(metal\_roof\_poly}\OperatorTok{,} \DecValTok{500}\NormalTok{)}\OperatorTok{.}\FunctionTok{map}\NormalTok{(}\KeywordTok{function}\NormalTok{(i)\{}
   \ControlFlowTok{return}\NormalTok{ i}\OperatorTok{.}\FunctionTok{set}\NormalTok{(\{}\StringTok{\textquotesingle{}class\textquotesingle{}}\OperatorTok{:} \DecValTok{0}\NormalTok{\})\})}
   
@@ -3540,7 +3623,7 @@ satellite imagery. This involves the following steps:
 \KeywordTok{var}\NormalTok{ road\_points}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\AttributeTok{FeatureCollection}\OperatorTok{.}\FunctionTok{randomPoints}\NormalTok{(road}\OperatorTok{,} \DecValTok{500}\NormalTok{)}\OperatorTok{.}\FunctionTok{map}\NormalTok{(}\KeywordTok{function}\NormalTok{(i)\{}
   \ControlFlowTok{return}\NormalTok{ i}\OperatorTok{.}\FunctionTok{set}\NormalTok{(\{}\StringTok{\textquotesingle{}class\textquotesingle{}}\OperatorTok{:} \DecValTok{3}\NormalTok{\})\})}
   
-  
+\CommentTok{// Create a single feature collection from the four classes  }
 \KeywordTok{var}\NormalTok{ sample}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\FunctionTok{FeatureCollection}\NormalTok{([metal\_roof\_points}\OperatorTok{,}
 \NormalTok{                                  suburban\_points}\OperatorTok{,}
 \NormalTok{                                  apartment\_points}\OperatorTok{,}
@@ -3553,9 +3636,6 @@ satellite imagery. This involves the following steps:
 \KeywordTok{var}\NormalTok{ split}\OperatorTok{=}\FloatTok{0.7}
 \KeywordTok{var}\NormalTok{ training\_sample }\OperatorTok{=}\NormalTok{ sample}\OperatorTok{.}\FunctionTok{filter}\NormalTok{(ee}\OperatorTok{.}\AttributeTok{Filter}\OperatorTok{.}\FunctionTok{lt}\NormalTok{(}\StringTok{\textquotesingle{}random\textquotesingle{}}\OperatorTok{,}\NormalTok{ split))}\OperatorTok{;}
 \KeywordTok{var}\NormalTok{ validation\_sample }\OperatorTok{=}\NormalTok{ sample}\OperatorTok{.}\FunctionTok{filter}\NormalTok{(ee}\OperatorTok{.}\AttributeTok{Filter}\OperatorTok{.}\FunctionTok{gte}\NormalTok{(}\StringTok{\textquotesingle{}random\textquotesingle{}}\OperatorTok{,}\NormalTok{ split))}\OperatorTok{;}
-
-
-
 
 \CommentTok{// take samples from image for training and validation  }
 \KeywordTok{var}\NormalTok{ training }\OperatorTok{=}\NormalTok{ image}\OperatorTok{.}\FunctionTok{select}\NormalTok{(bands)}\OperatorTok{.}\FunctionTok{sampleRegions}\NormalTok{(\{}
@@ -3570,19 +3650,34 @@ satellite imagery. This involves the following steps:
   \DataTypeTok{scale}\OperatorTok{:} \DecValTok{10}
 \NormalTok{\})}\OperatorTok{;}
 
-\CommentTok{// Random Forest Classification}
-
+\CommentTok{// Train a Random Forest classifier}
 \KeywordTok{var}\NormalTok{ rf1 }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\AttributeTok{Classifier}\OperatorTok{.}\FunctionTok{smileRandomForest}\NormalTok{(}\DecValTok{100}\NormalTok{)}
     \OperatorTok{.}\FunctionTok{train}\NormalTok{(training}\OperatorTok{,} \StringTok{\textquotesingle{}class\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
    
+\CommentTok{// Apply the RF classifier to the image}
 \KeywordTok{var}\NormalTok{ rf2 }\OperatorTok{=}\NormalTok{ image}\OperatorTok{.}\FunctionTok{classify}\NormalTok{(rf1)}\OperatorTok{;}
 
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(rf2}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{palette}\OperatorTok{:}\NormalTok{palette}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:}\DecValTok{0} \OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{3}\NormalTok{\}}\OperatorTok{,}\StringTok{\textquotesingle{}Random Forest\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
+The process of training a model in this way is iterative. I started with
+a binary classification problem (informal settlement vs.~everything
+else), but it kept mixing up informal settlements with general high
+density urban areas such as the central business district. I then added
+the ``apartment'', ``suburban'', and ``road'' classes to the training
+data, which helped the model to better distinguish between informal
+settlements and other urban areas. This basically involves telling the
+algorithm explicitly ``NO. This is not an informal settlement. It's a
+different type of urban area.'' After a few iterations, the model was
+able to distinguish between the four classes with a high degree of
+accuracy.
+
 \hypertarget{step-3-validation}{%
 \section{Step 3: Validation}\label{step-3-validation}}
+
+Once again, a crucial step in the process of classification is to
+validate the model's predictions. This is done by comparing the model's
+predictions to the validation set we created earlier.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -3604,45 +3699,171 @@ satellite imagery. This involves the following steps:
 
 \CommentTok{// Consumer\textquotesingle{}s accuracy can be interpreted in a sentence as follows:}
 \FunctionTok{print}\NormalTok{(ee}\OperatorTok{.}\FunctionTok{Number}\NormalTok{(consumers}\OperatorTok{.}\FunctionTok{get}\NormalTok{([}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\NormalTok{]))}\OperatorTok{.}\FunctionTok{multiply}\NormalTok{(}\DecValTok{100}\NormalTok{)}\OperatorTok{,}\StringTok{\textquotesingle{}\% of the areas identified as informal settlements }\SpecialCharTok{\textbackslash{}n}\StringTok{in the classification are actually informal settlements }\SpecialCharTok{\textbackslash{}n}\StringTok{(according to the verification data)\textquotesingle{}}\NormalTok{)}
-
-\KeywordTok{var}\NormalTok{ resub }\OperatorTok{=}\NormalTok{ rf2}\OperatorTok{.}\FunctionTok{sample}\NormalTok{(\{}
-  \DataTypeTok{region}\OperatorTok{:}\NormalTok{ validation\_sample}\OperatorTok{,}
-  \DataTypeTok{geometries}\OperatorTok{:}\KeywordTok{true}\OperatorTok{,}
-  \DataTypeTok{scale}\OperatorTok{:}\DecValTok{10}
-\NormalTok{\})}\OperatorTok{.}\FunctionTok{map}\NormalTok{(}\KeywordTok{function}\NormalTok{(feature)\{}\ControlFlowTok{return}\NormalTok{ feature}\OperatorTok{.}\FunctionTok{buffer}\NormalTok{(}\DecValTok{10}\NormalTok{)\})}
-
-\KeywordTok{var}\NormalTok{ resub\_color }\OperatorTok{=}\NormalTok{ empty}\OperatorTok{.}\FunctionTok{paint}\NormalTok{(\{}
-  \DataTypeTok{featureCollection}\OperatorTok{:}\NormalTok{ resub}\OperatorTok{,}
-  \DataTypeTok{color}\OperatorTok{:} \StringTok{\textquotesingle{}classification\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{width}\OperatorTok{:}\DecValTok{4}
-\NormalTok{\})}
-\KeywordTok{var}\NormalTok{ palette }\OperatorTok{=}\NormalTok{[}\StringTok{\textquotesingle{}\#ff6200\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}\#a126ff\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}\#4a26ff\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}\#00c3ff\textquotesingle{}}\NormalTok{]}
-
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(resub\_color}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{min}\OperatorTok{:}\DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{3}\OperatorTok{,} \DataTypeTok{palette}\OperatorTok{:}\NormalTok{palette\}}\OperatorTok{,}\StringTok{\textquotesingle{}Validation Error\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+Once again, the model reports high accuracy statistics. Remember,
+however, that spatial autocorrelation is probably inflating these
+statistics significantly; even though we are separating the data into
+training and validation sets, the validation points are still likely to
+be extremely close to the training points, and the model is likely to be
+overfitting to the training data.
+
+It's always good to do some qualitative validation too-- zip around the
+map and see if the model's predictions make sense, pretend you're the
+end user. Doing so reveals that the classification process is indeed
+working quite well. Consider this small pocket of informal settlements
+in the north of the city:
+
+\includegraphics{images/ism_pocket1.jpg}
+
+It's nestled in a large suburban area, and would be very easy to miss if
+you were, for example, running a food aid programme using only official
+statistics. The model that we trained successfully detects it as an
+informal settlement, and we didn't train the model anywhere near this
+settlement:
+
+\includegraphics{images/ism_pocket2.jpg}
+
+Now, we've finished the classification portion of this lab. The next
+step is to build a user interface that will allow users to interact with
+the model and get statistics on informal settlements in a given area.
+Before moving on to that, try your hand at the following exercises.
+
+\hypertarget{exercises-3}{%
+\section{EXERCISES}\label{exercises-3}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Try running the classification procedure without the OSM density layer
+  (you can do this by removing ``constant\_sum'' from the list of bands
+  used to train the model.). How does the model's accuracy change? What
+  if you only use the OSM density layer?
+\item
+  Try conducting the same classification for Nairobi, Kenya. You'll need
+  to create your own geometry imports to train the model, and load
+  building footprints from a different source:
+\end{enumerate}
+
+\texttt{var\ feature\ =\ ee.FeatureCollection(\textquotesingle{}projects/sat-io/open-datasets/MSBuildings/Kenya\textquotesingle{})}
 
 \hypertarget{step-4-build-a-user-interface}{%
 \section{Step 4: Build a User
 Interface}\label{step-4-build-a-user-interface}}
 
+The user interface in this application is again similar to last week's,
+in that it involves getting areal statistics for a given area. This
+week's objective will be to get the estimated number of informal
+settlement dwellings in a given ward (these are administrative units in
+Tanzania, similar to boroughs in London).
+
+We'll begin by doing a couple things that will help speed things up
+later; Similar to last week, I've stored the output of the machine
+learning model as an image (it's called `Classified2' in the code
+below), and I've also stored the OSM building footprints as a raster.
+This means that we can skip the classification step and the OSM density
+calculation step when we run the app.
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{//function to add the core layers }
+
+
+\KeywordTok{var}\NormalTok{ Classified }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Image}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_Classified"}\NormalTok{)}\OperatorTok{,}
+\NormalTok{    Tanzania\_Density }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Image}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_Density"}\NormalTok{)}\OperatorTok{,}
+\NormalTok{    Classified2 }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Image}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_RF\_OSM\_Sentinel"}\NormalTok{)}\OperatorTok{,}
+\NormalTok{    wards}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\FunctionTok{FeatureCollection}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_Wards"}\NormalTok{)}\OperatorTok{,}
+\NormalTok{    subwards}\OperatorTok{=}\NormalTok{ee}\OperatorTok{.}\FunctionTok{FeatureCollection}\NormalTok{(}\StringTok{"users/ollielballinger/Tanzania\_SubWards"}\NormalTok{)}
+
+\CommentTok{///this part generates the estimated number of informal settlement dwellings in a ward}
+
+\CommentTok{//create binary raster from the RF+OSM layer, 1=Informal settlement, 0=everything else}
+\KeywordTok{var}\NormalTok{ is}\OperatorTok{=}\NormalTok{Classified2}\OperatorTok{.}\FunctionTok{gt}\NormalTok{(}\DecValTok{3}\NormalTok{)}\OperatorTok{.}\FunctionTok{and}\NormalTok{(Classified2}\OperatorTok{.}\FunctionTok{lt}\NormalTok{(}\DecValTok{6}\NormalTok{))}
+
+\CommentTok{// create a masked version of the binary raster (i.e. remove all 0 values so that we are left with only the informal settlements)}
+\KeywordTok{var}\NormalTok{ is2}\OperatorTok{=}\NormalTok{is}\OperatorTok{.}\FunctionTok{updateMask}\NormalTok{(is}\OperatorTok{.}\FunctionTok{neq}\NormalTok{(}\DecValTok{0}\NormalTok{))}
+
+\CommentTok{// reduce the masked raster to vectors, and filter out small areas}
+\KeywordTok{var}\NormalTok{ vectors }\OperatorTok{=}\NormalTok{ is2}\OperatorTok{.}\FunctionTok{reduceToVectors}\NormalTok{(\{}
+  \DataTypeTok{geometry}\OperatorTok{:}\NormalTok{ wards}\OperatorTok{,}
+  \DataTypeTok{scale}\OperatorTok{:} \DecValTok{5}\OperatorTok{,}
+  \DataTypeTok{geometryType}\OperatorTok{:} \StringTok{\textquotesingle{}polygon\textquotesingle{}}\OperatorTok{,}
+  \DataTypeTok{eightConnected}\OperatorTok{:} \KeywordTok{true}\OperatorTok{,}
+  \DataTypeTok{labelProperty}\OperatorTok{:} \StringTok{\textquotesingle{}zone\textquotesingle{}}\OperatorTok{,}
+  \DataTypeTok{maxPixels}\OperatorTok{:}\DecValTok{1653602926}
+\NormalTok{  \})}\OperatorTok{.}\FunctionTok{map}\NormalTok{(}\KeywordTok{function}\NormalTok{(feature) \{}
+  \ControlFlowTok{return}\NormalTok{ feature}\OperatorTok{.}\FunctionTok{set}\NormalTok{(\{}\DataTypeTok{area}\OperatorTok{:}\NormalTok{ feature}\OperatorTok{.}\FunctionTok{geometry}\NormalTok{()}\OperatorTok{.}\FunctionTok{area}\NormalTok{(}\DecValTok{10}\NormalTok{)\})}
+\NormalTok{  \})}
+  \OperatorTok{.}\FunctionTok{filter}\NormalTok{(ee}\OperatorTok{.}\AttributeTok{Filter}\OperatorTok{.}\FunctionTok{gt}\NormalTok{(}\StringTok{\textquotesingle{}area\textquotesingle{}}\OperatorTok{,}\DecValTok{10000}\NormalTok{))}
+
+\CommentTok{//spatially join this vector with the filtered OSM footprints}
+\KeywordTok{var}\NormalTok{ spatialFilter }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\AttributeTok{Filter}\OperatorTok{.}\FunctionTok{intersects}\NormalTok{(\{}
+  \DataTypeTok{leftField}\OperatorTok{:} \StringTok{\textquotesingle{}.geo\textquotesingle{}}\OperatorTok{,}
+  \DataTypeTok{rightField}\OperatorTok{:} \StringTok{\textquotesingle{}.geo\textquotesingle{}}\OperatorTok{,}
+  \DataTypeTok{maxError}\OperatorTok{:} \DecValTok{10}
+\NormalTok{\})}\OperatorTok{;}
+
+\KeywordTok{var}\NormalTok{ saveAllJoin }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\AttributeTok{Join}\OperatorTok{.}\FunctionTok{saveAll}\NormalTok{(\{}
+  \DataTypeTok{matchesKey}\OperatorTok{:} \StringTok{\textquotesingle{}zone\textquotesingle{}}\OperatorTok{,}
+  \DataTypeTok{outer}\OperatorTok{:}\KeywordTok{false}
+\NormalTok{\})}\OperatorTok{;}
+
+\CommentTok{//join the vectors with the OSM footprints. This gives us a feature collection of just the building footprints that are in informal settlements}
+\KeywordTok{var}\NormalTok{ buildings }\OperatorTok{=}\NormalTok{ saveAllJoin}\OperatorTok{.}\FunctionTok{apply}\NormalTok{(OSM}\OperatorTok{,}\NormalTok{ vectors}\OperatorTok{,}\NormalTok{ spatialFilter)}
+
+\CommentTok{// add palettes for visualization}
+  
+  \KeywordTok{var}\NormalTok{ Vis}\OperatorTok{=}\NormalTok{ [}
+  \StringTok{\textquotesingle{}49cc47\textquotesingle{}}\OperatorTok{,} 
+  \StringTok{\textquotesingle{}0008ff\textquotesingle{}}\OperatorTok{,}
+  \StringTok{\textquotesingle{}2ff5ff\textquotesingle{}}\OperatorTok{,}
+  \StringTok{\textquotesingle{}ff0000\textquotesingle{}}\OperatorTok{,}
+  \StringTok{\textquotesingle{}fff700\textquotesingle{}}\OperatorTok{,} 
+  \StringTok{\textquotesingle{}ffffff\textquotesingle{}}\OperatorTok{,}
+  \StringTok{\textquotesingle{}47b2ff\textquotesingle{}}\OperatorTok{,}
+  \StringTok{\textquotesingle{}2700ff\textquotesingle{}}\OperatorTok{,}
+  \StringTok{\textquotesingle{}00a1ff\textquotesingle{}}\NormalTok{]}
+
+\KeywordTok{var}\NormalTok{ palette }\OperatorTok{=}\NormalTok{[}\StringTok{"0034f5"}\OperatorTok{,}\StringTok{"1e7d83"}\OperatorTok{,}\StringTok{"4da910"}\OperatorTok{,}\StringTok{"b3c120"}\OperatorTok{,}\StringTok{"fcc228"}\OperatorTok{,}\StringTok{"ff8410"}\OperatorTok{,}\StringTok{"fd3000"}\NormalTok{]}
+
+\CommentTok{// create outlines for wards and subwards}
+\KeywordTok{var}\NormalTok{ subwards\_outline }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Image}\NormalTok{()}\OperatorTok{.}\FunctionTok{byte}\NormalTok{()}\OperatorTok{.}\FunctionTok{paint}\NormalTok{(\{}
+  \DataTypeTok{featureCollection}\OperatorTok{:}\NormalTok{ subwards}\OperatorTok{,}
+  \DataTypeTok{width}\OperatorTok{:} \DecValTok{1}
+\NormalTok{\})}\OperatorTok{;}
+
+\KeywordTok{var}\NormalTok{ wards\_outline }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Image}\NormalTok{()}\OperatorTok{.}\FunctionTok{byte}\NormalTok{()}\OperatorTok{.}\FunctionTok{paint}\NormalTok{(\{}
+  \DataTypeTok{featureCollection}\OperatorTok{:}\NormalTok{ wards}\OperatorTok{,}
+  \DataTypeTok{width}\OperatorTok{:} \DecValTok{2}
+\NormalTok{\})}\OperatorTok{;}
+
+\CommentTok{// function to add the core layers to the map }
 
 \KeywordTok{function} \FunctionTok{core\_layers}\NormalTok{()\{}
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Classified}\OperatorTok{.}\FunctionTok{clip}\NormalTok{(wards)}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{min}\OperatorTok{:}\DecValTok{1}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{9}\OperatorTok{,} \DataTypeTok{palette}\OperatorTok{:}\NormalTok{ Vis}\OperatorTok{,} \DataTypeTok{format}\OperatorTok{:}\StringTok{\textquotesingle{}png\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}\StringTok{\textquotesingle{}RF Sentinel\textquotesingle{}}\OperatorTok{,}\KeywordTok{false}\NormalTok{)}\OperatorTok{;}
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Classified2}\OperatorTok{.}\FunctionTok{clip}\NormalTok{(wards)}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{min}\OperatorTok{:}\DecValTok{1}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{9}\OperatorTok{,} \DataTypeTok{palette}\OperatorTok{:}\NormalTok{ Vis}\OperatorTok{,} \DataTypeTok{format}\OperatorTok{:}\StringTok{\textquotesingle{}png\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}\StringTok{\textquotesingle{}RF Sentinel+OSM\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(subwards\_outline}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{color}\OperatorTok{:}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Sub{-}Wards\textquotesingle{}}\OperatorTok{,}\KeywordTok{false}\NormalTok{)}\OperatorTok{;}
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(image}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{bands}\OperatorTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}B4\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B3\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B2\textquotesingle{}}\NormalTok{]}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:} \DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:} \FloatTok{0.3}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Sentinel{-}2\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Tanzania\_Density}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{palette}\OperatorTok{:}\NormalTok{palette}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:}\DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{1}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Reciprocal Area Density\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}\OperatorTok{;}
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(wards\_outline}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{color}\OperatorTok{:}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Wards\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Classified}\OperatorTok{.}\FunctionTok{clip}\NormalTok{(wards)}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{min}\OperatorTok{:}\DecValTok{1}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{9}\OperatorTok{,} \DataTypeTok{palette}\OperatorTok{:}\NormalTok{ Vis}\OperatorTok{,} \DataTypeTok{format}\OperatorTok{:}\StringTok{\textquotesingle{}png\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}\StringTok{\textquotesingle{}RF Sentinel\textquotesingle{}}\OperatorTok{,}\KeywordTok{false}\NormalTok{)}\OperatorTok{;}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Classified2}\OperatorTok{.}\FunctionTok{clip}\NormalTok{(wards)}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{min}\OperatorTok{:}\DecValTok{1}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{9}\OperatorTok{,} \DataTypeTok{palette}\OperatorTok{:}\NormalTok{ Vis}\OperatorTok{,} \DataTypeTok{format}\OperatorTok{:}\StringTok{\textquotesingle{}png\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}\StringTok{\textquotesingle{}RF Sentinel+OSM\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(subwards\_outline}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{color}\OperatorTok{:}\StringTok{\textquotesingle{}black\textquotesingle{}}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Sub{-}Wards\textquotesingle{}}\OperatorTok{,}\KeywordTok{false}\NormalTok{)}\OperatorTok{;}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(image}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{bands}\OperatorTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}B4\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B3\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}B2\textquotesingle{}}\NormalTok{]}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:} \DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:} \FloatTok{0.3}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Sentinel{-}2\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(Tanzania\_Density}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{palette}\OperatorTok{:}\NormalTok{palette}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:}\DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{1}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Reciprocal Area Density\textquotesingle{}}\OperatorTok{,} \KeywordTok{false}\NormalTok{)}\OperatorTok{;}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(wards\_outline}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{color}\OperatorTok{:}\StringTok{\textquotesingle{}red\textquotesingle{}}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Wards\textquotesingle{}}\NormalTok{)}\OperatorTok{;}
 \NormalTok{\}}
 
+
+\CommentTok{//run the function }
 \FunctionTok{core\_layers}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
 
+OK. Now that we've pre-loaded the layers, we can start building the user
+interface. The first thing we'll do is create a main panel that will
+contain all the other elements of the interface. This panel will be
+positioned in the top-right corner of the map, and will contain a title,
+some introductory text, and a button that will allow the user to get
+statistics on informal settlements in a given ward by clicking on the
+map.
 
-\CommentTok{/// User interface}
+\begin{Shaded}
+\begin{Highlighting}[]
 
 \CommentTok{// create the main panel }
 
@@ -3651,8 +3872,7 @@ Interface}\label{step-4-build-a-user-interface}}
   \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
     \DataTypeTok{position}\OperatorTok{:} \StringTok{\textquotesingle{}top{-}right\textquotesingle{}}\OperatorTok{,}
     \DataTypeTok{padding}\OperatorTok{:} \StringTok{\textquotesingle{}8px 15px\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{width}\OperatorTok{:} \StringTok{\textquotesingle{}350px\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{height}\OperatorTok{:} \StringTok{\textquotesingle{}450px\textquotesingle{}}
+    \DataTypeTok{width}\OperatorTok{:} \StringTok{\textquotesingle{}350px\textquotesingle{}}
     
 \NormalTok{  \}}
 \NormalTok{\})}\OperatorTok{;}
@@ -3671,113 +3891,12 @@ Interface}\label{step-4-build-a-user-interface}}
 
 \CommentTok{// add text labels}
 
-\KeywordTok{var}\NormalTok{ intro1}\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}This tool uses machine learning to map informal settlements in Dar es Salaam. Data layers can be toggled using the "Layers" tab. To compare the model}\SpecialCharTok{\textbackslash{}\textquotesingle{}}\StringTok{s prediction to high{-}resolution imagery, click }\SpecialCharTok{\textbackslash{}"}\StringTok{Zoom to Informal Settlement}\SpecialCharTok{\textbackslash{}"}\StringTok{: \textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
+\KeywordTok{var}\NormalTok{ intro1}\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}This tool uses machine learning to map informal settlements in Dar es Salaam. Data layers can be toggled using the "Layers" tab.\textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
 
 \KeywordTok{var}\NormalTok{ stats\_label}\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}To explore Ward{-}level data on informal settlements, click }\SpecialCharTok{\textbackslash{}"}\StringTok{Ward Statistics}\SpecialCharTok{\textbackslash{}"}\StringTok{: \textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
 
-\KeywordTok{var}\NormalTok{ info\_label}\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}For more information about the model or any of its input layers, click }\SpecialCharTok{\textbackslash{}"}\StringTok{How it Works}\SpecialCharTok{\textbackslash{}"}\StringTok{: \textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
 
-\KeywordTok{var}\NormalTok{ intro2}\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}These maps were generated by a Random Forest algorithm built to identify informal settlements. The identification strategy exploits two characteristics of informal settlements: variation in roofing material, and the spatial distribution of structures. Further details about the data layers can be found below:\textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ contact}\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}Please direct queries to ollie.ballinger@sant.ox.ac.uk\textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
-
-
-\CommentTok{// add "how it works" viz checkboxes}
-
-\KeywordTok{var}\NormalTok{ rfs\_label}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Checkbox}\NormalTok{(\{}
-  \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}RF Sentinel\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
-    \DataTypeTok{fontWeight}\OperatorTok{:} \StringTok{\textquotesingle{}bold\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{fontSize}\OperatorTok{:} \StringTok{\textquotesingle{}18px\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{margin}\OperatorTok{:} \StringTok{\textquotesingle{}0 0 6px 0\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{padding}\OperatorTok{:} \StringTok{\textquotesingle{}0\textquotesingle{}}
-\NormalTok{    \}}\OperatorTok{,}
-  \DataTypeTok{onChange}\OperatorTok{:} \KeywordTok{function}\NormalTok{(checked) \{}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{0}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(checked)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{1}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{3}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{4}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-\NormalTok{  \}}
-\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ rfs\_desc}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{"The }\SpecialCharTok{\textbackslash{}"}\StringTok{RF Sentinel}\SpecialCharTok{\textbackslash{}"}\StringTok{ layer predicts the locations of informal settlements using freely available Sentinel{-}2 satellite imagery as its sole input. Accuracy: 81\%"}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ rfsosm\_label}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Checkbox}\NormalTok{(\{}
-  \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}RF Sentinel+OSM\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
-    \DataTypeTok{fontWeight}\OperatorTok{:} \StringTok{\textquotesingle{}bold\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{fontSize}\OperatorTok{:} \StringTok{\textquotesingle{}18px\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{margin}\OperatorTok{:} \StringTok{\textquotesingle{}0 0 4px 0\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{padding}\OperatorTok{:} \StringTok{\textquotesingle{}0\textquotesingle{}}
-\NormalTok{    \}}\OperatorTok{,}
-  \DataTypeTok{onChange}\OperatorTok{:} \KeywordTok{function}\NormalTok{(checked) \{}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{1}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(checked)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{0}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{3}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{4}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-\NormalTok{  \}}
-\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ rfsosm\_desc}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{"The }\SpecialCharTok{\textbackslash{}"}\StringTok{RF Sentinel+OSM}\SpecialCharTok{\textbackslash{}"}\StringTok{ layer utilizes an additional input layer on housing density derived from Open Street Maps. Accuracy: 92\%"}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ s\_label}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Checkbox}\NormalTok{(\{}
-  \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}Sentinel{-}2\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
-    \DataTypeTok{fontWeight}\OperatorTok{:} \StringTok{\textquotesingle{}bold\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{fontSize}\OperatorTok{:} \StringTok{\textquotesingle{}18px\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{margin}\OperatorTok{:} \StringTok{\textquotesingle{}0 0 4px 0\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{padding}\OperatorTok{:} \StringTok{\textquotesingle{}0\textquotesingle{}}
-\NormalTok{    \}}\OperatorTok{,}
-  \DataTypeTok{onChange}\OperatorTok{:} \KeywordTok{function}\NormalTok{(checked) \{}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{3}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(checked)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{0}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{1}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{4}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-\NormalTok{  \}}
-\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ s\_desc}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{"Satellite images from Sentinel{-}2 are the primary input for supervised classification. Images have a resolution of 10 meters per pixel, and are split into 12 spectral bands. Despite its low resolution, multispectral imagery allows us to distinguish materials based on how they reflect light. Here, we exploit the fact that the roofing of informal settlements are primarily built using corrugated iron and plastic rather than concrete."}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ rad\_label}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Checkbox}\NormalTok{(\{}
-  \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}Reciprocal Area Density\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
-    \DataTypeTok{fontWeight}\OperatorTok{:} \StringTok{\textquotesingle{}bold\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{fontSize}\OperatorTok{:} \StringTok{\textquotesingle{}18px\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{margin}\OperatorTok{:} \StringTok{\textquotesingle{}0 0 4px 0\textquotesingle{}}\OperatorTok{,}
-    \DataTypeTok{padding}\OperatorTok{:} \StringTok{\textquotesingle{}0\textquotesingle{}}
-\NormalTok{    \}}\OperatorTok{,}
-  \DataTypeTok{onChange}\OperatorTok{:} \KeywordTok{function}\NormalTok{(checked) \{}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{4}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(checked)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{0}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{1}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{3}\NormalTok{)}\OperatorTok{.}\FunctionTok{setShown}\NormalTok{(}\KeywordTok{false}\NormalTok{)}
-\NormalTok{  \}}
-\NormalTok{\})}
-
-\KeywordTok{var}\NormalTok{ rad\_desc}\OperatorTok{=}\NormalTok{ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{"Data extracted from Open Street Maps provide information on a second important characteristic of informal settlements. Unlike planned developments, which are mainly composed of larger structures that are spaced apart, informal settlements are composed of smaller structures that are closer together. This layer uses freely available data from Open Street Maps to detect clusters of small structures"}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\})}
-
-
-\CommentTok{// home panel config }
-\KeywordTok{var}\NormalTok{ home}\OperatorTok{=} \KeywordTok{function}\NormalTok{()\{}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setCenter}\NormalTok{(}\FloatTok{39.2854}\OperatorTok{,} \OperatorTok{{-}}\FloatTok{6.8167}\OperatorTok{,} \DecValTok{14}\NormalTok{)}
-  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setOptions}\NormalTok{(}\StringTok{"Terrain"}\NormalTok{)}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{clear}\NormalTok{()}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(title)}\OperatorTok{;}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(intro1)}\OperatorTok{;}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(zoom)}\OperatorTok{;}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(stats\_label)}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(ward\_stats)}\OperatorTok{;}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(info\_label)}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(details)}
-  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(contact)}
-\NormalTok{\}}
-
-
-\CommentTok{//home button config}
+\CommentTok{//home button config. this will be used to return to the main panel after the user has clicked on the map and gotten ward{-}level statistics}
 \KeywordTok{var}\NormalTok{ home\_button }\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Button}\NormalTok{(\{}
   \DataTypeTok{style}\OperatorTok{:}\NormalTok{\{}\DataTypeTok{stretch}\OperatorTok{:} \StringTok{\textquotesingle{}horizontal\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}
   \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}Home\textquotesingle{}}\OperatorTok{,}
@@ -3788,70 +3907,26 @@ Interface}\label{step-4-build-a-user-interface}}
     
 \NormalTok{  \}}
 \NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
 
+Next, we'll create a button that will allow the user to get statistics
+on informal settlements in a given ward by clicking on the map. This
+button will be configured to display a panel with the statistics when
+clicked. First, we define a
 
-\CommentTok{// "Zoom to informal settlement" button config }
+Upon clicking the button and then clicking on the map, the user will be
+shown the estimated number of informal dwellings in the selected ward,
+as well as the total number of buildings and the percentage of the ward
+that is covered by informal settlements. This is achieved by using the
+\texttt{Map.onClick} function to get the coordinates of the user's
+click, and then using the \texttt{ee.Join} class to join the building
+footprints with the ward polygons.
 
-\KeywordTok{var}\NormalTok{ zoom }\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Button}\NormalTok{(\{}
-  \DataTypeTok{style}\OperatorTok{:}\NormalTok{\{}\DataTypeTok{stretch}\OperatorTok{:} \StringTok{\textquotesingle{}horizontal\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}
-  \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}Zoom to Informal Settlement\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{onClick}\OperatorTok{:} 
-  \KeywordTok{function}\NormalTok{() \{}
-    \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setOptions}\NormalTok{(}\StringTok{"Satellite"}\NormalTok{)}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{clear}\NormalTok{()}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(title)}\OperatorTok{;}
-    
-    \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(drone}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{bands}\OperatorTok{:}\NormalTok{ [}\StringTok{\textquotesingle{}b1\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}b2\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}b3\textquotesingle{}}\NormalTok{]}\OperatorTok{,} \DataTypeTok{min}\OperatorTok{:} \DecValTok{0}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:} \DecValTok{255}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Drone\textquotesingle{}}\NormalTok{)}
-    
-    \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setCenter}\NormalTok{(}\FloatTok{39.27145}\OperatorTok{,} \OperatorTok{{-}}\FloatTok{6.771062}\OperatorTok{,} \DecValTok{17}\NormalTok{)}
-    
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}This is a sample informal settlement identified in the Namanga area of Dar es Salaam. Use the slider below to compare drone imagery to the model prediction:\textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\}))}
-   
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(\{}
-      \DataTypeTok{value}\OperatorTok{:} \StringTok{\textquotesingle{}Drone Layer Opacity:\textquotesingle{}}\OperatorTok{,}
-      \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
-      \DataTypeTok{fontWeight}\OperatorTok{:} \StringTok{\textquotesingle{}bold\textquotesingle{}}\OperatorTok{,}
-      \DataTypeTok{fontSize}\OperatorTok{:} \StringTok{\textquotesingle{}14px\textquotesingle{}}\OperatorTok{,}
-      \DataTypeTok{padding}\OperatorTok{:} \StringTok{\textquotesingle{}0\textquotesingle{}}\NormalTok{\}\}))}
-   
-    \KeywordTok{var}\NormalTok{ slider }\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Slider}\NormalTok{(\{}\DataTypeTok{style}\OperatorTok{:}\NormalTok{\{}\DataTypeTok{stretch}\OperatorTok{:} \StringTok{\textquotesingle{}horizontal\textquotesingle{}}\NormalTok{\}\})}\OperatorTok{;}
-\NormalTok{    slider}\OperatorTok{.}\FunctionTok{setValue}\NormalTok{(}\FloatTok{0.9}\NormalTok{)}\OperatorTok{;}
-\NormalTok{    slider}\OperatorTok{.}\FunctionTok{onChange}\NormalTok{(}\KeywordTok{function}\NormalTok{(value) \{}
-      \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{layers}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\DecValTok{6}\NormalTok{)}\OperatorTok{.}\FunctionTok{setOpacity}\NormalTok{(value)}\OperatorTok{;}
-\NormalTok{    \})}\OperatorTok{;}
-    
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(slider)}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(}\StringTok{\textquotesingle{}The informal settlement on the left and the suburban neighborhood on the right are both located in the Msasani Ward of Dar es Salaam. Because most statistics are aggregated at the ward level, data on population density, income, health outcomes, and other developmental indicators are likely to be highly biased by variation within city wards. By identifying the geographic extent of informal settlements, policy interventions and crisis responses can be targeted with a high degree of precision.\textquotesingle{}}\OperatorTok{,}\NormalTok{ \{}\DataTypeTok{whiteSpace}\OperatorTok{:} \StringTok{\textquotesingle{}wrap\textquotesingle{}}\NormalTok{\}))}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(home\_button)}
+\begin{Shaded}
+\begin{Highlighting}[]
 
-\NormalTok{  \}}
-\NormalTok{\})}\OperatorTok{;}
-
-
-\CommentTok{// "How it Works" button config}
-\KeywordTok{var}\NormalTok{ details }\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Button}\NormalTok{(\{}
-  \DataTypeTok{style}\OperatorTok{:}\NormalTok{\{}\DataTypeTok{stretch}\OperatorTok{:} \StringTok{\textquotesingle{}horizontal\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}
-  \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}How it Works\textquotesingle{}}\OperatorTok{,}
-  \DataTypeTok{onClick}\OperatorTok{:} 
-  \KeywordTok{function}\NormalTok{() \{}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{clear}\NormalTok{()}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(title)}\OperatorTok{;}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(intro2)}\OperatorTok{;}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(rfs\_label)}\OperatorTok{;}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(rfs\_desc)}\OperatorTok{;}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(rfsosm\_label)}\OperatorTok{;}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(rfsosm\_desc)}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(s\_label)}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(s\_desc)}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(rad\_label)}
-      \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(rad\_desc)}
-    \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(home\_button)}
-
-\NormalTok{  \}}
-\NormalTok{\})}\OperatorTok{;}
-
-
-\CommentTok{//"Ward Statistics" button config}
+\CommentTok{//"Ward Statistics" button config. This }
 \KeywordTok{var}\NormalTok{ ward\_stats }\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Button}\NormalTok{(\{}
   \DataTypeTok{style}\OperatorTok{:}\NormalTok{\{}\DataTypeTok{stretch}\OperatorTok{:} \StringTok{\textquotesingle{}horizontal\textquotesingle{}}\NormalTok{\}}\OperatorTok{,}
   \DataTypeTok{label}\OperatorTok{:} \StringTok{\textquotesingle{}Ward Statistics\textquotesingle{}}\OperatorTok{,}
@@ -3859,6 +3934,7 @@ Interface}\label{step-4-build-a-user-interface}}
   \KeywordTok{function} \FunctionTok{ward\_stats\_panel}\NormalTok{() \{}
     
     \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setOptions}\NormalTok{(}\StringTok{"Satellite"}\NormalTok{)}
+    \CommentTok{// add the "buildings" layer to the map, which we computed earlier and containts the building footprints in informal settlements}
     \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{addLayer}\NormalTok{(buildings}\OperatorTok{,}\NormalTok{\{}\DataTypeTok{color}\OperatorTok{:}\StringTok{\textquotesingle{}red\textquotesingle{}}\OperatorTok{,} \DataTypeTok{max}\OperatorTok{:}\DecValTok{1}\NormalTok{\}}\OperatorTok{,} \StringTok{\textquotesingle{}Informal Dwellings\textquotesingle{}}\OperatorTok{,}\KeywordTok{false}\NormalTok{)}
     
     \BuiltInTok{console}\OperatorTok{.}\FunctionTok{clear}\NormalTok{()}
@@ -3880,9 +3956,14 @@ Interface}\label{step-4-build-a-user-interface}}
                 \DataTypeTok{outer}\OperatorTok{:}\KeywordTok{true}
 \NormalTok{              \})}\OperatorTok{;}
 
+          \CommentTok{// join the coordinates of the clicked point with the ward polygons to get the name of the ward}
           \KeywordTok{var}\NormalTok{ ward\_name }\OperatorTok{=}\NormalTok{ ee}\OperatorTok{.}\FunctionTok{Feature}\NormalTok{(ee}\OperatorTok{.}\FunctionTok{List}\NormalTok{(saveAllJoin}\OperatorTok{.}\FunctionTok{apply}\NormalTok{(point}\OperatorTok{,}\NormalTok{ wards}\OperatorTok{,}\NormalTok{ spatialFilter)}\OperatorTok{.}\FunctionTok{first}\NormalTok{()}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\StringTok{"Ward\_Name"}\NormalTok{))}\OperatorTok{.}\FunctionTok{getInfo}\NormalTok{()[}\DecValTok{0}\NormalTok{])}\OperatorTok{.}\FunctionTok{get}\NormalTok{(}\StringTok{\textquotesingle{}Ward\_Name\textquotesingle{}}\NormalTok{)}
-\NormalTok{          ward\_name}\OperatorTok{.}\FunctionTok{evaluate}\NormalTok{(}\KeywordTok{function}\NormalTok{(val)\{ward\_name}\OperatorTok{.}\FunctionTok{setValue}\NormalTok{(val)\})}\OperatorTok{;}
+
+          \CommentTok{//run the function to get statistics on the selected ward}
           \FunctionTok{ward\_stats}\NormalTok{(ward\_name) }
+          
+          \CommentTok{//ward\_name.evaluate(function(val)\{ward\_name.setValue(val)\});}
+
 \NormalTok{      \})}
         
       \CommentTok{// get ward level IS/normal building counts }
@@ -3914,11 +3995,8 @@ Interface}\label{step-4-build-a-user-interface}}
         
         
         \CommentTok{//grab server{-}side info      }
-        
 \NormalTok{        sum}\OperatorTok{.}\FunctionTok{evaluate}\NormalTok{(}\KeywordTok{function}\NormalTok{(val)\{sumLabel}\OperatorTok{.}\FunctionTok{setValue}\NormalTok{(val)\})}\OperatorTok{;}
-        
 \NormalTok{        allBuildings}\OperatorTok{.}\FunctionTok{evaluate}\NormalTok{(}\KeywordTok{function}\NormalTok{(val)\{allLabel}\OperatorTok{.}\FunctionTok{setValue}\NormalTok{(val)\})}\OperatorTok{;}
-        
 \NormalTok{        mean}\OperatorTok{.}\FunctionTok{evaluate}\NormalTok{(}\KeywordTok{function}\NormalTok{(val)\{meanLabel}\OperatorTok{.}\FunctionTok{setValue}\NormalTok{(val)\})}\OperatorTok{;}
 
         \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(ui}\OperatorTok{.}\FunctionTok{Label}\NormalTok{(\{}
@@ -3949,8 +4027,40 @@ Interface}\label{step-4-build-a-user-interface}}
       \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(home\_button)     }
 \NormalTok{        \}}
 \NormalTok{      \})}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
 
+There's a lot going on here, so let's break it down.
 
+First, we define a function called \texttt{ward\_stats\_panel} that will
+be called when the user clicks the ``Ward Statistics'' button. This
+function will clear the main panel, add a title and some introductory
+text giving the user instructions on what to do next, and then add a
+click event to the map. This click event will get the coordinates of the
+user's click, and then use \texttt{ee.Join} to get the name of the ward
+that the user clicked on.
+
+Next, we define a function called \texttt{ward\_stats} that will be
+called when the user clicks on the map. This function takes the name of
+the ward returned by the \texttt{ward\_stats\_panel} function to isolate
+the ward polygon, and then uses the \texttt{size} and
+\texttt{reduceRegions} functions to get the estimated number of informal
+dwellings in the ward, the total number of buildings, and the percentage
+of the ward that is covered by informal settlements. These statistics
+are then added to the main panel, the map is zoomed to the center of the
+ward, and the corresponding informal settlement building footprints are
+added to the map.
+
+This set of functions comprises the core functionalities of the user
+interface.
+
+One of the last things on the agenda is to make a legend panel that lets
+the user know what the colors on the map represent. This is done using
+the \texttt{ui.Panel} class, which allows us to create a panel with a
+title and a series of rows, each of which contains a color and a label.
+
+\begin{Shaded}
+\begin{Highlighting}[]
 \CommentTok{// set position of panel}
 \KeywordTok{var}\NormalTok{ legend }\OperatorTok{=}\NormalTok{ ui}\OperatorTok{.}\FunctionTok{Panel}\NormalTok{(\{}
   \DataTypeTok{style}\OperatorTok{:}\NormalTok{ \{}
@@ -4051,12 +4161,33 @@ Interface}\label{step-4-build-a-user-interface}}
 \NormalTok{legend}\OperatorTok{.}\FunctionTok{add}\NormalTok{(}\FunctionTok{makeRow}\NormalTok{(}\StringTok{\textquotesingle{}49cc47\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}vegetation\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}000000\textquotesingle{}}\NormalTok{))}\OperatorTok{;}
 \NormalTok{legend}\OperatorTok{.}\FunctionTok{add}\NormalTok{(}\FunctionTok{makeRow}\NormalTok{(}\StringTok{\textquotesingle{}2ff5ff\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}urban\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}0008ff\textquotesingle{}}\NormalTok{))}\OperatorTok{;}
 \NormalTok{legend}\OperatorTok{.}\FunctionTok{add}\NormalTok{(}\FunctionTok{makeRow}\NormalTok{(}\StringTok{\textquotesingle{}fff700\textquotesingle{}}\OperatorTok{,} \StringTok{\textquotesingle{}informal settlement\textquotesingle{}}\OperatorTok{,}\StringTok{\textquotesingle{}ff0000\textquotesingle{}}\NormalTok{))}\OperatorTok{;}
+\end{Highlighting}
+\end{Shaded}
 
+Finally, we can define a function called \texttt{home} that will center
+the view of the map on Dar es Salaam, set the map to a hybrid view, and
+add the requisite widgets to our main panel. This function will be
+called when the app is first loaded, and will also be called when the
+user clicks the ``Home'' button. We will finish by adding the legend and
+main panel to the map, and running the \texttt{home} function to
+initialize the app.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+
+\CommentTok{// home panel config }
+\KeywordTok{var}\NormalTok{ home}\OperatorTok{=} \KeywordTok{function}\NormalTok{()\{}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setCenter}\NormalTok{(}\FloatTok{39.2854}\OperatorTok{,} \OperatorTok{{-}}\FloatTok{6.8167}\OperatorTok{,} \DecValTok{14}\NormalTok{)}
+  \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{setOptions}\NormalTok{(}\StringTok{"Hybrid"}\NormalTok{)}
+  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{clear}\NormalTok{()}
+  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(title)}\OperatorTok{;}
+  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(intro1)}\OperatorTok{;}
+  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(stats\_label)}
+  \BuiltInTok{console}\OperatorTok{.}\FunctionTok{add}\NormalTok{(ward\_stats)}\OperatorTok{;}
+\NormalTok{\}}
 \CommentTok{// add legend, main panel with home configuration}
-
-\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{add}\NormalTok{(}\BuiltInTok{console}\NormalTok{)}
 \BuiltInTok{Map}\OperatorTok{.}\FunctionTok{add}\NormalTok{(legend)}\OperatorTok{;}
-
+\BuiltInTok{Map}\OperatorTok{.}\FunctionTok{add}\NormalTok{(}\BuiltInTok{console}\NormalTok{)}
 \FunctionTok{home}\NormalTok{()}
 \end{Highlighting}
 \end{Shaded}
@@ -5572,7 +5703,7 @@ blockade was lifted in September 2022.
 \hypertarget{programming-basics}{%
 \section{Programming Basics}\label{programming-basics}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author}{%
 \subsection*{Author}\label{author}}
@@ -5970,7 +6101,7 @@ Congratulations! You have learned enough JavaScript to be able to use
 the Earth Engine API. In the next section, you will see how to access
 and execute Earth Engine API functions using JavaScript.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F10a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -6094,7 +6225,7 @@ yearList~indeed contains the list of years with the correct interval.
 You just accomplished a moderately complex programming task with the
 help of Earth Engine API.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F10b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -6116,7 +6247,7 @@ scripts for remote sensing analysis.
 \hypertarget{exploring-images}{%
 \section{Exploring Images}\label{exploring-images}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-1}{%
 \subsection*{Author}\label{author-1}}
@@ -6400,7 +6531,7 @@ the order of the layers in the list to the sequence of operations in
 your script.~What layer did your script add first and where does this
 appear in the layering order on the map?
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F11a.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -6580,7 +6711,7 @@ composites}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F11b.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -6793,7 +6924,7 @@ value of each band. This will empower you to employ false-color
 composites as a flexible and powerful method to explore and interpret
 geographic patterns and changes on Earth's surface.~
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F11c.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -6827,7 +6958,7 @@ about the location, date collected, and other properties of each image,
 allowing you to sift through the ImageCollection~for the exact image
 characteristics needed for your analysis.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{authors}{%
 \subsection*{Authors}\label{authors}}
@@ -7003,7 +7134,7 @@ and information to the screen for too many elements}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F12a.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -7172,7 +7303,7 @@ level of 7 (zoom levels go from 0 to 24).
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F12b.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -7294,7 +7425,7 @@ previous section (Fig. F1.2.6). Zoom in and out and pan the screen as
 needed. What do you notice? Save your script but don't start a new
 one---we will keep adding code to this script.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F12c.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -7344,7 +7475,7 @@ Central Africa? Northern Australia?
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F12d.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -7501,7 +7632,7 @@ is shown in red)?
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F12f.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -7541,7 +7672,7 @@ in order to make these features more visible. Save your script.
 
 Fig. F1.2.18.~NASADEM elevation
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F12g.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -7586,7 +7717,7 @@ Earth Engine. Remote Sens 13:1--23. https://doi.org/10.3390/rs13010010
 \section{The Remote~Sensing
 Vocabulary}\label{the-remote-sensing-vocabulary}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{authors-1}{%
 \subsection*{Authors}\label{authors-1}}
@@ -7912,7 +8043,7 @@ with large-sized pixels are also called ``coarse resolution,'' those
 with medium-sized pixels are also called ``moderate resolution,'' and
 those with small-sized pixels are also called ``fine resolution.''
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F13a.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -8078,7 +8209,7 @@ just produced (Fig. F1.3.15). Both cover a period of six months, yet
 there are many more points through time for the Sentinel-2 satellite,
 reflecting the greater temporal resolution.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F13b.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -8269,7 +8400,7 @@ F1.3.19.~
 Compare this hyperspectral instrument chart with the multispectral chart
 we plotted above for MODIS.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F13c.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -8322,7 +8453,7 @@ false-color image with the QA60 band to see these values. More
 information about how to interpret these complex values is given in
 Chap. F4.3,~which explains the treatment of clouds.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F13d.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -8372,7 +8503,7 @@ properties using the get~function, and printed to the Console.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F13e.~The book's repository contains a script that shows
 what your code should look like at this point.
@@ -8416,7 +8547,7 @@ interpreting the results.
 \section{Image Manipulation: Bands, Arithmetic, Thresholds, and
 Masks}\label{image-manipulation-bands-arithmetic-thresholds-and-masks}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-2}{%
 \subsubsection*{Author}\label{author-2}}
@@ -8763,7 +8894,7 @@ higher water content.
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F20a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -9094,7 +9225,7 @@ have more layers in your Inspector.}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F20b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -9177,7 +9308,7 @@ Amazon. Remote Sens 5:5493--5513. https://doi.org/10.3390/rs5115493
 \section{Interpreting an Image:
 Classification}\label{interpreting-an-image-classification}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-3}{%
 \subsubsection*{Author}\label{author-3}}
@@ -9485,7 +9616,7 @@ developed, water, and herbaceous (Fig. F2.1.8).
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F21a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -9752,7 +9883,7 @@ on accuracy metrics.
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F21b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -9893,7 +10024,7 @@ classification results (see Code Checkpoint below for an example).
 Another key point of classification is the accuracy assessment of the
 results. This will be covered in Chap. F2.2.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F21c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -9948,7 +10079,7 @@ tools and techniques. In: Data Mining. pp 4
 \section{Accuracy Assessment: Quantifying Classification
 Quality}\label{accuracy-assessment-quantifying-classification-quality}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-4}{%
 \subsubsection*{Author}\label{author-4}}
@@ -10335,7 +10466,7 @@ compared to the others? Can you think of any reasons why? (Hint: Check
 where the errors in these classes are in the confusion matrix---i.e.,
 being committed and omitted.)
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F22a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -10395,7 +10526,7 @@ trees}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F22b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -10414,7 +10545,7 @@ following Code Checkpoint replicates Sect. 1 but with a spatial join
 that excludes training points that are less than 1000 meters distant
 from testing points.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F22c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -10486,7 +10617,7 @@ to understand the status of places across decades.
 \hypertarget{filter-map-reduce}{%
 \section{Filter, Map, Reduce}\label{filter-map-reduce}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-5}{%
 \subsubsection*{Author}\label{author-5}}
@@ -10822,7 +10953,7 @@ you narrowed geographically first, it is good practice in Earth Engine
 to order the filters with the filterBounds first, followed by metadata
 filters in order of decreasing specificity.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F40a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -10959,7 +11090,7 @@ opening and closing the list of items. When you open that tag, you will
 see a chart of the EVI values at that pixel, created by mapping the
 makeLandsat5EVI function over the filtered ImageCollection.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F40b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11039,7 +11170,7 @@ subsequent chapters in Part F4, you will see other kinds of
 reducers---for example, ones that summarize the characteristics in the
 neighborhood surrounding each pixel.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F40c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11070,7 +11201,7 @@ ability to do sophisticated projects in Earth Engine.
 \section{Exploring Image
 Collections}\label{exploring-image-collections}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-6}{%
 \subsubsection*{Author}\label{author-6}}
@@ -11213,7 +11344,7 @@ tab, assuming the same pixel is clicked.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F41a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11303,7 +11434,7 @@ want to use a different reducer, such as a median operation, that would
 give different, useful answers for each band. A few of these reducers
 are described below.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F41b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11362,7 +11493,7 @@ curious about which reducers can be used to summarize band values across
 a collection of images, use the Docs tab in the Code Editor to list all
 reducers and look for those beginning with ee.Reducer.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F41c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11464,7 +11595,7 @@ in image collections in a frequency domain. Exploring these values in
 different forms should be the first step of any study before developing
 data analysis algorithms.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F41d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11498,7 +11629,7 @@ Biol 14:e1002415. https://doi.org/10.1371/journal.pbio.1002415
 \section{Aggregating Images for Time
 Series}\label{aggregating-images-for-time-series}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-7}{%
 \subsubsection*{Author}\label{author-7}}
@@ -11634,7 +11765,7 @@ Let's aggregate this collection so that we have 12 images---one image
 per month, with pixel values that represent the total precipitation for
 that month.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F42a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11714,7 +11845,7 @@ We will use the millis function in the next section when we need to set
 the system:time\_start and system:time\_end properties of the aggregated
 images.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F42b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11808,7 +11939,7 @@ ImageCollection (Fig. F4.2.2).
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F42c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11897,7 +12028,7 @@ monsoon season lasting from June to September.
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F42d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -11938,7 +12069,7 @@ Remote Sensing Symposium (IGARSS). pp 3414--3416
 \section{Clouds and Image
 Compositing}\label{clouds-and-image-compositing}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-8}{%
 \subsubsection*{Author}\label{author-8}}
@@ -12335,7 +12466,7 @@ to better see them). Again, if the time period is not a constraint for
 the creation of your composite, you can incorporate more images from a
 third year, and so on.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F43a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -12529,7 +12660,7 @@ composite (right) for 2019. Inset centered at latitude 3.6023, longitude
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F43b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -12558,7 +12689,7 @@ compositing approach can be found in Griffiths et al.~(2013), and
 detailed information on tuning parameters can be found in White et
 al.~(2014).
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F43c. The book's repository contains information about
 accessing the GEE-BAP interface and its related functions.
@@ -12717,7 +12848,7 @@ into a new script.
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F43d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -12855,7 +12986,7 @@ https://doi.org/10.1016/j.rse.2011.10.028
 \hypertarget{change-detection-1}{%
 \section{Change Detection}\label{change-detection-1}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-9}{%
 \subsubsection*{Author}\label{author-9}}
@@ -13184,7 +13315,7 @@ the built-in rename function.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F44a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -13344,7 +13475,7 @@ algorithms that go beyond differencing and thresholding between two
 images, instead allowing you to analyze changes indicated across several
 images as a time series.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F44b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -13420,7 +13551,7 @@ https://doi.org/10.1016/j.rse.2019.111558
 \section{Interpreting Annual Time Series with
 LandTrendr}\label{interpreting-annual-time-series-with-landtrendr}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-10}{%
 \subsubsection*{Author}\label{author-10}}
@@ -13494,7 +13625,7 @@ in some of the chapters that follow this one.
 For this lab, we will use a graphical user interface (GUI) to teach the
 concepts of LandTrendr.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F45a. The book's repository contains information about
 accessing the LandTrendr interface.
@@ -13964,7 +14095,7 @@ https://doi.org/10.3390/rs10050691
 \section{Fitting Functions to Time
 Series}\label{fitting-functions-to-time-series}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-11}{%
 \subsubsection*{Author}\label{author-11}}
@@ -14276,7 +14407,7 @@ analyses can be done to the time series by harnessing Earth Engine tools
 for fitting curves through this data. We will see a couple of examples
 in the following sections.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F46a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -14394,7 +14525,7 @@ trendlines parameter (Fig. F4.6.5).
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F46b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -14573,7 +14704,7 @@ values of a pixel, you will not get values of phase, amplitude, and
 NDVI, but the transformed values into values of blue, green, and red
 colors.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F46c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -14641,7 +14772,7 @@ in the image. Using different elements of the fit, these two views, like
 other combinations of the data you might imagine, can reveal the rich
 variability of the landscape around Modesto.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F46d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -14659,7 +14790,7 @@ Modeling multiple waves within a given year can be done by adding more
 harmonic terms to Eq. F4.6.2. The code at the following checkpoint
 allows the fitting of any number of cycles through a given point.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F46e. The book's repository contains a script to use to
 begin this section. You will need to start with that script and edit the
@@ -14735,7 +14866,7 @@ https://doi.org/10.1016/j.rse.2019.02.003
 \section{Interpreting Time Series with
 CCDC}\label{interpreting-time-series-with-ccdc}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-12}{%
 \subsubsection*{Author}\label{author-12}}
@@ -14847,7 +14978,7 @@ created an interface-based tool (Arévalo et al.~2020) that facilitates
 the exploration of time series of Landsat observations and the CCDC
 results.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F47a. The book's repository contains information about
 accessing the CCDC interface.
@@ -15057,7 +15188,7 @@ exercise would take approximately 30 minutes on average to export, but
 larger tiles may take several hours to complete, depending on the number
 of images in the collection and the parameters used.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F47b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -15280,7 +15411,7 @@ the selected study period}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F47c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -15430,7 +15561,7 @@ by the CCDC algorithm for the origin (e.g., time 0), and not for the
 year we requested. In order to retrieve the adjusted intercept, as well
 as other coefficients, we will use a different approach.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F47d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -15618,7 +15749,7 @@ for the requested date}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F47e. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -15679,7 +15810,7 @@ of land cover using all available Landsat data. Remote Sens Environ
 \section{Data Fusion: Merging Classification
 Streams}\label{data-fusion-merging-classification-streams}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-13}{%
 \subsubsection*{Author}\label{author-13}}
@@ -15879,7 +16010,7 @@ In the thumbnail sequence, the color palette shows Forest (class 1) as
 green, Water (class 2) as blue, and Active Agriculture (class 3) as
 yellow. Areas with no data in a particular Event are shown in black.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F48a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -16251,7 +16382,7 @@ second stage, the meaning of those changes and any changes to LULC
 classes are identified. We will explore the workings of BULC-D using its
 GUI.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F48c. The book's repository contains information about
 accessing that interface.
@@ -16667,7 +16798,7 @@ Journey. Anchor
 \section{Exploring Lagged Effects in Time
 Series}\label{exploring-lagged-effects-in-time-series}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-14}{%
 \subsubsection*{Author}\label{author-14}}
@@ -17062,7 +17193,7 @@ course, that images list will fill up with all the images that are
 within lag of t. Those other images are also useful---for example, in
 fitting autoregressive models as described later.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F49a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17180,7 +17311,7 @@ As long as there is sufficient temporal overlap between the time series,
 these techniques could be extended to longer lags and longer time
 series.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F49b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17309,7 +17440,7 @@ At this stage, note that the missing data has become a real problem. Any
 data point for which at least one of the previous points is masked or
 missing is also masked.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F49c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17321,7 +17452,7 @@ equation F4.9.1 (the modeled value) for the missing or masked data.
 Unfortunately, the code to make that happen is not straightforward. You
 can check a solution in the following Code Checkpoint:
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F49d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17372,7 +17503,7 @@ vector data, and how to combine vector and raster data for analyses.
 \hypertarget{exploring-vectors}{%
 \section{Exploring Vectors}\label{exploring-vectors}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-15}{%
 \subsubsection*{Author}\label{author-15}}
@@ -17530,7 +17661,7 @@ the Imports section of the code at the top of your script}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F50a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17678,7 +17809,7 @@ Note that if you have any trouble with loading the FeatureCollection
 using the technique above, you can follow directions in the Checkpoint
 script below to use an existing asset loaded for this exercise.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F50b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17802,7 +17933,7 @@ Both of the above sections of code provide meaningful information about
 each feature, but they do not tell us which block is the most green. The
 next section will address that question.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F50c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17950,7 +18081,7 @@ After you run the task, the file will be saved to your Google Drive. You
 have now brought a feature into Earth Engine and also exported data from
 Earth Engine.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F50d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -17998,7 +18129,7 @@ USF.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F50e. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -18022,7 +18153,7 @@ using vector features in Earth Engine.
 \hypertarget{rastervector-conversions}{%
 \section{Raster/Vector Conversions}\label{rastervector-conversions}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-16}{%
 \subsubsection*{Author}\label{author-16}}
@@ -18372,7 +18503,7 @@ samples for a validation effort.
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F51a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -18590,7 +18721,7 @@ of interest, such as only the largest deforestation events:
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F51b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -18678,7 +18809,7 @@ change.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F51c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -18774,7 +18905,7 @@ This output can be useful when performing large-scale raster operations,
 such as efficiently calculating deforestation rates for multiple
 protected areas.
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F51d. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -18932,7 +19063,7 @@ protected area but only outside of the boundary.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F51e. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -18951,7 +19082,7 @@ applications and ideas for using these techniques.
 \hypertarget{zonal-statistics}{%
 \section{Zonal Statistics}\label{zonal-statistics}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-17}{%
 \subsubsection*{Author}\label{author-17}}
@@ -19223,7 +19354,7 @@ vector dataset for future filtering and joining.
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F52a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -19648,7 +19779,7 @@ you don't specify your own existing folder in Drive, the folder
 \end{Highlighting}
 \end{Shaded}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F52b. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -19830,7 +19961,7 @@ point of three pixels.}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F52c. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -19898,7 +20029,7 @@ https://doi.org/10.1016/j.rse.2006.12.006
 \hypertarget{advanced-vector-operations}{%
 \section{Advanced Vector Operations}\label{advanced-vector-operations}}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-tip-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-tip-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-tip-color}{\faLightbulb}\hspace{0.5em}{Chapter Information}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-tip-color-frame, colbacktitle=quarto-callout-tip-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 \hypertarget{author-18}{%
 \subsubsection*{Author}\label{author-18}}
@@ -20225,7 +20356,7 @@ priority}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F53a. The book's repository contains a script that shows
 what your code should look like at this point.
@@ -20576,7 +20707,7 @@ Francisco neighborhoods}
 
 \end{figure}
 
-\begin{tcolorbox}[enhanced jigsaw, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, leftrule=.75mm, arc=.35mm, coltitle=black, breakable, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, left=2mm, colframe=quarto-callout-note-color-frame, bottomtitle=1mm, colback=white, bottomrule=.15mm, titlerule=0mm, toprule=.15mm, colbacktitle=quarto-callout-note-color!10!white, opacityback=0]
+\begin{tcolorbox}[enhanced jigsaw, coltitle=black, leftrule=.75mm, opacitybacktitle=0.6, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, left=2mm, titlerule=0mm, arc=.35mm, colframe=quarto-callout-note-color-frame, colbacktitle=quarto-callout-note-color!10!white, breakable, bottomtitle=1mm, rightrule=.15mm, toptitle=1mm, bottomrule=.15mm, toprule=.15mm]
 
 Code Checkpoint F53b. The book's repository contains a script that shows
 what your code should look like at this point.
