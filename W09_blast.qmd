@@ -290,11 +290,25 @@ In Area C, there are a bunch of high rise buildings clustered together. The buil
 
 ## Conclusion
 
-In this practical, we created a custom change detection algorithm that conducts a pixelwise t-test to detect change resulting from the 2020 explosion in the port of Beirut. By defining our own functions to do most of this analysis, we can apply the same workflow quite easily to a different context by simply moving the AOI and inputting the date of the shock. A placebo test showed that it's not just detecting general change in the area, but specifically change resulting from the explosion: when we keep everythgin the same but change the year of the shock, we see very little significant change being detected. Finally, by joining the predicted damage map to building footprints, we come up with an estimate of 9,256 damaged buildings, which is pretty close to the U.N.'s estimate of 10,000. That concludes the portion of this case study that deals with Earth Engine, but if you're interested in learning more about why we're coming up a bit short on the damage estimate (and some different ways of looking at the problem), read on.
+In this practical, we created a custom change detection algorithm that conducts a pixelwise t-test to detect change resulting from the 2020 explosion in the port of Beirut. By defining our own functions to do most of this analysis, we can apply the same workflow quite easily to a different context by simply moving the AOI and inputting the date of the shock. A placebo test showed that it's not just detecting general change in the area, but specifically change resulting from the explosion: when we keep everythgin the same but change the year of the shock, we see very little significant change being detected. Finally, by joining the predicted damage map to building footprints, we come up with an estimate of 9,256 damaged buildings, which is pretty close to the U.N.'s estimate of 10,000. 
 
-## Extension: Satellite Imagery and its Limits
+# Exercise
 
-Though satellite imagery analysis is undoubtedly one of the best tools we have at our disposal to analyze this sort of phenomenon, it appears to systematically underestimate the extent of damage in Beirut. I outline an alternative approach using Open Street Map data to create a 3D model of Beirut and the explosion to analyze directional blast damage. Again, we're now leaving Earth Engine and moving to Blender, so if you're not interested in that feel free to skip ahead to the next case study.
+We've focused so far on the detection of damage from the beirut explosion, but one of the main reasons for using a pixel-based statistical test and SAR imagery is that it's a very generalizable approach. The same algorithm could be used to detect change from any sort of event, be it a natural disaster or  conflict.
+
+On 6 February 2023, a devastating earthquake hit Souhthern Turkey. The earthquake had a magnitude of 7.8 and caused widespread damage. The epicentre was near the city of Kahramanmaras (36.92647, 37.574), and  was felt as far away as Cyprus. It is estimated to have left 1.5 million people homeless. I worked with the [Economist](https://archive.is/XC0UO) to deploy the Pixelwise T-Test algorithm to detect damaged buildings in the aftermath. Using the code from this practical, try to detect the damage from the earthquake in Southern Turkey, and use last week's code to build a user interface that allows users to get the count of damaged buildings within a given area.
+
+Once you've tried this yourself, you can check your attempt against [this link](https://code.earthengine.google.com/e42d562a41ef75bee179d8dfa34a18c7) which contains my implementation:
+
+:::{.column-page}
+
+<iframe src='https://ollielballinger.users.earthengine.app/view/turkey-earthquake' width='100%' height='700px'></iframe>
+
+:::
+
+# Extension: Satellite Imagery and its Limits
+
+Though satellite imagery analysis is undoubtedly one of the best tools we have at our disposal to analyze this sort of phenomenon, it appears to systematically underestimate the extent of damage in Beirut. I outline an alternative approach using Open Street Map data to create a 3D model of Beirut and the explosion to analyze directional blast damage. Again, we're now leaving Earth Engine and moving to Blender, so if you're not interested in that feel free to skip.
 
 Below is one of the most viewed videos of the explosion:
 
@@ -310,9 +324,7 @@ Why are satellite images underestimating damage in Beirut? Satellite images are 
 
 ![](./images/beirut/IMG_3.png)
 
-Areas close to the explosion suffered so much damage that it could be seen from above, but even if an apartment building had all of its windows blown out, this would not necessarily be visible in a top-down view. Even for radar, which does technically collect data in three dimensions, the angle problem remains; a high resolution radar might be able to tell you how tall an apartment complex is, but it won't give you a clear image of all sides. Case in point: the NASA damage map was created using Sentinel-1 SAR data. In a nutshell, damage assessment in this case is a three-dimensional problem, and remote sensing is a two-dimensional solution.
-
-  
+Areas close to the explosion suffered so much damage that it could be seen from above, but even if an apartment building had all of its windows blown out, this would not necessarily be visible in a top-down view. Even for radar, which is side-looking, the angle problem remains; a high resolution radar might be able to tell you how tall an apartment complex is, but it won't give you a clear image of all sides. Case in point: the NASA damage map was created using Sentinel-1 SAR data. In a nutshell, damage assessment in this case is a three-dimensional problem, and remote sensing is a two-dimensional solution.
 
 ### Creating a 3D model of Beirut
 
@@ -339,7 +351,6 @@ The video was taken from the rooftop of a japanese restaurant called Clap Beirut
 Though somewhat grainy, the basemap on the OSM rendering shows the same parking lot in the foreground, the second pier, and the same two buildings highlighted in yellow. Having created a 3D model of Beirut using OSM data, we can now simulate how the explosion would interact with the cityscape.
 
   
-
 ### Using a Viewshed Analysis to Assess Blast Exposure
 
 As the pressure wave moved through the Beirut, some buildings bore the full force of the explosion, while others were partially shielded by taller structures. A viewshed analysis can be conducted to identify surfaces that were directly exposed to the explosion by creating a lighting object at ground zero; areas that are lit up experienced unobstructed exposure to the blast:
