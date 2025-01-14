@@ -2,12 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.326">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 1&nbsp; Installation</title>
+<title>1&nbsp; Spatial databases – CASA0025: 
+ Building Spatial Applications with Big Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -72,19 +73,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-9da5c79871f7304987118a62e6bdfd0e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-f69388bb9b5b3b37de49aa2d4ba5dbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -93,8 +100,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-RK9ZLZQ6GL"></script>
@@ -112,17 +121,16 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 <body class="nav-sidebar floating">
 
-
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W01_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W01_intro.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Installation</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W01_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W01_intro.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -132,7 +140,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./logo_white.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
@@ -142,36 +150,36 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/oballinger/CASA0025/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
+              <i class="bi bi-file-pdf pe-1"></i>
             Download PDF
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
+              <i class="bi bi-journal pe-1"></i>
             Download ePub
             </a>
           </li>
       </ul>
     </div>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-bi-twitter pe-1"></i>
+              <i class="bi bi-twitter pe-1"></i>
             Twitter
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
-              <i class="bi bi-bi-facebook pe-1"></i>
+              <i class="bi bi-facebook pe-1"></i>
             Facebook
             </a>
           </li>
@@ -196,9 +204,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">A. SQL</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -206,7 +214,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W01_intro.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -237,9 +245,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">B. Google Earth Engine</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -278,9 +286,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">GEE Textbook</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -314,40 +322,45 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#postgresql-for-microsoft-windows" id="toc-postgresql-for-microsoft-windows" class="nav-link active" data-scroll-target="#postgresql-for-microsoft-windows"><span class="header-section-number">1.1</span> PostgreSQL for Microsoft Windows</a></li>
-  <li><a href="#postgresql-for-apple-macos" id="toc-postgresql-for-apple-macos" class="nav-link" data-scroll-target="#postgresql-for-apple-macos"><span class="header-section-number">1.2</span> PostgreSQL for Apple MacOS</a></li>
-  <li><a href="#pgadmin-for-windows-and-macos" id="toc-pgadmin-for-windows-and-macos" class="nav-link" data-scroll-target="#pgadmin-for-windows-and-macos"><span class="header-section-number">1.3</span> PgAdmin for Windows and MacOS</a></li>
-  <li><a href="#creating-a-spatial-database" id="toc-creating-a-spatial-database" class="nav-link" data-scroll-target="#creating-a-spatial-database"><span class="header-section-number">2</span> Creating a Spatial Database</a>
+  <li><a href="#duckdb" id="toc-duckdb" class="nav-link active" data-scroll-target="#duckdb"><span class="header-section-number">1.1</span> DuckDB</a></li>
+  <li><a href="#introduction-to-sql" id="toc-introduction-to-sql" class="nav-link" data-scroll-target="#introduction-to-sql"><span class="header-section-number">2</span> Introduction to SQL</a></li>
+  <li><a href="#optional---downloading-postgresql-and-postgis-locally-for-windows-and-macos" id="toc-optional---downloading-postgresql-and-postgis-locally-for-windows-and-macos" class="nav-link" data-scroll-target="#optional---downloading-postgresql-and-postgis-locally-for-windows-and-macos"><span class="header-section-number">3</span> OPTIONAL - Downloading PostgreSQL and PostGIS locally for Windows and MacOS</a>
   <ul class="collapse">
-  <li><a href="#pgadmin" id="toc-pgadmin" class="nav-link" data-scroll-target="#pgadmin"><span class="header-section-number">2.1</span> PgAdmin</a></li>
-  <li><a href="#creating-a-database" id="toc-creating-a-database" class="nav-link" data-scroll-target="#creating-a-database"><span class="header-section-number">2.2</span> Creating a Database</a></li>
-  <li><a href="#function-list" id="toc-function-list" class="nav-link" data-scroll-target="#function-list"><span class="header-section-number">2.3</span> Function List</a></li>
+  <li><a href="#postgresql-for-microsoft-windows" id="toc-postgresql-for-microsoft-windows" class="nav-link" data-scroll-target="#postgresql-for-microsoft-windows"><span class="header-section-number">3.1</span> PostgreSQL for Microsoft Windows</a></li>
+  <li><a href="#postgresql-for-apple-macos" id="toc-postgresql-for-apple-macos" class="nav-link" data-scroll-target="#postgresql-for-apple-macos"><span class="header-section-number">3.2</span> PostgreSQL for Apple MacOS</a></li>
+  <li><a href="#pgadmin-for-windows-and-macos" id="toc-pgadmin-for-windows-and-macos" class="nav-link" data-scroll-target="#pgadmin-for-windows-and-macos"><span class="header-section-number">3.3</span> PgAdmin for Windows and MacOS</a></li>
   </ul></li>
-  <li><a href="#loading-spatial-data" id="toc-loading-spatial-data" class="nav-link" data-scroll-target="#loading-spatial-data"><span class="header-section-number">3</span> Loading spatial data</a>
+  <li><a href="#creating-a-spatial-database" id="toc-creating-a-spatial-database" class="nav-link" data-scroll-target="#creating-a-spatial-database"><span class="header-section-number">4</span> Creating a Spatial Database</a>
   <ul class="collapse">
-  <li><a href="#loading-the-backup-file" id="toc-loading-the-backup-file" class="nav-link" data-scroll-target="#loading-the-backup-file"><span class="header-section-number">3.1</span> Loading the Backup File</a></li>
-  <li><a href="#shapefiles-whats-that" id="toc-shapefiles-whats-that" class="nav-link" data-scroll-target="#shapefiles-whats-that"><span class="header-section-number">3.2</span> Shapefiles? What's that?</a></li>
-  <li><a href="#loading-with-shp2pgsql" id="toc-loading-with-shp2pgsql" class="nav-link" data-scroll-target="#loading-with-shp2pgsql"><span class="header-section-number">3.3</span> Loading with shp2pgsql</a></li>
-  <li><a href="#srid-26918-whats-with-that" id="toc-srid-26918-whats-with-that" class="nav-link" data-scroll-target="#srid-26918-whats-with-that"><span class="header-section-number">3.4</span> SRID 26918? What's with that?</a></li>
-  <li><a href="#things-to-try-view-data-using-qgis" id="toc-things-to-try-view-data-using-qgis" class="nav-link" data-scroll-target="#things-to-try-view-data-using-qgis"><span class="header-section-number">3.5</span> Things to Try: View data using QGIS</a></li>
-  <li><a href="#loading-data-using-qgis-dbmanager" id="toc-loading-data-using-qgis-dbmanager" class="nav-link" data-scroll-target="#loading-data-using-qgis-dbmanager"><span class="header-section-number">3.6</span> Loading data using QGIS DbManager</a></li>
+  <li><a href="#pgadmin" id="toc-pgadmin" class="nav-link" data-scroll-target="#pgadmin"><span class="header-section-number">4.1</span> PgAdmin</a></li>
+  <li><a href="#creating-a-database" id="toc-creating-a-database" class="nav-link" data-scroll-target="#creating-a-database"><span class="header-section-number">4.2</span> Creating a Database</a></li>
+  <li><a href="#function-list" id="toc-function-list" class="nav-link" data-scroll-target="#function-list"><span class="header-section-number">4.3</span> Function List</a></li>
+  </ul></li>
+  <li><a href="#loading-spatial-data" id="toc-loading-spatial-data" class="nav-link" data-scroll-target="#loading-spatial-data"><span class="header-section-number">5</span> Loading spatial data</a>
+  <ul class="collapse">
+  <li><a href="#loading-the-backup-file" id="toc-loading-the-backup-file" class="nav-link" data-scroll-target="#loading-the-backup-file"><span class="header-section-number">5.1</span> Loading the Backup File</a></li>
+  <li><a href="#shapefiles-whats-that" id="toc-shapefiles-whats-that" class="nav-link" data-scroll-target="#shapefiles-whats-that"><span class="header-section-number">5.2</span> Shapefiles? What's that?</a></li>
+  <li><a href="#loading-with-shp2pgsql" id="toc-loading-with-shp2pgsql" class="nav-link" data-scroll-target="#loading-with-shp2pgsql"><span class="header-section-number">5.3</span> Loading with shp2pgsql</a></li>
+  <li><a href="#srid-26918-whats-with-that" id="toc-srid-26918-whats-with-that" class="nav-link" data-scroll-target="#srid-26918-whats-with-that"><span class="header-section-number">5.4</span> SRID 26918? What's with that?</a></li>
+  <li><a href="#things-to-try-view-data-using-qgis" id="toc-things-to-try-view-data-using-qgis" class="nav-link" data-scroll-target="#things-to-try-view-data-using-qgis"><span class="header-section-number">5.5</span> Things to Try: View data using QGIS</a></li>
+  <li><a href="#loading-data-using-qgis-dbmanager" id="toc-loading-data-using-qgis-dbmanager" class="nav-link" data-scroll-target="#loading-data-using-qgis-dbmanager"><span class="header-section-number">5.6</span> Loading data using QGIS DbManager</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W01_intro.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/W01_intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W01_intro.html">A. SQL</a></li><li class="breadcrumb-item"><a href="./W01_intro.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Installation</span></h1>
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></h1>
 </div>
 
 
@@ -360,8 +373,42 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
 
+
+<p>A database management system (DBMS) allows users to store, insert, delete, and update information in a database. Spatial databases go a step further because they record data with geographic coordinates.</p>
+<p>From Esri Geodatabase to PostGIS, spatial databases have quickly become the primary method of managing spatial data.</p>
+<p>To learn more about spatial databases, check out the resources below:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Spatial_database">Wikipedia: Spatial database</a></li>
+<li><a href="https://engage.safe.com/blog/2021/11/7-spatial-databases-enterprise">7 Spatial Databases for Your Enterprise</a></li>
+<li><a href="https://gisgeography.com/spatial-databases/">GISGeography: Spatial Databases – Build Your Spatial Data Empire</a></li>
+<li><a href="https://pro.arcgis.com/en/pro-app/latest/help/data/geodatabases/overview/what-is-a-geodatabase-.htm">Esri: What is a geodatabase?</a></li>
+<li><a href="https://postgis.net/workshops/postgis-intro">Introduction to PostGIS</a></li>
+<li><a href="https://duckdb.org/2023/04/28/spatial.html">PostGEESE? Introducing The DuckDB Spatial Extension</a></li>
+</ul>
+<section id="duckdb" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="duckdb"><span class="header-section-number">1.1</span> DuckDB</h2>
+<p><a href="https://duckdb.org">DuckDB</a> is an in-process SQL OLAP database management system. It is designed to be used as an embedded database in applications, but it can also be used as a standalone SQL database.</p>
+<ul>
+<li><em>In-process SQL</em> means that DuckDB’s features run in your application, not an external process to which your application connects. In other words: there is no client sending instructions nor a server to read and process them. SQLite works the same way, while PostgreSQL, MySQL…, do not.</li>
+<li><em>OLAP</em> stands for OnLine Analytical Processing, and Microsoft defines it as a technology that organizes large business databases and supports complex analysis. It can be used to perform complex analytical queries without negatively affecting transactional systems.</li>
+</ul>
+<p>DuckDB is a great option if you’re looking for a serverless data analytics database management system.</p>
+<p><img src="https://i.imgur.com/BEDGstx.png" class="img-fluid"></p>
+<p><img src="https://i.imgur.com/mFpqp5I.png" class="img-fluid"></p>
+</section>
+<section id="introduction-to-sql" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Introduction to SQL</h1>
+<p>This week, we will be familiarizing ourselves with DuckDB, learning how to use SQL within a Jupyter notebook, and loading in spatial data. Please work through the following notebook to get started:</p>
+<ol type="1">
+<li><a href="https://colab.research.google.com/github/oballinger/CASA0025/blob/main/notebooks/W02_data_import.ipynb">Loading Data</a></li>
+</ol>
+</section>
+<section id="optional---downloading-postgresql-and-postgis-locally-for-windows-and-macos" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> OPTIONAL - Downloading PostgreSQL and PostGIS locally for Windows and MacOS</h1>
+<p>This module will primarily use DuckDB to explore spatial data. However, if you would like to learn more about PostgreSQL and PostGIS, you can follow the instructions below to install them on your local machine.</p>
 <p>This workshop uses a <a href="https://s3.amazonaws.com/s3.cleverelephant.ca/postgis-workshop-2020.zip">data bundle</a>. Download it and extract to a convenient location.</p>
 <p>To explore the PostgreSQL/PostGIS database, and learn about writing spatial queries in SQL, we will need some software, either installed locally or available remotely on the cloud.</p>
 <ul>
@@ -369,8 +416,8 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <li>There are instructions below on how to install <a href="https://www.pgadmin.org/">PgAdmin</a>. PgAdmin is a graphical database explorer and SQL editor which provides a "user facing" interface to the database engine that does all the world.</li>
 </ul>
 <p>For always up-to-date directions on installing PostgreSQL, go to the <a href="https://www.postgresql.org/download/">PostgreSQL download page</a> and select the operating system you are using.</p>
-<section id="postgresql-for-microsoft-windows" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="postgresql-for-microsoft-windows"><span class="header-section-number">1.1</span> PostgreSQL for Microsoft Windows</h2>
+<section id="postgresql-for-microsoft-windows" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="postgresql-for-microsoft-windows"><span class="header-section-number">3.1</span> PostgreSQL for Microsoft Windows</h2>
 <p>For a Windows install:</p>
 <ol type="1">
 <li><p>Go to the <a href="https://www.enterprisedb.com/downloads/postgres-postgresql-downloads">Windows PostgreSQL download page</a>.</p></li>
@@ -378,17 +425,27 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <li><p>Run the installer and accept the defaults.</p></li>
 <li><p>Find and run the "StackBuilder" program that was installed with the database.</p></li>
 <li><p>Select the "Spatial Extensions" section and choose latest "PostGIS ..Bundle" option.</p>
-<img src="./screenshots/install_windows_01.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/install_windows_01.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>Accept the defaults and install.</p></li>
 </ol>
 </section>
-<section id="postgresql-for-apple-macos" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="postgresql-for-apple-macos"><span class="header-section-number">1.2</span> PostgreSQL for Apple MacOS</h2>
+<section id="postgresql-for-apple-macos" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="postgresql-for-apple-macos"><span class="header-section-number">3.2</span> PostgreSQL for Apple MacOS</h2>
 <p>For a MacOS install:</p>
 <ol type="1">
 <li><p>Go to the <a href="https://postgresapp.com/">Postgres.app</a> site, and download the latest release.</p></li>
 <li><p>Open the disk image, and drag the <strong>Postgres</strong> icon into the <strong>Applications</strong> folder.</p>
-<img src="./screenshots/install_macos_01.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/install_macos_01.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>In the <strong>Applications</strong> folder, double-click the <strong>Postgres</strong> icon to start the server.</p></li>
 <li><p>Click the <strong>Initialize</strong> button to create a new blank database instance.</p>
 <p><img src="./screenshots/install_macos_02.png" class="img-fluid" alt="image">{.inline, .border .inline, .border}</p></li>
@@ -400,37 +457,58 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp</code></pre>
 </blockquote>
 </section>
-<section id="pgadmin-for-windows-and-macos" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="pgadmin-for-windows-and-macos"><span class="header-section-number">1.3</span> PgAdmin for Windows and MacOS</h2>
+<section id="pgadmin-for-windows-and-macos" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="pgadmin-for-windows-and-macos"><span class="header-section-number">3.3</span> PgAdmin for Windows and MacOS</h2>
 <p>PgAdmin is available for multiple platforms, at <a href="https://www.pgadmin.org/download/" class="uri">https://www.pgadmin.org/download/</a>.</p>
 <ol type="1">
 <li><p>Download and install the latest version for your platform.</p></li>
 <li><p>Start PgAdmin!</p>
-<img src="./screenshots/install_pgadmin_01.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/install_pgadmin_01.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 </ol>
 </section>
-<section id="creating-a-spatial-database" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Creating a Spatial Database</h1>
-<section id="pgadmin" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="pgadmin"><span class="header-section-number">2.1</span> PgAdmin</h2>
+</section>
+<section id="creating-a-spatial-database" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Creating a Spatial Database</h1>
+<section id="pgadmin" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="pgadmin"><span class="header-section-number">4.1</span> PgAdmin</h2>
 <p>PostgreSQL has a number of administrative front-ends. The primary one is <a href="http://www.postgresql.org/docs/current/static/app-psql.html">psql</a>, a command-line tool for entering SQL queries. Another popular PostgreSQL front-end is the free and open source graphical tool <a href="http://www.pgadmin.org/">pgAdmin</a>. All queries done in pgAdmin can also be done on the command line with <code>psql</code>. pgAdmin also includes a geometry viewer you can use to spatial view PostGIS queries.</p>
 <ol type="1">
 <li><p>Find pgAdmin and start it up.</p>
-<img src="./screenshots/pgadmin_01.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/pgadmin_01.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>If this is the first time you have run pgAdmin, you probably don't have any servers configured. Right click the <code>Servers</code> item in the Browser panel.</p>
 <p>We'll name our server <strong>PostGIS</strong>. In the Connection tab, enter the <code>Host name/address</code>. If you're working with a local PostgreSQL install, you'll be able to use <code>localhost</code>. If you're using a cloud service, you should be able to retrieve the host name from your account.</p>
 <p>Leave <strong>Port</strong> set at <code>5432</code>, and both <strong>Maintenance database</strong> and <strong>Username</strong> as <code>postgres</code>. The <strong>Password</strong> should be what you specified with a local install or with your cloud service.</p>
-<img src="./screenshots/pgadmin_02a.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/pgadmin_02a.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 </ol>
 </section>
-<section id="creating-a-database" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="creating-a-database"><span class="header-section-number">2.2</span> Creating a Database</h2>
+<section id="creating-a-database" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="creating-a-database"><span class="header-section-number">4.2</span> Creating a Database</h2>
 <ol type="1">
 <li><p>Open the Databases tree item and have a look at the available databases. The <code>postgres</code> database is the user database for the default postgres user and is not too interesting to us.</p></li>
 <li><p>Right-click on the <code>Databases</code> item and select <code>New Database</code>.</p>
-<img src="./screenshots/pgadmin_02.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/pgadmin_02.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>Fill in the <code>Create Database</code> form as shown below and click <strong>OK</strong>.</p>
-<table class="table">
+<table class="caption-top table">
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><strong>Name</strong></td>
@@ -442,11 +520,26 @@ echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/pat
 </tr>
 </tbody>
 </table>
-<img src="./screenshots/pgadmin_03.png" class="inline inline img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/pgadmin_03.png" class="inline img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>Select the new <code>nyc</code> database and open it up to display the tree of objects. You'll see the <code>public</code> schema.</p>
-<img src="./screenshots/pgadmin_04.png" class="img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/pgadmin_04.png" class="img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>Click on the SQL query button indicated below (or go to <em>Tools &gt; Query Tool</em>).</p>
-<img src="./screenshots/pgadmin_05.png" class="img-fluid" alt="image"></li>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./screenshots/pgadmin_05.png" class="img-fluid figure-img"></p>
+<figcaption>image</figcaption>
+</figure>
+</div></li>
 <li><p>Enter the following query into the query text field to load the PostGIS spatial extension:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> EXTENSION postgis;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>Click the <strong>Play</strong> button in the toolbar (or press <strong>F5</strong>) to "Execute the query."</p></li>
@@ -455,17 +548,17 @@ echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/pat
 </ol>
 <p>You have successfully created a PostGIS spatial database!!</p>
 </section>
-<section id="function-list" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="function-list"><span class="header-section-number">2.3</span> Function List</h2>
+<section id="function-list" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="function-list"><span class="header-section-number">4.3</span> Function List</h2>
 <p><a href="http://postgis.net/docs/PostGIS_Full_Version.html">PostGIS_Full_Version</a>: Reports full PostGIS version and build configuration info.</p>
 </section>
 </section>
-<section id="loading-spatial-data" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Loading spatial data</h1>
+<section id="loading-spatial-data" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Loading spatial data</h1>
 <p>Supported by a wide variety of libraries and applications, PostGIS provides many options for loading data.</p>
 <p>We will first load our working data from a database backup file, then review some standard ways of loading different GIS data formats using common tools.</p>
-<section id="loading-the-backup-file" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="loading-the-backup-file"><span class="header-section-number">3.1</span> Loading the Backup File</h2>
+<section id="loading-the-backup-file" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="loading-the-backup-file"><span class="header-section-number">5.1</span> Loading the Backup File</h2>
 <ol type="1">
 <li><p>In the PgAdmin browser, <strong>right-click</strong> on the <strong>nyc</strong> database icon, and then select the <strong>Restore...</strong> option.</p>
 <p><img src="./screenshots/data_loading_1.png" class="img-fluid" alt="image">{.inline, .border .inline, .border}</p></li>
@@ -485,8 +578,8 @@ echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/pat
 <p>If you want to practice loading data from the native spatial formats, instead of using the PostgreSQL db backup files just covered, the next couple of sections will guide you thru loading using various command-line tools and QGIS DbManager. Note you can skip these sections, if you have already loaded the data with pgAdmin.</p>
 </div>
 </section>
-<section id="shapefiles-whats-that" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="shapefiles-whats-that"><span class="header-section-number">3.2</span> Shapefiles? What's that?</h2>
+<section id="shapefiles-whats-that" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="shapefiles-whats-that"><span class="header-section-number">5.2</span> Shapefiles? What's that?</h2>
 <p>You may be asking yourself -- "What's this shapefile thing?" A "shapefile" commonly refers to a collection of files with <code>.shp</code>, <code>.shx</code>, <code>.dbf</code>, and other extensions on a common prefix name (e.g., nyc_census_blocks). The actual shapefile relates specifically to files with the <code>.shp</code> extension. However, the <code>.shp</code> file alone is incomplete for distribution without the required supporting files.</p>
 <p>Mandatory files:</p>
 <ul>
@@ -500,8 +593,8 @@ echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/pat
 </ul>
 <p>The <code class="interpreted-text" role="file">shp2pgsql</code> utility makes shape data usable in PostGIS by converting it from binary data into a series of SQL commands that are then run in the database to load the data.</p>
 </section>
-<section id="loading-with-shp2pgsql" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="loading-with-shp2pgsql"><span class="header-section-number">3.3</span> Loading with shp2pgsql</h2>
+<section id="loading-with-shp2pgsql" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="loading-with-shp2pgsql"><span class="header-section-number">5.3</span> Loading with shp2pgsql</h2>
 <p>The <code class="interpreted-text" role="file">shp2pgsql</code> converts Shape files into SQL. It is a conversion utility that is part of the PostGIS code base and ships with PostGIS packages. If you installed PostgreSQL locally on your computer, you may find that <code class="interpreted-text" role="file">shp2pgsql</code> has been installed along with it, and it is available in the executable directory of your installation.</p>
 <p>Unlike <code class="interpreted-text" role="file">ogr2ogr</code>, <code class="interpreted-text" role="file">shp2pgsql</code> does not connect directly to the destination database, it just emits the SQL equivalent to the input shape file. It is up to the user to pass the SQL to the database, either with a "pipe" or by saving the SQL to file and then loading it.</p>
 <p>Here is an example invocation, loading the same data as before:</p>
@@ -530,8 +623,8 @@ shp2pgsql \
 <pre><code>| psql dbname=nyc user=postgres host=localhost</code></pre>
 <p>The utility program is generating a stream of SQL. The "|" operator takes that stream and uses it as input to the <code class="interpreted-text" role="file">psql</code> database terminal program. The arguments to <code class="interpreted-text" role="file">psql</code> are just the connection string for the destination database.</p>
 </section>
-<section id="srid-26918-whats-with-that" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="srid-26918-whats-with-that"><span class="header-section-number">3.4</span> SRID 26918? What's with that?</h2>
+<section id="srid-26918-whats-with-that" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="srid-26918-whats-with-that"><span class="header-section-number">5.4</span> SRID 26918? What's with that?</h2>
 <p>Most of the import process is self-explanatory, but even experienced GIS professionals can trip over an <strong>SRID</strong>.</p>
 <p>An "SRID" stands for "Spatial Reference IDentifier." It defines all the parameters of our data's geographic coordinate system and projection. An SRID is convenient because it packs all the information about a map projection (which can be quite complex) into a single number.</p>
 <p>You can see the definition of our workshop map projection by looking it up either in an online database,</p>
@@ -568,14 +661,14 @@ shp2pgsql \
 <p>If you open up the <code>nyc_neighborhoods.prj</code> file from the data directory, you'll see the same projection definition.</p>
 <p>Data you receive from local agencies—such as New York City—will usually be in a local projection noted by "state plane" or "UTM". Our projection is "Universal Transverse Mercator (UTM) Zone 18 North" or EPSG:26918.</p>
 </section>
-<section id="things-to-try-view-data-using-qgis" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="things-to-try-view-data-using-qgis"><span class="header-section-number">3.5</span> Things to Try: View data using QGIS</h2>
+<section id="things-to-try-view-data-using-qgis" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="things-to-try-view-data-using-qgis"><span class="header-section-number">5.5</span> Things to Try: View data using QGIS</h2>
 <p><a href="http://qgis.org">QGIS</a>, is a desktop GIS viewer/editor for quickly looking at data. You can view a number of data formats including flat shapefiles and a PostGIS database. Its graphical interface allows for easy exploration of your data, as well as simple testing and fast styling.</p>
 <p>Try using this software to connect your PostGIS database. The application can be downloaded from <a href="https://qgis.org" class="uri">https://qgis.org</a></p>
 <p>You'll first want to create a connection to a PostGIS database using menu <code class="interpreted-text" role="command">Layer-&gt;Add Layer-&gt;PostGIS Layers-&gt;New</code> and then filling in the prompts. Once you have a connection, you can add Layers by clicking connect and selecting a table to display.</p>
 </section>
-<section id="loading-data-using-qgis-dbmanager" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="loading-data-using-qgis-dbmanager"><span class="header-section-number">3.6</span> Loading data using QGIS DbManager</h2>
+<section id="loading-data-using-qgis-dbmanager" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="loading-data-using-qgis-dbmanager"><span class="header-section-number">5.6</span> Loading data using QGIS DbManager</h2>
 <p>QGIS comes with a tool called <a href="https://docs.qgis.org/3.28/en/docs/user_manual/plugins/core_plugins/plugins_db_manager.html#dbmanager">DbManager</a> that allows you to connect to various different kinds of databases, including a PostGIS enabled one. After you have a PostGIS Database connection configured, go to <code class="interpreted-text" role="command">Database-&gt;DbManager</code> and expand to your database as shown below:</p>
 <p><img src="./screenshots/qgis_dbmanager.png" class="img-fluid" alt="image">{.inline, .border .inline, .border}</p>
 <p>From there you can use the <code class="interpreted-text" role="command">Import Layer/File</code> menu option to load numerous different spatial formats. In addition to being able to load data from many spatial formats and export data to many formats, you can also add ad-hoc queries to the canvas or define views in your database, using the highlighted wrench icon.</p>
@@ -627,6 +720,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -695,13 +815,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'alternate';
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -736,18 +858,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -779,11 +890,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -793,8 +941,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -806,7 +963,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -850,6 +1129,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -875,6 +1155,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -936,12 +1242,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./index.html" class="pagination-link">
+      <a href="./index.html" class="pagination-link" aria-label="Module Overview">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Module Overview</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./W02_SQL.html" class="pagination-link">
+      <a href="./W02_SQL.html" class="pagination-link" aria-label="Introduction to SQL">
         <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to SQL</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -950,4 +1256,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/W01_intro.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer></body></html>

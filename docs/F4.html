@@ -2,12 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.326">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 13&nbsp; Image Series</title>
+<title>13&nbsp; Image Series – CASA0025: 
+ Building Spatial Applications with Big Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -72,19 +73,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-9da5c79871f7304987118a62e6bdfd0e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-f69388bb9b5b3b37de49aa2d4ba5dbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -93,8 +100,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-RK9ZLZQ6GL"></script>
@@ -107,24 +116,50 @@ gtag('js', new Date());
 gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 </script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
 <body class="nav-sidebar floating">
 
-
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./F1.html">GEE Textbook</a></li><li class="breadcrumb-item"><a href="./F4.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Image Series</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./F1.html">GEE Textbook</a></li><li class="breadcrumb-item"><a href="./F4.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Image Series</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -134,7 +169,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./logo_white.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
@@ -144,36 +179,36 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/oballinger/CASA0025/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
+              <i class="bi bi-file-pdf pe-1"></i>
             Download PDF
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
+              <i class="bi bi-journal pe-1"></i>
             Download ePub
             </a>
           </li>
       </ul>
     </div>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-bi-twitter pe-1"></i>
+              <i class="bi bi-twitter pe-1"></i>
             Twitter
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
-              <i class="bi bi-bi-facebook pe-1"></i>
+              <i class="bi bi-facebook pe-1"></i>
             Facebook
             </a>
           </li>
@@ -198,9 +233,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">A. SQL</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -208,7 +243,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W01_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -239,9 +274,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">B. Google Earth Engine</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -280,9 +315,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">GEE Textbook</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -316,7 +351,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -401,12 +436,12 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   <li><a href="#references-8" id="toc-references-8" class="nav-link" data-scroll-target="#references-8">References</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/F4.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/F4.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./F1.html">GEE Textbook</a></li><li class="breadcrumb-item"><a href="./F4.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Image Series</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Image Series</span></h1>
 </div>
@@ -421,7 +456,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>One of the paradigm-changing features of Earth Engine is the ability to access decades of imagery without the previous limitation of needing to download all the data to a local disk for processing. Because remote-sensing data files can be enormous, this used to limit many projects to viewing two or three images from different periods. With Earth Engine, users can access tens or hundreds of thousands of images to understand the status of places across decades.</p>
 <section id="filter-map-reduce" class="level2" data-number="13.1">
@@ -489,7 +526,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image66.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.0.1 Filter, map, reduce as applied to image collections in Earth Engine</figcaption><p></p>
+<figcaption>Fig. 4.0.1 Filter, map, reduce as applied to image collections in Earth Engine</figcaption>
 </figure>
 </div>
 <p>As described first in Chap. F1.2, the Earth Engine API provides a set of filters for the ImageCollection type. The filters can limit an ImageCollection based on spatial, temporal, or attribute characteristics. Filters were used in Parts F1, F2, and F3 without much context or explanation, to isolate an image from an ImageCollection for inspection or manipulation. The information below should give perspective on that work while introducing some new tools for filtering image collections.</p>
@@ -632,7 +669,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image67.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.0.2 The effects of two reducers on mapped EVI values in a filtered ImageCollection: mean image (above), and median image (below)</figcaption><p></p>
+<figcaption>Fig. 4.0.2 The effects of two reducers on mapped EVI values in a filtered ImageCollection: mean image (above), and median image (below)</figcaption>
 </figure>
 </div>
 <p>There are many more reducers that work with an ImageCollection to produce a wide range of summary statistics. Reducers are not limited to returning only one item from the reduction. The minMax reducer, for example, returns a two-band image for each band it is given, one for the minimum and one for the maximum.</p>
@@ -719,7 +756,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image22.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.1.1 Inspect values in an ImageCollection at a selected point by making use of the Inspector tool in the Code Editor</figcaption><p></p>
+<figcaption>Fig. F4.1.1 Inspect values in an ImageCollection at a selected point by making use of the Inspector tool in the Code Editor</figcaption>
 </figure>
 </div>
 <p>We can also show this kind of chart automatically by making use of the ui.Chart function of the Earth Engine API. The following code snippet should result in the same chart as we could observe in the Inspector tab, assuming the same pixel is clicked.</p>
@@ -775,7 +812,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image27.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.1.2 The number of Landsat 8 images acquired during 2020</figcaption><p></p>
+<figcaption>Fig. F4.1.2 The number of Landsat 8 images acquired during 2020</figcaption>
 </figure>
 </div>
 <p>Note the checkered pattern, somewhat reminiscent of a Mondrian painting. To understand why the image looks this way, it is useful to consider the overlapping image footprints. As Landsat passes over, each image is wide enough to produce substantial “sidelap” with the images from the adjacent paths, which are collected at different dates according to the satellite’s orbit schedule. In the north-south direction, there is also some overlap to ensure that there are no gaps in the data. Because these are served as distinct images and stored distinctly in Earth Engine, you will find that there can be two images from the same day with the same value for points in these overlap areas. Depending on the purposes of a study, you might find a way to ignore the duplicate pixel values during the analysis process.</p>
@@ -835,7 +872,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image74.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.1.3 Landsat 8 TOA reflectance 30th percentile image computed for ImageCollection with images acquired during 2020</figcaption><p></p>
+<figcaption>Fig. F4.1.3 Landsat 8 TOA reflectance 30th percentile image computed for ImageCollection with images acquired during 2020</figcaption>
 </figure>
 </div>
 <p>We can see that the resulting composite image (Fig. 4.1.3) has almost no cloudy pixels present for this area. This happens because cloudy pixels usually have higher reflectance values. At the lowest end of the values, other unwanted effects like cloud or hill shadows typically have very low reflectance values. This is why this 30th percentile composite image looks so much cleaner than the mean composite image (meanFilteredIC) calculated earlier. Note that the reducers operate per pixel: adjacent pixels are drawn from different images. This means that one pixel’s value could be taken from an image from one date, and the adjacent pixel’s value drawn from an entirely different period. Although, like the mean and median images, percentile images such as that seen in Fig. F4.1.3 never existed on a single day, composite images allow us to view Earth’s surface without the noise that can make analysis difficult.</p>
@@ -851,7 +888,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image55.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.1.4 Landsat 8 TOA reflectance percentile composite images</figcaption><p></p>
+<figcaption>Fig. F4.1.4 Landsat 8 TOA reflectance percentile composite images</figcaption>
 </figure>
 </div>
 <p>Earth Engine provides a very rich API, allowing users to explore image collections to better understand the extent and variability of data in space, time, and across bands, as well as tools to analyze values stored in image collections in a frequency domain. Exploring these values in different forms should be the first step of any study before developing data analysis algorithms.</p>
@@ -939,7 +976,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image25.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.2.1 CHIRPS time series for one year</figcaption><p></p>
+<figcaption>Fig. F4.2.1 CHIRPS time series for one year</figcaption>
 </figure>
 </div>
 <p>Each image’s pixel values store the total precipitation during the pentad. Without aggregation to a period that matches other datasets, these layers are not very useful. For hydrological analysis, we typically need the total precipitation for each month or for a season. Let’s aggregate this collection so that we have 12 images—one image per month, with pixel values that represent the total precipitation for that month.</p>
@@ -1015,7 +1052,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image90.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.2.2 Aggregated time series</figcaption><p></p>
+<figcaption>Fig. F4.2.2 Aggregated time series</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1069,7 +1106,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image32.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.2.3 Monthly rainfall chart</figcaption><p></p>
+<figcaption>Fig. F4.2.3 Monthly rainfall chart</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1198,7 +1235,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image12.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.1 Landsat 8 surface reflectance 2019 median composite of Colombia</figcaption><p></p>
+<figcaption>Fig. F4.3.1 Landsat 8 surface reflectance 2019 median composite of Colombia</figcaption>
 </figure>
 </div>
 <p>The resulting composite (Fig. F4.3.1) has lots of clouds, especially in the western, mountainous regions of Colombia. In tropical regions, it is very challenging to generate a high-quality, cloud-free composite without first filtering images for cloud cover, even if our collection is constrained to only include images acquired during the dry season. Therefore, let’s filter our collection by the CLOUD_COVER parameter to avoid cloudy images. We will start with images that have less than 50% cloud cover.</p>
@@ -1219,7 +1256,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image50.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.2 Landsat 8 surface reflectance 2019 median composite of Colombia filtered by cloud cover less than 50%</figcaption><p></p>
+<figcaption>Fig. F4.3.2 Landsat 8 surface reflectance 2019 median composite of Colombia filtered by cloud cover less than 50%</figcaption>
 </figure>
 </div>
 <p>This new composite (Fig. F4.3.2) looks slightly better than the previous one, but still very cloudy. Remember to turn off the first layer or adjust the transparency to visualize only this new composite. The code prints the size of these collections, using the size function) to see how many images were left out after we applied the cloud cover threshold. (There are 1201 images in the landsat8 collection, compared to 493 in the landsat8FiltClouds collection—a lot of scenes with cloud cover greater than or equal to 50%.)</p>
@@ -1227,7 +1264,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image42.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.3 Landsat 8 surface reflectance 2019 median composite of Colombia filtered by cloud cover less than 20%</figcaption><p></p>
+<figcaption>Fig. F4.3.3 Landsat 8 surface reflectance 2019 median composite of Colombia filtered by cloud cover less than 20%</figcaption>
 </figure>
 </div>
 <p>This is due to persistent cloud cover in some regions of Colombia. However, a cloud mask can be applied to improve the results. The Landsat 8 Collection 2 contains a quality assessment (QA) band called QA_PIXEL that provides useful information on certain conditions within the data, and allows users to apply per-pixel filters. Each pixel in the QA band contains unsigned integers that represent bit-packed combinations of surface, atmospheric, and sensor conditions.</p>
@@ -1248,7 +1285,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image39.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.4 Landsat 8 surface reflectance 2019 median composite of Colombia filtered by cloud cover less than 50% and with cloud mask applied</figcaption><p></p>
+<figcaption>Fig. F4.3.4 Landsat 8 surface reflectance 2019 median composite of Colombia filtered by cloud cover less than 50% and with cloud mask applied</figcaption>
 </figure>
 </div>
 <p>Because we are dealing with bits, in the maskSrClouds function we utilized the bitwiseAnd and parseInt functions. These are functions that serve the purpose of unpacking the bit information. A bitwise AND is a binary operation that takes two equal-length binary representations and performs the logical AND operation on each pair of corresponding bits. Thus, if both bits in the compared positions have the value 1, the bit in the resulting binary representation is 1 (1 × 1 = 1); otherwise, the result is 0 (1 × 0 = 0 and 0 × 0 = 0). The parseInt function parses a string argument (in our case, five-character string ‘11111’) and returns an integer of the specified numbering system, base 2.</p>
@@ -1256,7 +1293,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image85.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.5 One-year, startDate variable set to 2019-01-01, (left) and two-year, startDate variable set to 2018-01-01, (right) median composites with 50% cloud cover threshold and cloud mask applied</figcaption><p></p>
+<figcaption>Fig. F4.3.5 One-year, startDate variable set to 2019-01-01, (left) and two-year, startDate variable set to 2018-01-01, (right) median composites with 50% cloud cover threshold and cloud mask applied</figcaption>
 </figure>
 </div>
 <p>The resulting image has substantially fewer data gaps (you can zoom in to better see them). Again, if the time period is not a constraint for the creation of your composite, you can incorporate more images from a third year, and so on.</p>
@@ -1309,7 +1346,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image73.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.6 One-year Landsat 7 median composite with 50% cloud cover threshold and cloud mask applied</figcaption><p></p>
+<figcaption>Fig. F4.3.6 One-year Landsat 7 median composite with 50% cloud cover threshold and cloud mask applied</figcaption>
 </figure>
 </div>
 <p>Note that we used bands: [‘SR_B3’, ‘SR_B2’, ‘SR_B1’] to visualize the composite because Landsat 7 has different band designations. The sensors aboard each of the Landsat satellites were designed to acquire data in different ranges of frequencies along the electromagnetic spectrum. Whereas for Landsat 8, the red, green, and blue bands are B4, B3, and B2, respectively, for Landsat 7, these same bands are B3, B2, and B1, respectively.</p>
@@ -1317,7 +1354,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image54.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.7 Landsat 7’s SLC-off condition. Source: USGS</figcaption><p></p>
+<figcaption>Fig. F4.3.7 Landsat 7’s SLC-off condition. Source: USGS</figcaption>
 </figure>
 </div>
 <p>Since Landsat 7 and 8 have different band designations, first we create a function to rename the bands from Landsat 7 to match the names used for Landsat 8 and map that function over our Landsat 7 collection.</p>
@@ -1334,7 +1371,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image15.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.8 First images of landsat7FiltMasked and landsat7FiltMaskedRenamed, respectively</figcaption><p></p>
+<figcaption>Fig. F4.3.8 First images of landsat7FiltMasked and landsat7FiltMaskedRenamed, respectively</figcaption>
 </figure>
 </div>
 <p>Now we merge the two collections using the merge function for ImageCollection and mapping over a function to cast the Landsat 7 input values to a 32-bit float using the toFloat function for consistency. To merge collections, the number and names of the bands must be the same in each collection. We use the select function (Chap. F1.1) to select the Landsat 8 bands to be the same as Landsat 7’s. When creating the new Landsat 7 and 8 composite, if we did not select these 6 bands, we would get an error message for trying to composite a collection that has 6 bands (Landsat 7) with a collection that has 19 bands (Landsat 8).</p>
@@ -1353,7 +1390,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image30.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.9 Landsat 8-only composite (left) and Landsat 7 and 8 composite (right) for 2019. Inset centered at latitude 3.6023, longitude −75.0741.</figcaption><p></p>
+<figcaption>Fig. F4.3.9 Landsat 8-only composite (left) and Landsat 7 and 8 composite (right) for 2019. Inset centered at latitude 3.6023, longitude −75.0741.</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1397,7 +1434,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image60.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.11 Example of a global BAP image composite showing NDVI values generated using the GEE-BAP user interface</figcaption><p></p>
+<figcaption>Fig. F4.3.11 Example of a global BAP image composite showing NDVI values generated using the GEE-BAP user interface</figcaption>
 </figure>
 </div>
 <p>GEE-BAP functions can be accessed programmatically, including pixel scoring parameters, as well as BAP image compositing (BAP), de-spiking (despikeCollection), data-gap infilling (infill), and displaying (ShowCollection) functions. The following code sets the scoring parameter values, then generates and displays the compositing results (Fig. F4.3.12) for a BAP composite that is de-spiked, with data gaps infilled using temporal interpolation. Copy and paste the code below into a new script.</p>
@@ -1438,7 +1475,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image11.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.3.12 Outcome of the compositing code</figcaption><p></p>
+<figcaption>Fig. F4.3.12 Outcome of the compositing code</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1545,7 +1582,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image87.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.4.1 Before and after images of (a) the eruption of Mount St.&nbsp;Helens in Washington State, USA, in 1980 (before, July 10, 1979; after, September 5, 1980); (b) the Camp Fire in California, USA, in 2018 (before, October 7, 2018; after, March 16, 2019); (c) illegal gold mining in the Madre de Dios region of Peru (before, March 31, 2001; after, August 22, 2020); and (d) shoreline changes in Incheon, South Korea (before, May 29, 1981; after, March 11, 2020)</figcaption><p></p>
+<figcaption>Fig. F4.4.1 Before and after images of (a) the eruption of Mount St.&nbsp;Helens in Washington State, USA, in 1980 (before, July 10, 1979; after, September 5, 1980); (b) the Camp Fire in California, USA, in 2018 (before, October 7, 2018; after, March 16, 2019); (c) illegal gold mining in the Madre de Dios region of Peru (before, March 31, 2001; after, August 22, 2020); and (d) shoreline changes in Incheon, South Korea (before, May 29, 1981; after, March 11, 2020)</figcaption>
 </figure>
 </div>
 <p>Many change detection techniques use the same basic premise: that most changes on the landscape result in spectral values that differ between pre-event and post-event images. The challenge can be to separate the real changes of interest—those due to activities on the landscape—from noise in the spectral signal, which can be caused by seasonal variation and phenology, image misregistration, clouds and shadows, radiometric inconsistencies, variability in illumination (e.g., sun angle, sensor position), and atmospheric effects.</p>
@@ -1555,7 +1592,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image68.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.4.2 Change detection workflow for this practicum</figcaption><p></p>
+<figcaption>Fig. F4.4.2 Change detection workflow for this practicum</figcaption>
 </figure>
 </div>
 </section>
@@ -1595,7 +1632,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image31.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.4.3 False-color composite using SWIR2, NIR, and red. Vegetation shows up vividly in the green channel due to vegetation being highly reflective in the NIR band. Shades of green can be indicative of vegetation density; water typically shows up as black to dark blue; and burned or barren areas show up as brown.</figcaption><p></p>
+<figcaption>Fig. F4.4.3 False-color composite using SWIR2, NIR, and red. Vegetation shows up vividly in the green channel due to vegetation being highly reflective in the NIR band. Shades of green can be indicative of vegetation density; water typically shows up as black to dark blue; and burned or barren areas show up as brown.</figcaption>
 </figure>
 </div>
 </section>
@@ -1646,7 +1683,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image4.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.4.4 (a) Two-date NBR difference; (b) pre-event image (June 2013) false-color composite; (c) post-event image (June 2020) false-color composite. In the change map (a), areas on the lower range of values (blue) depict areas where vegetation has been negatively affected, and areas on the higher range of values (pink) depict areas where there has been vegetation gain; the green/orange areas have experienced little change. In the pre-event and post-event images (b and c), the green areas indicate vegetation, while the brown regions are barren ground.</figcaption><p></p>
+<figcaption>Fig. F4.4.4 (a) Two-date NBR difference; (b) pre-event image (June 2013) false-color composite; (c) post-event image (June 2020) false-color composite. In the change map (a), areas on the lower range of values (blue) depict areas where vegetation has been negatively affected, and areas on the higher range of values (pink) depict areas where there has been vegetation gain; the green/orange areas have experienced little change. In the pre-event and post-event images (b and c), the green areas indicate vegetation, while the brown regions are barren ground.</figcaption>
 </figure>
 </div>
 </section>
@@ -1780,7 +1817,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image29.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.1 The LandTrendr GUI interface, with the control panel on the left, the Map panel in the center, and the reporting panel on the right</figcaption><p></p>
+<figcaption>Fig. 4.5.1 The LandTrendr GUI interface, with the control panel on the left, the Map panel in the center, and the reporting panel on the right</figcaption>
 </figure>
 </div>
 <p>The LandTrendr GUI consists of three panels: a control panel on the left, a reporting panel on the right, and a Map panel in the center. The control panel is where all of the functionality of the interface resides. There are several modules,and each is accessed by clicking on the double arrow to the right of the title. The Map panel defaults to a location in Oregon but can be manually moved anywhere in the world. The reporting panel shows messages about how to use functions, as well as providing graphical outputs.</p>
@@ -1788,7 +1825,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image88.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.2 A typical trajectory for a single pixel. The x-axis shows the year, the y-axis the spectral index value, and the title the index chosen. The gray line represents the original spectral values observed by Landsat, and the red line the result of the LandTrendr temporal segmentation algorithms.</figcaption><p></p>
+<figcaption>Fig. 4.5.2 A typical trajectory for a single pixel. The x-axis shows the year, the y-axis the spectral index value, and the title the index chosen. The gray line represents the original spectral values observed by Landsat, and the red line the result of the LandTrendr temporal segmentation algorithms.</figcaption>
 </figure>
 </div>
 <p>The key to success with the LandTrendr algorithm is interpreting these time series. First, let’s examine the components of the chart. The x-axis shows the year of observation. With LandTrendr, only one observation per year is used to describe the history of a pixel; later, we will cover how you control that value. The y-axis shows the spectral value of the index that is chosen. In the default mode, the Normalized Burn Ratio (as described in Chap. F4.4). Note that you also have the ability to pick more indices using the checkboxes on the control panel on the left. Note that we scale floating point (decimal) indices by 1000. Thus, an NBR value of 1.0 would be displayed as 1000.</p>
@@ -1799,7 +1836,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image71.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.3 For the trajectory in Fig. 4.5.2, we can identify a segment capturing disturbance based on its abrupt drop in the NBR index, and the subsequent vegetative recovery</figcaption><p></p>
+<figcaption>Fig. 4.5.3 For the trajectory in Fig. 4.5.2, we can identify a segment capturing disturbance based on its abrupt drop in the NBR index, and the subsequent vegetative recovery</figcaption>
 </figure>
 </div>
 <p>Tip: LandTrendr is able to accept any index, and advanced users are welcome to use indices of their own design. An important consideration is knowing which direction indicates “recovery” and “disturbance” for the topic you are interested in. The algorithms favor detection of disturbance and can be controlled to constrain how quickly recovery is assumed to occur (see parameters below).</p>
@@ -1809,7 +1846,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image7.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.4 The LandTrendr options menu. Users control the year and date range in the Image Collection section, the index used for temporal segmentation in the middle section, and the parameters controlling the temporal segmentation in the bottom section</figcaption><p></p>
+<figcaption>Fig. 4.5.4 The LandTrendr options menu. Users control the year and date range in the Image Collection section, the index used for temporal segmentation in the middle section, and the parameters controlling the temporal segmentation in the bottom section</figcaption>
 </figure>
 </div>
 <p>Change the Start Date and End Date to find a time of year when the distinction between cover conditions before and during the change process of interest is greatest.</p>
@@ -1834,7 +1871,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image84.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.5 Tracking actual values of fitted trajectories to learn how we focus on quantification of disturbance. Because we know that the NBR index drops when vegetation is lost and soil exposure is increased, we know that a precipitous drop suggests an abrupt loss of vegetation. Although some early segments show very subtle change, only the segment between vertex 4 and 5 shows large-magnitude vegetation loss.</figcaption><p></p>
+<figcaption>Fig. 4.5.5 Tracking actual values of fitted trajectories to learn how we focus on quantification of disturbance. Because we know that the NBR index drops when vegetation is lost and soil exposure is increased, we know that a precipitous drop suggests an abrupt loss of vegetation. Although some early segments show very subtle change, only the segment between vertex 4 and 5 shows large-magnitude vegetation loss.</figcaption>
 </figure>
 </div>
 <p>From the table shown in Fig. 4.5.5, we can infer several key things about this pixel:</p>
@@ -1852,7 +1889,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image49.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.6 The menu used to post-process disturbance trajectories into maps. Select vegetation change type and sort to hone in on the segment type of interest, then check boxes to apply selective filters to eliminate uninteresting changes.</figcaption><p></p>
+<figcaption>Fig. 4.5.6 The menu used to post-process disturbance trajectories into maps. Select vegetation change type and sort to hone in on the segment type of interest, then check boxes to apply selective filters to eliminate uninteresting changes.</figcaption>
 </figure>
 </div>
 <p>The first two sections are used to identify the segments of interest.</p>
@@ -1863,14 +1900,14 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image16.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.7 The basic output from a disturbance mapping exercise</figcaption><p></p>
+<figcaption>Fig. 4.5.7 The basic output from a disturbance mapping exercise</figcaption>
 </figure>
 </div>
 <p>There are multiple layers of disturbance added to the map. Use the map layers checkboxes to change which is shown. Magnitude of disturbance, for example, is a map of the delta change between beginning and endpoints of the segments (Fig. 4.5.8).</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image14.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.5.8 Magnitude of change for the same area</figcaption><p></p>
+<figcaption>Fig. 4.5.8 Magnitude of change for the same area</figcaption>
 </figure>
 </div>
 </section>
@@ -1947,7 +1984,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image38.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.1 Time series representation of pixel p</figcaption><p></p>
+<figcaption>Fig. F4.6.1 Time series representation of pixel p</figcaption>
 </figure>
 </div>
 </section>
@@ -2024,7 +2061,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image3.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.2 Time series representation of pixel p</figcaption><p></p>
+<figcaption>Fig. F4.6.2 Time series representation of pixel p</figcaption>
 </figure>
 </div>
 <p>We can add a linear trend line to our chart using the trendlines parameters in the setOptions function for image series charts. Copy and paste the code below to print the same chart but with a linear trend line plotted (Fig. F4.6.3). In the next section, you will learn how to estimate linear trends over time.</p>
@@ -2044,7 +2081,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image82.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.3 Time series representation of pixel p with the trend line in red</figcaption><p></p>
+<figcaption>Fig. F4.6.3 Time series representation of pixel p with the trend line in red</figcaption>
 </figure>
 </div>
 <p>Now that we have plotted and visualized the data, lots of interesting analyses can be done to the time series by harnessing Earth Engine tools for fitting curves through this data. We will see a couple of examples in the following sections.</p>
@@ -2094,7 +2131,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image53.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.4 Pixel values of array image and coefficients image</figcaption><p></p>
+<figcaption>Fig. F4.6.4 Pixel values of array image and coefficients image</figcaption>
 </figure>
 </div>
 <p>Now, copy and paste the code below to use the model to detrend the original NDVI time series and plot the time series chart with the trendlines parameter (Fig. F4.6.5).</p>
@@ -2119,7 +2156,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image20.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.5 Detrended NDVI time series</figcaption><p></p>
+<figcaption>Fig. F4.6.5 Detrended NDVI time series</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2183,7 +2220,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image86.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.6 Harmonic model of NDVI time series</figcaption><p></p>
+<figcaption>Fig. F4.6.6 Harmonic model of NDVI time series</figcaption>
 </figure>
 </div>
 <p>Returning to the mind-bending nature of curve-fitting, it is worth remembering that the harmonic waves seen in Fig. F4.6.6 are the fit of the data to a single point across the image. Next, we will map the outcomes of millions of these fits, pixel by pixel, across the entire study area.</p>
@@ -2191,7 +2228,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image8.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.7 Example of phase and amplitude in harmonic model</figcaption><p></p>
+<figcaption>Fig. F4.6.7 Example of phase and amplitude in harmonic model</figcaption>
 </figure>
 </div>
 <p>Copy and paste the code below to compute phase and amplitude from the coefficients and add this image to the map (Fig. F4.6.8).</p>
@@ -2220,7 +2257,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image63.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.8 Phase, amplitude, and NDVI concatenated image</figcaption><p></p>
+<figcaption>Fig. F4.6.8 Phase, amplitude, and NDVI concatenated image</figcaption>
 </figure>
 </div>
 <p>The code uses the HSV to RGB transformation hsvToRgb for visualization purposes (Chap. F3.1). We use this transformation to separate color components from intensity for a better visualization. Without this transformation, we would visualize a very colorful image that would not look as intuitive as the image with the transformation. With this transformation, phase, amplitude, and mean NDVI are displayed in terms of hue (color), saturation (difference from white), and value (difference from black), respectively. Therefore, darker pixels are areas with low NDVI. For example, water bodies will appear as black, since NDVI values are zero or negative. The different colors are distinct phase values, and the saturation of the color refers to the amplitude: whiter colors mean amplitude closer to zero (e.g., forested areas), and the more vivid the colors, the higher the amplitude (e.g., croplands). Note that if you use the Inspector tool to analyze the values of a pixel, you will not get values of phase, amplitude, and NDVI, but the transformed values into values of blue, green, and red colors.</p>
@@ -2265,7 +2302,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image45.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.9 Two views of the harmonic fits for NDVI for the Modesto, California area</figcaption><p></p>
+<figcaption>Fig. F4.6.9 Two views of the harmonic fits for NDVI for the Modesto, California area</figcaption>
 </figure>
 </div>
 <p>The upper image in Fig. F4.6.9 is a closer view of Fig. F4.6.8, showing an image that transforms the sine and cosine coefficient values, and incorporates information from the mean NDVI. The lower image draws the sine and cosine in the red and blue bands, and extracts the slope of the linear trend that you calculated earlier in the chapter, placing that in the green band. The two views of the fit are similarly structured in their spatial pattern—both show fields to the west and the city to the east. But the pixel-by-pixel variability emphasizes a key point of this chapter: that a fit to the NDVI data is done independently in each pixel in the image. Using different elements of the fit, these two views, like other combinations of the data you might imagine, can reveal the rich variability of the landscape around Modesto.</p>
@@ -2306,7 +2343,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image64.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.6.10 Fit with harmonic curves of increasing complexity, fitted for data at a given point</figcaption><p></p>
+<figcaption>Fig. F4.6.10 Fit with harmonic curves of increasing complexity, fitted for data at a given point</figcaption>
 </figure>
 </div>
 </section>
@@ -2390,7 +2427,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image6.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.7.1 Landsat time series for the SWIR1 band (blue dots) and CCDC time segments (colored lines) showing a forest loss event circa 2006 for a place in Rondônia, Brazil</figcaption><p></p>
+<figcaption>Fig. 4.7.1 Landsat time series for the SWIR1 band (blue dots) and CCDC time segments (colored lines) showing a forest loss event circa 2006 for a place in Rondônia, Brazil</figcaption>
 </figure>
 </div>
 <p>Question 1. While still using the SWIR1 band, click on a pixel that is forested. What do the time series and time segments look like?</p>
@@ -2570,14 +2607,14 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.7.2 First (top) and last (bottom) detected breaks for the study area. Darker colors represent more recent dates, while brighter colors represent older dates. The first change layer shows the clear patterns of original agricultural expansion closer to the year 2000. The last change layer shows the more recently detected and noisy breaks in the same areas. The thin areas in the center of the image have only one time of change, corresponding to a single deforestation event. Pixels with no detected breaks are masked and therefore show the basemap underneath, set to show satellite imagery.</figcaption><p></p>
+<figcaption>Fig. F4.7.2 First (top) and last (bottom) detected breaks for the study area. Darker colors represent more recent dates, while brighter colors represent older dates. The first change layer shows the clear patterns of original agricultural expansion closer to the year 2000. The last change layer shows the more recently detected and noisy breaks in the same areas. The thin areas in the center of the image have only one time of change, corresponding to a single deforestation event. Pixels with no detected breaks are masked and therefore show the basemap underneath, set to show satellite imagery.</figcaption>
 </figure>
 </div>
 <p>We first take the absolute value because the magnitudes can be positive or negative, depending on the direction of the change and the band used. For example, a positive value in the SWIR1 may show a forest loss event, where surface reflectance goes from low to higher values. Brighter values in Fig. 4.7.3 represent events of that type. Conversely, a flooding event would have a negative value, due to the corresponding drop in reflectance. Once we find the maximum absolute value, we find its position on the array and then use that index to extract the original magnitude value, as well as the time when that break occurred.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image44.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.7.3 Maximum magnitude of change for the SWIR1 band for the selected study period</figcaption><p></p>
+<figcaption>Fig. F4.7.3 Maximum magnitude of change for the SWIR1 band for the selected study period</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2647,7 +2684,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image78.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.7.4 Values for the intercept coefficient of the segments that start before and end after the midpoint of 2005</figcaption><p></p>
+<figcaption>Fig. F4.7.4 Values for the intercept coefficient of the segments that start before and end after the midpoint of 2005</figcaption>
 </figure>
 </div>
 <p>Since we run the CCDC algorithm on Landsat surface reflectance images, intercept values should represent the average reflectance of a segment. However, if you click on the image, you will see that the values are outside of the 0–1 range. This is because the intercept is calculated by the CCDC algorithm for the origin (e.g., time 0), and not for the year we requested. In order to retrieve the adjusted intercept, as well as other coefficients, we will use a different approach.</p>
@@ -2746,14 +2783,14 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image28.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.7.5 Image showing the slopes (top) and RMSE (bottom) of the segments that intersect the requested date</figcaption><p></p>
+<figcaption>Fig. F4.7.5 Image showing the slopes (top) and RMSE (bottom) of the segments that intersect the requested date</figcaption>
 </figure>
 </div>
 <p>Finally, the RGB image we created is shown in Fig. 4.7.6. The intercepts are calculated for the middle point of the time segment intercepting the date we requested, representing the average reflectance for the span of the selected segment. In that sense, when shown together as an RGB image, they are similar to a composite image for the selected date, with the advantage of always being cloud-free.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image76.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.7.6 RGB image created using the time segment intercepts for the requested date</figcaption><p></p>
+<figcaption>Fig. F4.7.6 RGB image created using the time segment intercepts for the requested date</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2835,7 +2872,7 @@ Chapter Information
 <p>How has the Roosevelt River area changed in recent decades? One way to view the area’s recent history is to use Google Earth Timelapse, which shows selected annual clear images of every part of Earth’s terrestrial surface since the 1980s. (You can find the site quickly with a web search.) Enter “Roosevelt River, Brazil” in the search field. For centuries, this area was very remote from agricultural development. It was so little known to Westerners that when former US President Theodore Roosevelt traversed it in the early 1900s there was widespread doubt about whether his near-death experience there was exaggerated or even entirely fictional (Millard 2006). After World War II, the region saw increased agricultural development. Fortin et al.&nbsp;(2020) traced four decades of the history of this region with satellite imagery. Timelapse, meanwhile, indicates that land cover conversion continued after 2016. Can we track it using Earth Engine?</p>
 <p>In this section, we will view the classification inputs to BULC, which were made separately from this lab exercise by identifying training points and classifying them using Earth Engine’s regression tree capability. As seen in Table 4.8.1, the classification inputs included Sentinel-2 optical data, Landsat 7, Landsat 8, and the Advanced Spaceborne Thermal Emission and Reflection Radiometer (ASTER) aboard Terra. Though each classification was made with care, they each contain noise, with each pixel likely to have been misclassified one or more times. This could lead us to draw unrealistic conclusions if the classifications themselves were considered as a time series. For example, we would judge it highly unlikely that an area represented by a pixel would really be agriculture one day and revert to intact forest later in the month, only to be converted to agriculture again soon after, and so on. With careful (though unavoidably imperfect) classifications, we would expect that an area that had truly been converted to agriculture would consistently be classified as agriculture, while an area that remained as forest would be classified as that class most of the time. BULC’s logic is to detect that persistence, extracting the true LULC change and stability from the noisy signal of the time series of classifications.</p>
 <p>Table F4.8.1 Images classified for updating Roosevelt River LULC with BULC</p>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
 <col style="width: 79%">
@@ -2908,7 +2945,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image5.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.8.1 BULC interface</figcaption><p></p>
+<figcaption>Fig. F4.8.1 BULC interface</figcaption>
 </figure>
 </div>
 <p>After you have run the script, BULC’s interface requires that a few parameters be set; these are specified using the left panel. Here, we describe and populate each of the required parameters, which are shown in red. As you proceed, the default red color will change to green when a parameter receives a value.</p>
@@ -2931,7 +2968,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image62.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.8.2 Initial settings for the key driving parameters of BULC</figcaption><p></p>
+<figcaption>Fig. 4.8.2 Initial settings for the key driving parameters of BULC</figcaption>
 </figure>
 </div>
 <p>Beneath the required parameters is a set of optional parameters that affect which intermediate results are stored during a run for later inspection. We are also given a choice of returning intermediate results for closer inspection. At this stage, you can leave all optional parameters out of the BULC call by leaving them blanked or unchecked.</p>
@@ -2942,7 +2979,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image65.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.8.3 BULC estimation of the state of LULC at the end of 2021 (left). Satellite backdrop for Earth Engine (right), which may differ from what you see due to updates.</figcaption><p></p>
+<figcaption>Fig. 4.8.3 BULC estimation of the state of LULC at the end of 2021 (left). Satellite backdrop for Earth Engine (right), which may differ from what you see due to updates.</figcaption>
 </figure>
 </div>
 <p>Question 1. When comparing the BULC classification for 2021 against the current Earth Engine satellite view, what are the similarities and differences? Note that in Earth Engine, the copyrighted year numbers at the bottom of the screen may not coincide with the precise date of the image shown.</p>
@@ -2961,7 +2998,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image10.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.8.4 Comparison of the final classification of the northern part of the study area to the satellite view</figcaption><p></p>
+<figcaption>Fig. 4.8.4 Comparison of the final classification of the northern part of the study area to the satellite view</figcaption>
 </figure>
 </div>
 <p>BULC captured the changes between 2016 and 2021 with a classification series that suggests agricultural development (Fig. 4.8.4, left). Given the appearance of BULC’s 2021 classification, it suggests that the satellite backdrop at the time of this writing (Fig. 4.8.4, right) came from an earlier time period.</p>
@@ -3015,14 +3052,14 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image52.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.8.8 NBR history for a pixel with an apparent increase in NBR in the target year (below) as compared to the expectation years (above). Pixel is colored a shade of blue in Fig. 4.8.6.</figcaption><p></p>
+<figcaption>Fig. 4.8.8 NBR history for a pixel with an apparent increase in NBR in the target year (below) as compared to the expectation years (above). Pixel is colored a shade of blue in Fig. 4.8.6.</figcaption>
 </figure>
 </div>
 <p>Figure F4.8.8 also shows that, for that pixel, the fit of values for the years used to build the expectation showed a sine wave (shown in blue), but with a fit that was not very strong. When data for the target year was assembled (Fig. F4.8.8, bottom), the values were persistently above expectation throughout the growing season. Note that this pixel was identified as being different in the target year as compared to earlier years, which does not rule out the possibility that the LULC of the area was changed (for example, from Forest to Agriculture) during the years used to build the expectation collection. BULC-D is intended to be run steadily over a long period of time, with the changes marked as they occur, after which point the expectation would be recalculated.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image56.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. 4.8.9 NBR history for a pixel with no apparent increase or decrease in NBR in the target year (below) as compared to the expectation years (above). Pixel is colored a shade of green in Fig. 4.8.6.</figcaption><p></p>
+<figcaption>Fig. 4.8.9 NBR history for a pixel with no apparent increase or decrease in NBR in the target year (below) as compared to the expectation years (above). Pixel is colored a shade of green in Fig. 4.8.6.</figcaption>
 </figure>
 </div>
 <p>Fig. F4.8.9 shows the NBR history for the green balloon in the southern part of the study area in Fig. F4.8.4. For that pixel, the values in the expectation collection formed a sine wave, and the values in the target collection deviated only slightly from the expectation during the target year.</p>
@@ -3044,7 +3081,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image13.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.8.11 Still frame (right image) from the animation of BULC’s adjusted estimate of LULC through time near Muiraquitã</figcaption><p></p>
+<figcaption>Fig. F4.8.11 Still frame (right image) from the animation of BULC’s adjusted estimate of LULC through time near Muiraquitã</figcaption>
 </figure>
 </div>
 <p>As BULC uses the classification inputs to estimate the state of the LULC at each time step, it also tracks its confidence in those estimates. This is shown in several ways in the interface.</p>
@@ -3058,7 +3095,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image40.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.8.12 Still frame from the animation of changing confidence through time, near Muiraquitã.</figcaption><p></p>
+<figcaption>Fig. F4.8.12 Still frame from the animation of changing confidence through time, near Muiraquitã.</figcaption>
 </figure>
 </div>
 </section>
@@ -3304,7 +3341,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.9.1 Autocovariance image</figcaption><p></p>
+<figcaption>Fig. F4.9.1 Autocovariance image</figcaption>
 </figure>
 </div>
 <p>The diagonal elements of the variance-covariance array are variances. Copy and paste the code below to define and map a function to compute correlation (Fig. F4.9.2) from the variance-covariance array.</p>
@@ -3328,7 +3365,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image33.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.9.2 Autocorrelation image</figcaption><p></p>
+<figcaption>Fig. F4.9.2 Autocorrelation image</figcaption>
 </figure>
 </div>
 <p>Higher positive values indicate higher correlation between the elements of the dataset, and lower negative values indicate the opposite.</p>
@@ -3373,7 +3410,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image46.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.9.3 Cross-correlation image of NDVI and precipitation with a five-day lag.</figcaption><p></p>
+<figcaption>Fig. F4.9.3 Cross-correlation image of NDVI and precipitation with a five-day lag.</figcaption>
 </figure>
 </div>
 <p>Perhaps precipitation in the month before the observed NDVI is relevant? Copy and paste the code below to test the 30-day lag idea.</p>
@@ -3403,7 +3440,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image34.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.9.4 Cross-correlation image of NDVI and precipitation with a 30-day lag.</figcaption><p></p>
+<figcaption>Fig. F4.9.4 Cross-correlation image of NDVI and precipitation with a 30-day lag.</figcaption>
 </figure>
 </div>
 <p>As long as there is sufficient temporal overlap between the time series, these techniques could be extended to longer lags and longer time series.</p>
@@ -3472,7 +3509,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F4/image19.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F4.9.5 Observed NDVI and fitted values at selected point</figcaption><p></p>
+<figcaption>Fig. F4.9.5 Observed NDVI and fitted values at selected point</figcaption>
 </figure>
 </div>
 <p>At this stage, note that the missing data has become a real problem. Any data point for which at least one of the previous points is masked or missing is also masked.</p>
@@ -3562,6 +3599,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
   }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
   const toggleColorMode = (alternate) => {
     // Switch the stylesheets
     const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
@@ -3628,13 +3692,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'alternate';
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -3669,18 +3735,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -3712,11 +3767,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -3726,8 +3818,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -3739,7 +3840,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -3783,6 +4006,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -3808,6 +4032,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -3867,15 +4117,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./F2.html" class="pagination-link">
+      <a href="./F2.html" class="pagination-link" aria-label="Interpreting Images">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interpreting Images</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./F5.html" class="pagination-link">
+      <a href="./F5.html" class="pagination-link" aria-label="Vectors and Tables">
         <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Vectors and Tables</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -3884,4 +4133,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/F4.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer></body></html>

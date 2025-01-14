@@ -2,12 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.326">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 6&nbsp; Remote Sensing</title>
+<title>6&nbsp; Remote Sensing – CASA0025: 
+ Building Spatial Applications with Big Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -38,12 +39,12 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-9da5c79871f7304987118a62e6bdfd0e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-f69388bb9b5b3b37de49aa2d4ba5dbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script src="site_libs/quarto-contrib/videojs/video.min.js"></script>
 <link href="site_libs/quarto-contrib/videojs/video-js.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
@@ -52,7 +53,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -61,8 +68,10 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-RK9ZLZQ6GL"></script>
@@ -83,17 +92,16 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 <body class="nav-sidebar floating">
 
-
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W06_RS.html">B. Google Earth Engine</a></li><li class="breadcrumb-item"><a href="./W06_RS.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remote Sensing</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W06_RS.html">B. Google Earth Engine</a></li><li class="breadcrumb-item"><a href="./W06_RS.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remote Sensing</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -103,7 +111,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./logo_white.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
@@ -113,36 +121,36 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/oballinger/CASA0025/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
+              <i class="bi bi-file-pdf pe-1"></i>
             Download PDF
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
+              <i class="bi bi-journal pe-1"></i>
             Download ePub
             </a>
           </li>
       </ul>
     </div>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-bi-twitter pe-1"></i>
+              <i class="bi bi-twitter pe-1"></i>
             Twitter
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
-              <i class="bi bi-bi-facebook pe-1"></i>
+              <i class="bi bi-facebook pe-1"></i>
             Facebook
             </a>
           </li>
@@ -167,9 +175,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">A. SQL</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -177,7 +185,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W01_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -208,9 +216,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">B. Google Earth Engine</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -249,9 +257,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">GEE Textbook</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -285,7 +293,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -354,12 +362,12 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </ul></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/W06_RS.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/W06_RS.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./W06_RS.html">B. Google Earth Engine</a></li><li class="breadcrumb-item"><a href="./W06_RS.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remote Sensing</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remote Sensing</span></h1>
 </div>
@@ -374,7 +382,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>Before learning how to load, process, and analyze satellite imagery in Google Earth Engine, it will be helpful to know a few basic principles of remote sensing. This section provides a brief overview of some important concepts and terminology that will be used throughout the course, including active and passive sensors; spatial, spectral, and temporal resolution; and orbits.</p>
 <section id="active-and-passive-sensors" class="level2" data-number="6.1">
@@ -395,17 +405,13 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="spectral-resolution"><span class="header-section-number">6.2.2</span> Spectral Resolution</h3>
 <p>What open access imagery lacks in spatial resolution it often makes up for with <em>spectral</em> resolution. Really sharp imagery from MAXAR, for example, mostly collects light in the visible light spectrum, which is what our eyes can see. But there are other parts of the electromagnetic spectrum that we can’t see, but which can be very useful for distinguishing between different materials. Many satellites that have a lower spatial resolution than MAXAR, such as Landsat and Sentinel-2, collect data in a wider range of the electromagnetic spectrum.</p>
 <p>Different materials reflect light differently. An apple absorbs shorter wavelengths (e.g.&nbsp;blue and green), and reflects longer wavelengths (red). Our eyes use that information– the color– to distinguish between different objects. Below is a plot of the spectral profiles of different materials:</p>
-<iframe title="Spectral Profiles of Different Materials" aria-label="Interactive line chart" id="datawrapper-chart-b1kcX" src="https://datawrapper.dwcdn.net/b1kcX/3/" scrolling="no" frameborder="0" style="width: 0; min-width: 100% !important; border: none;" height="400">
-</iframe>
-<script type="text/javascript">!function(){"use strict";window.addEventListener("message",(function(e){if(void 0!==e.data["datawrapper-height"]){var t=document.querySelectorAll("iframe");for(var a in e.data["datawrapper-height"])for(var r=0;r<t.length;r++){if(t[r].contentWindow===e.source)t[r].style.height=e.data["datawrapper-height"][a]+"px"}}}))}();
-</script>
 <p>The visible portion of the spectrum is highlighted on the left, ranging from 400nm (violet) to 700nm (red). Our eyes (and satellite imagery in the visible light spectrum) can only see this portion of the light spectrum; we can’t see UV or infrared wavelengths, for example, though the extent to which different materials reflect or absorb these wavelengths is just as useful for distinguishing between them. The European Space Agency’s Sentinel-2 satellite collects spectral information well beyond the visible light spectrum, enabling this sort of analysis. It chops the electromagnetic spectrum up into “bands”, and measures how strongly wavelengths in each of those bands is reflected:</p>
 <p><img src="images/S2_bands.png" class="img-fluid"></p>
 <p>To illustrate why this is important, consider Astroturf (fake plastic grass). Astroturf and real grass will both look green to us, espeically from a satellite image. But living plants strongly reflect radiation from the sun in a part of the light spectrum that we can’t see (near-infrared). There’s a spectral index called the Normalized Difference Vegetation Index (NDVI) which exploits this fact to isolate vegetation in multispectral satellite imagery. So if we look at <a href="https://en.wikipedia.org/wiki/Gillette_Stadium">Gilette Stadium</a> near Boston, we can tell that the three training fields south of the stadium are real grass (they generate high NDVI values, showing up red), while the pitch in the stadium itself is astroturf (generating low NDVI values, showing up blue).</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/NDVI.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">VHR image of Gilette Stadium with Sentinel-2 derived NDVI overlay</figcaption><p></p>
+<figcaption>VHR image of Gilette Stadium with Sentinel-2 derived NDVI overlay</figcaption>
 </figure>
 </div>
 <p>In other words, even though these fields are all green and indistinguishable to the human eye, their <em>spectral profiles</em> beyond the visible light spectrum differ, and we can use this information to distinguish between them.</p>
@@ -423,7 +429,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/revisit_chart.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A chart of revisit times for different satellites from <a href="https://link.springer.com/article/10.1007/s10712-021-09637-5">Sutlieff et. al.(2021)</a></figcaption><p></p>
+<figcaption>A chart of revisit times for different satellites from <a href="https://link.springer.com/article/10.1007/s10712-021-09637-5">Sutlieff et. al.(2021)</a></figcaption>
 </figure>
 </div>
 </section>
@@ -441,13 +447,14 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/obj_det3.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Automatic detection of vehicles using artificial intelligence in high resolution optical imagery. See the <a href="object_detection.qmd">object detection</a> tutorial.</figcaption><p></p>
+<figcaption>Automatic detection of vehicles using artificial intelligence in high resolution optical imagery. See the <a href="object_detection.qmd">object detection</a> tutorial.</figcaption>
 </figure>
 </div>
 <p>Optical satellite imagery is the bread and butter of many open source investiagtions. It would be tough to list off all of the possible use cases, so here’s a handy flowchart:</p>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <pre class="mermaid mermaid-js">%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#FFFFFF' ,'primaryBorderColor':'#000000' , 'lineColor':'#009933'}}}%%
 
@@ -468,6 +475,7 @@ F--&gt;G
 C--&gt;H
 </pre>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -504,7 +512,7 @@ C--&gt;H
 </section>
 <section id="datasets" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -565,7 +573,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/radar ships.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Ships and interference from a radar system are visible in Zhuanghe Wan, near North Korea.</figcaption><p></p>
+<figcaption>Ships and interference from a radar system are visible in Zhuanghe Wan, near North Korea.</figcaption>
 </figure>
 </div>
 <p>Synthetic Aperture Radar imagery (SAR) is a type of remote sensing that uses radio waves to detect objects on the ground. SAR imagery is useful for detecting objects that are small, or that are obscured by clouds or other weather phenomena. SAR imagery is also useful for detecting objects that are moving, such as ships or cars.</p>
@@ -580,7 +588,7 @@ C--&gt;H
 </section>
 <section id="datasets-1" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-1">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -605,7 +613,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/Figure_1.gif" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A timelapse of nighttime lights over Northern Iraq showing the capture and liberation of Mosul by ISIS.</figcaption><p></p>
+<figcaption>A timelapse of nighttime lights over Northern Iraq showing the capture and liberation of Mosul by ISIS.</figcaption>
 </figure>
 </div>
 <p>Satellite images of the Earth at night a useful proxy for human activity. The brightness of a given area at night is a function of the number of people living there and the nature of their activities. The effects of conflict, natural disasters, and economic development can all be inferred from changes in nighttime lights.</p>
@@ -620,7 +628,7 @@ C--&gt;H
 </section>
 <section id="datasets-2" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-2">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -651,7 +659,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/mishraq_small.gif" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption class="figure-caption">Sulphur Dioxide plume resulting from ISIS attack on the Al-Mishraq Sulphur Plant in Iraq</figcaption><p></p>
+<figcaption>Sulphur Dioxide plume resulting from ISIS attack on the Al-Mishraq Sulphur Plant in Iraq</figcaption>
 </figure>
 </div>
 <p>Climate and atmospheric data can be used to track the effects of conflict on the environment. The European Space Agency’s Sentinel-5p satellites measure the concentration of a number of atmospheric gases, including nitrogen dioxide, methane, and ozone. Measurements are available on a daily basis at a fairly high resolution (1km), allowing for the detection of localized sources of pollution such as oil refineries or power plants. For example, see this <a href="https://www.bellingcat.com/resources/2021/04/15/what-oil-satellite-technology-and-iraq-can-tell-us-about-pollution/">Bellingcat article</a> in which Wim Zwijnenburg and I trace pollution to specific facilities operated by multinational oil companies in Iraq.</p>
@@ -670,7 +678,7 @@ C--&gt;H
 </section>
 <section id="datasets-3" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-3">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -701,7 +709,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/mining.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Zinc deposits across Central Africa</figcaption><p></p>
+<figcaption>Zinc deposits across Central Africa</figcaption>
 </figure>
 </div>
 <p>Mining activities often play an important role in conflict. According to an influential <a href="https://www.aeaweb.org/articles?id=10.1257/aer.20150774">study</a>, “the historical rise in mineral prices might explain up to one-fourth of the average level of violence across African countries” between 1997 and 2010. Data on the location of mineral deposits can be used to identify areas where mining activities are likely to be taking place, and several such datasets are available in Google Earth Engine.</p>
@@ -715,7 +723,7 @@ C--&gt;H
 </section>
 <section id="datasets-4" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-4">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -740,7 +748,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/fires.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Detected fires over Ukraine since 27/02/2022 showing the frontline of the war</figcaption><p></p>
+<figcaption>Detected fires over Ukraine since 27/02/2022 showing the frontline of the war</figcaption>
 </figure>
 </div>
 <p>Earth-observing satellites can detect “thermal anomalies” (fires) from space. NASA’s Fire Information for Resource Management System (FIRMS) provides daily data on active fires in near real time, going back to the year 2000. Carlos Gonzales wrote a comprehensive <a href="https://www.bellingcat.com/resources/2022/10/04/scorched-earth-using-nasa-fire-data-to-monitor-war-zones/">Bellingcat article</a> on the use of FIRMS to monitor war zones from Ukraine to Ethiopia. The map above shows that FIRMS detected fires over Eastern Ukraine trace the frontline of the war.</p>
@@ -758,7 +766,7 @@ C--&gt;H
 </section>
 <section id="datasets-5" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-5">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -789,7 +797,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/pop.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Population density estimates around Pyongyang, North Korea</figcaption><p></p>
+<figcaption>Population density estimates around Pyongyang, North Korea</figcaption>
 </figure>
 </div>
 <p>Sometimes, we may want to get an estimate the population in a specific area to ballpark how many people might be affected by a natural disaster, a counteroffensive, or a missile strike. You can’t really google “what is the population in this rectangle i’ve drawn in Northeastern Syria?” and get a good answer. Luckily, there are several spatial population datasets hosted in GEE that let you do just that. Some, such as WorldPop, provide estimated breakdowns by age and sex as well. However, it is extremely important to bear in mind that these are <strong>estimates</strong>, and will <strong>not</strong> take into account things like conflict-induced displacement. For example, Oak Ridge National Laboratory’s LandScan program has released high-resolution population data for Ukraine, but this pertains to the pre-war population distribution. The war has radically changed this distribution, so these estimates no longer reflect where people <em>are</em>. Still, this dataset could be used to roughly estimate displacement or the number of people who will need new housing.</p>
@@ -801,7 +809,7 @@ C--&gt;H
 </section>
 <section id="datasets-6" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-6">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Sensor</th>
@@ -838,7 +846,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/footprints.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Building footprints in Mariupol, Ukraine colored by whether the building is damaged</figcaption><p></p>
+<figcaption>Building footprints in Mariupol, Ukraine colored by whether the building is damaged</figcaption>
 </figure>
 </div>
 <p>A building footprint dataset contains the two dimensional outlines of buildings in a given area. Currently, GEE hosts one building footprint dataset which covers all of Africa. In 2022, Microsoft released a free <a href="https://www.microsoft.com/en-us/maps/building-footprints">global building footprint dataset</a>, though to use it in Earth Engine you’ll have to download it from their <a href="https://github.com/Microsoft/USBuildingFootprints">GitHub page</a> and upload it manually to GEE. The same goes for OpenStreetMap (OSM), a public database of building footprints, roads, and other features that also contains useful annotations for many buildings indicating their use. <a href="https://www.youtube.com/watch?v=bJkV3l5Haq0">Benjamin Strick</a> has a great youtube video on conducting investigations using OSM data.</p>
@@ -850,7 +858,7 @@ C--&gt;H
 </section>
 <section id="datasets-7" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-7">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Dataset</th>
@@ -873,7 +881,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/fao_gaul.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Second-level administrative boundaries in Yemen</figcaption><p></p>
+<figcaption>Second-level administrative boundaries in Yemen</figcaption>
 </figure>
 </div>
 <p>Spatial analysis often have to aggregate information over a defined area; we may want to assess the total burned area by province in Ukraine, or count the number of Saudi airstrikes by district in Yemen. For that, we need data on these administrative boundaries. GEE hosts several such datasets at the country, province, and district (or equivalent) level.</p>
@@ -888,7 +896,7 @@ C--&gt;H
 </section>
 <section id="datasets-8" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-8">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Dataset</th>
@@ -911,7 +919,7 @@ C--&gt;H
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="./images/power.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Power plants in Ukraine colored by type</figcaption><p></p>
+<figcaption>Power plants in Ukraine colored by type</figcaption>
 </figure>
 </div>
 <p>The Global Power Plant Database is a comprehensive, open source database of power plants around the world. It centralizes power plant data to make it easier to navigate, compare and draw insights. Each power plant is geolocated and entries contain information on plant capacity, generation, ownership, and fuel type. As of June 2018, the database includes around 28,500 power plants from 164 countries. The database is curated by the <a href="https://datasets.wri.org/dataset/globalpowerplantdatabase">World Resources Institude (WRI)</a>.</p>
@@ -927,7 +935,7 @@ C--&gt;H
 </section>
 <section id="datasets-9" class="level3 unnumbered">
 <h3 class="unnumbered anchored" data-anchor-id="datasets-9">Datasets</h3>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Dataset</th>
@@ -991,6 +999,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1059,13 +1094,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'alternate';
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1100,18 +1137,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1143,11 +1169,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1157,8 +1220,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1170,7 +1242,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1214,6 +1408,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1239,6 +1434,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1300,19 +1521,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./W05_quiz.html" class="pagination-link">
+      <a href="./W05_quiz.html" class="pagination-link" aria-label="Quiz">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Quiz</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./W07_refineries.html" class="pagination-link">
+      <a href="./W07_refineries.html" class="pagination-link" aria-label="Refinery Identification">
         <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Refinery Identification</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
-<script>videojs(video_shortcode_videojs_video1);</script>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/W06_RS.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer><script>videojs(video_shortcode_videojs_video1);</script>
 <script>videojs(video_shortcode_videojs_video2);</script>
+
 
 
 

@@ -2,12 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.326">
+<meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>CASA0025: Building Spatial Applications with Big Data - 12&nbsp; Interpreting Images</title>
+<title>12&nbsp; Interpreting Images – CASA0025: 
+ Building Spatial Applications with Big Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -33,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -72,19 +73,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-9e228d6d4d66c12a9d11739da31c2b1c.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-9da5c79871f7304987118a62e6bdfd0e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-f69388bb9b5b3b37de49aa2d4ba5dbf2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -93,8 +100,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-RK9ZLZQ6GL"></script>
@@ -112,17 +121,16 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 
 <body class="nav-sidebar floating">
 
-
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./F1.html">GEE Textbook</a></li><li class="breadcrumb-item"><a href="./F2.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interpreting Images</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./F1.html">GEE Textbook</a></li><li class="breadcrumb-item"><a href="./F2.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interpreting Images</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -132,7 +140,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
       <a href="./index.html" class="sidebar-logo-link">
       <img src="./logo_white.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
@@ -142,36 +150,36 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
         <div class="sidebar-tools-main tools-wide">
     <a href="https://github.com/oballinger/CASA0025/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <div class="dropdown">
-      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Download"><i class="bi bi-download"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.pdf">
-              <i class="bi bi-bi-file-pdf pe-1"></i>
+              <i class="bi bi-file-pdf pe-1"></i>
             Download PDF
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="./CASA0025--
 -Building-Spatial-Applications-with-Big-Data.epub">
-              <i class="bi bi-bi-journal pe-1"></i>
+              <i class="bi bi-journal pe-1"></i>
             Download ePub
             </a>
           </li>
       </ul>
     </div>
     <div class="dropdown">
-      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" role="link" aria-label="Share"><i class="bi bi-share"></i></a>
       <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
-              <i class="bi bi-bi-twitter pe-1"></i>
+              <i class="bi bi-twitter pe-1"></i>
             Twitter
             </a>
           </li>
           <li>
             <a class="dropdown-item sidebar-tools-main-item" href="https://www.facebook.com/sharer/sharer.php?u=|url|">
-              <i class="bi bi-bi-facebook pe-1"></i>
+              <i class="bi bi-facebook pe-1"></i>
             Facebook
             </a>
           </li>
@@ -196,9 +204,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
  <span class="menu-text">A. SQL</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -206,7 +214,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./W01_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Installation</span></span></a>
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Spatial databases</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -237,9 +245,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
  <span class="menu-text">B. Google Earth Engine</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -278,9 +286,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
  <span class="menu-text">GEE Textbook</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
@@ -314,7 +322,7 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -342,12 +350,12 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   <li><a href="#conclusion-2" id="toc-conclusion-2" class="nav-link" data-scroll-target="#conclusion-2">Conclusion</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/oballinger/CASA0025/edit/main/F2.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/F2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./F1.html">GEE Textbook</a></li><li class="breadcrumb-item"><a href="./F2.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interpreting Images</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interpreting Images</span></h1>
 </div>
@@ -362,7 +370,9 @@ gtag('config', 'G-RK9ZLZQ6GL', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
+
 
 <p>Now that you know how images are viewed and what kinds of images exist in Earth Engine, how do we manipulate them? To gain the skills of interpreting images, you’ll work with bands, combining values to form indices and masking unwanted pixels. Then, you’ll learn some of the techniques available in Earth Engine for classifying images and interpreting the results.</p>
 <section id="image-manipulation-bands-arithmetic-thresholds-and-masks" class="level2" data-number="12.1">
@@ -406,14 +416,14 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image39.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.1 Mapped color-IR images from multiple satellite sensors that we mapped in Chap. F1.3. The near infrared spectrum is mapped as red, showing where there are high amounts of healthy vegetation.</figcaption><p></p>
+<figcaption>Fig. F2.0.1 Mapped color-IR images from multiple satellite sensors that we mapped in Chap. F1.3. The near infrared spectrum is mapped as red, showing where there are high amounts of healthy vegetation.</figcaption>
 </figure>
 </div>
 <p>If we graph the amount of light (reflectance) at different wavelengths that an object or land cover reflects, we can visualize this more easily (Fig. F2.0.2). For example, look at the reflectance curves for soil and water in the graph below. Soil and water both have relatively low reflectance at wavelengths around 300 nm (ultraviolet and violet light). Conversely, at wavelengths above 700 nm (red and infrared light) soil has relatively high reflectance, while water has very low reflectance. Vegetation, meanwhile, generally reflects large amounts of near infrared light, relative to other land covers.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image32.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.2 A graph of the amount of reflectance for different objects on the Earth’s surface at different wavelengths in the visible and infrared portions of the electromagnetic spectrum. 1 micrometer (µm) = 1,000 nanometers (nm).</figcaption><p></p>
+<figcaption>Fig. F2.0.2 A graph of the amount of reflectance for different objects on the Earth’s surface at different wavelengths in the visible and infrared portions of the electromagnetic spectrum. 1 micrometer (µm) = 1,000 nanometers (nm).</figcaption>
 </figure>
 </div>
 <p>Spectral indices use math to express how objects reflect light across multiple portions of the spectrum as a single number. Indices combine multiple bands, often with simple operations of subtraction and division, to create a single value across an image that is intended to help to distinguish particular land uses or land covers of interest. Using Fig. F2.0.2, you can imagine which wavelengths might be the most informative for distinguishing among a variety of land covers. We will explore a variety of calculations made from combinations of bands in the following sections.</p>
@@ -453,7 +463,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image46.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.3 False color Sentinel-2 imagery of San Francisco and surroundings</figcaption><p></p>
+<figcaption>Fig. F2.0.3 False color Sentinel-2 imagery of San Francisco and surroundings</figcaption>
 </figure>
 </div>
 <p>The simplest mathematical operations in Earth Engine are the add, subtract, multiply, and divide methods. Let’s select the near-infrared and red bands and use these operations to calculate NDVI for our image.</p>
@@ -479,7 +489,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image50.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.4 NDVI calculated using Sentinel-2. Remember that outputs for NDVI vary between −1 and 1. High amounts of green vegetation have values around 0.8–0.9. Absence of green leaves gives values near 0, and water gives values near −1.</figcaption><p></p>
+<figcaption>Fig. F2.0.4 NDVI calculated using Sentinel-2. Remember that outputs for NDVI vary between −1 and 1. High amounts of green vegetation have values around 0.8–0.9. Absence of green leaves gives values near 0, and water gives values near −1.</figcaption>
 </figure>
 </div>
 <p>Using these simple arithmetic tools, you can build almost any index, or develop and visualize your own. Earth Engine allows you to quickly and easily calculate and display the index across a large area.</p>
@@ -503,7 +513,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">(F2.0.2)</figcaption><p></p>
+<figcaption>(F2.0.2)</figcaption>
 </figure>
 </div>
 <p>where NIR is near-infrared, centered near 860 nm (0.86 μm), and SWIR is short-wave infrared, centered near 1,240 nm (1.24 μm).</p>
@@ -520,7 +530,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image40.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.5 NDWI displayed for Sentinel-2 over San Francisco</figcaption><p></p>
+<figcaption>Fig. F2.0.5 NDWI displayed for Sentinel-2 over San Francisco</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -565,7 +575,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image30.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.6 NDVI image of Sentinel-2 imagery over Seattle, Washington, USA</figcaption><p></p>
+<figcaption>Fig. F2.0.6 NDVI image of Sentinel-2 imagery over Seattle, Washington, USA</figcaption>
 </figure>
 </div>
 <p>Inspect the image. We can see that vegetated areas are darker green while non-vegetated locations are white and water is pink. If we use the Inspector to query our image, we can see that parks and other forested areas have an NDVI over about 0.5. Thus, it would make sense to define areas with NDVI values greater than 0.5 as forested, and those below that threshold as not forested.</p>
@@ -584,7 +594,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image47.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.7 Thresholded forest and non-forest image based on NDVI for Seattle, Washington, USA</figcaption><p></p>
+<figcaption>Fig. F2.0.7 Thresholded forest and non-forest image based on NDVI for Seattle, Washington, USA</figcaption>
 </figure>
 </div>
 <p>Use the Inspector tool to explore this new layer. If you click on a green location, that NDVI should be greater than 0.5. If you click on a white pixel, the NDVI value should be equal to or less than 0.5.</p>
@@ -615,7 +625,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image37.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.8 Thresholded water, forest, and non-forest image based on NDVI for Seattle, Washington, USA.</figcaption><p></p>
+<figcaption>Fig. F2.0.8 Thresholded water, forest, and non-forest image based on NDVI for Seattle, Washington, USA.</figcaption>
 </figure>
 </div>
 </section>
@@ -629,7 +639,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image23.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.9 The existing mask for the seaVeg layer we created previously</figcaption><p></p>
+<figcaption>Fig. F2.0.9 The existing mask for the seaVeg layer we created previously</figcaption>
 </figure>
 </div>
 <p>You can use the Inspector to see that the black area is masked and the white area has a constant value of 1. This means that data values are mapped and available for analysis within the white area only.</p>
@@ -651,7 +661,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image26.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.10 An updated mask now displays only the forested areas. Non-forested areas are masked out and transparent.</figcaption><p></p>
+<figcaption>Fig. F2.0.10 An updated mask now displays only the forested areas. Non-forested areas are masked out and transparent.</figcaption>
 </figure>
 </div>
 <p>Map the updated mask for the layer and you can see why this is.</p>
@@ -660,7 +670,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image33.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.11 The updated mask. Areas of non-forest are now masked out as well (black areas of the image).</figcaption><p></p>
+<figcaption>Fig. F2.0.11 The updated mask. Areas of non-forest are now masked out as well (black areas of the image).</figcaption>
 </figure>
 </div>
 </section>
@@ -682,7 +692,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image28.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.0.12 For forested areas, the remapped layer has a value of 10, compared with the original layer, which has a value of 2. You may have more layers in your Inspector.</figcaption><p></p>
+<figcaption>Fig. F2.0.12 For forested areas, the remapped layer has a value of 10, compared with the original layer, which has a value of 2. You may have more layers in your Inspector.</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -767,7 +777,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image48.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.1 Image classification concept</figcaption><p></p>
+<figcaption>Fig. F2.1.1 Image classification concept</figcaption>
 </figure>
 </div>
 <p>Image classification techniques for generating land cover and land use information have been in use since the 1980s (Li et al.&nbsp;2014). Here, we will cover the concepts of pixel-based supervised and unsupervised classifications, testing out different classifiers. Chapter F3.3 covers the concept and application of object-based classification.</p>
@@ -807,7 +817,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image44.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.2 Landsat image</figcaption><p></p>
+<figcaption>Fig. F2.1.2 Landsat image</figcaption>
 </figure>
 </div>
 <p>Using the Geometry Tools, we will create points on the Landsat image that represent land cover classes of interest to use as our training data. We’ll need to do two things: (1) identify where each land cover occurs on the ground, and (2) label the points with the proper class number. For this exercise, we will use the classes and codes shown below:</p>
@@ -821,7 +831,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image22.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.3 Creating a new layer in the Geometry Imports</figcaption><p></p>
+<figcaption>Fig. F2.1.3 Creating a new layer in the Geometry Imports</figcaption>
 </figure>
 </div>
 <p>We will start by collecting forest points, so name the import forest. Import it as a FeatureCollection, and then click + Property. Name the new property “class” and give it a value of 0 (Fig. F2.1.4). We can also choose a color to represent this class. For a forest class, it is natural to choose a green color. You can choose the color you prefer by clicking on it, or, for more control, you can use a hexadecimal value.</p>
@@ -830,35 +840,35 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image36.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.4 Edit geometry layer properties</figcaption><p></p>
+<figcaption>Fig. F2.1.4 Edit geometry layer properties</figcaption>
 </figure>
 </div>
 <p>Now, in the Geometry Imports, we will see that the import has been renamed forest. Click on it to activate the drawing mode (Fig. F2.1.5) in order to start collecting forest points.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image29.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.5 Activate forest layer to start collection</figcaption><p></p>
+<figcaption>Fig. F2.1.5 Activate forest layer to start collection</figcaption>
 </figure>
 </div>
 <p>Now, start collecting points over forested areas (Fig. F2.1.6). Zoom in and out as needed. You can use the satellite basemap to assist you, but the basis of your collection should be the Landsat image. Remember that the more points you collect, the more the classifier will learn from the information you provide. For now, let’s set a goal to collect 25 points per class. Click Exit next to Point drawing (Fig. F2.1.5) when finished.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image38.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.6 Forest points</figcaption><p></p>
+<figcaption>Fig. F2.1.6 Forest points</figcaption>
 </figure>
 </div>
 <p>Repeat the same process for the other classes by creating new layers (Fig. F2.1.7). Don’t forget to import using the FeatureCollection option as mentioned above. For the developed class, collect points over urban areas. For the water class, collect points over the Ligurian Sea, and also look for other bodies of water, like rivers. For the herbaceous class, collect points over agricultural fields. Remember to set the “class” property for each class to its corresponding code (see Table 2.1.1) and click Exit once you finalize collecting points for each class as mentioned above. We will be using the following hexadecimal colors for the other classes: #FF0000 for developed, #1A11FF for water, and #D0741E for herbaceous.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image41.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.7 New layer option in Geometry Imports</figcaption><p></p>
+<figcaption>Fig. F2.1.7 New layer option in Geometry Imports</figcaption>
 </figure>
 </div>
 <p>You should now have four FeatureCollection imports named forest, developed, water, and herbaceous (Fig. F2.1.8).</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image42.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.8 Example of training points</figcaption><p></p>
+<figcaption>Fig. F2.1.8 Example of training points</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -897,14 +907,14 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image20.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.9 Example of extracted band information for one point of class 0 (forest)</figcaption><p></p>
+<figcaption>Fig. F2.1.9 Example of extracted band information for one point of class 0 (forest)</figcaption>
 </figure>
 </div>
 <p>Now we can choose a classifier. The choice of classifier is not always obvious, and there are many options from which to pick—you can quickly expand the ee.Classifier object under Docs to get an idea of how many options we have for image classification. Therefore, we will be testing different classifiers and comparing their results. We will start with a Classification and Regression Tree (CART) classifier, a well-known classification algorithm (Fig. F2.1.10) that has been around for decades.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image25.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.10 Example of a decision tree for satellite image classification. Values and classes are hypothetical.</figcaption><p></p>
+<figcaption>Fig. F2.1.10 Example of a decision tree for satellite image classification. Values and classes are hypothetical.</figcaption>
 </figure>
 </div>
 <p>Copy and paste the code below to instantiate a CART classifier (ee.Classifier.smileCart) and train it.</p>
@@ -942,14 +952,14 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image21.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.11 CART classification</figcaption><p></p>
+<figcaption>Fig. F2.1.11 CART classification</figcaption>
 </figure>
 </div>
 <p>For now, we will try another supervised learning classifier that is widely used: Random Forests (RF). The RF algorithm (Breiman 2001, Pal 2005) builds on the concept of decision trees, but adds strategies to make them more powerful. It is called a “forest” because it operates by constructing a multitude of decision trees. As mentioned previously, a decision tree creates the rules which are used to make decisions. A Random Forest will randomly choose features and make observations, build a forest of decision trees, and then use the full set of trees to estimate the class. It is a great choice when you do not have a lot of insight about the training data.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image27.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.12 General concept of Random Forests</figcaption><p></p>
+<figcaption>Fig. F2.1.12 General concept of Random Forests</figcaption>
 </figure>
 </div>
 <p>Copy and paste the code below to train the RF classifier (ee.Classifier.smileRandomForest) and apply the classifier to the image. The RF algorithm requires, as its argument, the number of trees to build. We will use 50 trees.</p>
@@ -973,7 +983,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image34.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.13 Random Forest classified image</figcaption><p></p>
+<figcaption>Fig. F2.1.13 Random Forest classified image</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1015,7 +1025,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image35.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.14 K-means visual concept</figcaption><p></p>
+<figcaption>Fig. F2.1.14 K-means visual concept</figcaption>
 </figure>
 </div>
 <p>Copy and paste the code below to request four clusters, the same number as for the supervised classification, in order to directly compare them.</p>
@@ -1030,7 +1040,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image31.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.1.15 K-means classification</figcaption><p></p>
+<figcaption>Fig. F2.1.15 K-means classification</figcaption>
 </figure>
 </div>
 <p>Inspect the results. How does this classification compare to the previous ones? If preferred, use the Inspector to check which classes were assigned to each pixel value (“cluster” band) and change the last line of your code to apply the same palette used for the supervised classification results (see Code Checkpoint below for an example).</p>
@@ -1146,7 +1156,7 @@ Chapter Information
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now, let’s discuss what a confusion matrix is. A confusion matrix describes the quality of a classification by comparing the predicted values to the actual values. A simple example is a confusion matrix for a binary classification into the classes “positive” and “negative,” as shown in Table F2.2.1.</p>
 <p>Table F2.2.1 Confusion matrix for a binary classification where the classes are “positive” and “negative”</p>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 14%">
@@ -1191,7 +1201,7 @@ Chapter Information
 </ul>
 <p>We can extract some statistical information from a confusion matrix.. Let’s look at an example to make this clearer. Table F2.2.2 is a confusion matrix for a sample of 1,000 pixels for a classifier that identifies whether a pixel is forest (positive) or non-forest (negative), a binary classification.</p>
 <p>Table F2.2.2 Confusion matrix for a binary classification where the classes are “positive” (forest) and “negative” (non-forest)</p>
-<table class="table">
+<table class="caption-top table">
 <thead>
 <tr class="header">
 <th></th>
@@ -1238,7 +1248,7 @@ Chapter Information
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image43.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.2.1 Confusion matrix for a binary classification where the classes are “positive” (forest) and “negative” (non-forest), with accuracy metrics</figcaption><p></p>
+<figcaption>Fig. F2.2.1 Confusion matrix for a binary classification where the classes are “positive” (forest) and “negative” (non-forest), with accuracy metrics</figcaption>
 </figure>
 </div>
 <p>It is very common to talk about two types of error when addressing remote-sensing classification accuracy: omission errors and commission errors. Omission errors refer to the reference pixels that were left out of (omitted from) the correct class in the classified map. In a two-class system, an error of omission in one class will be counted as an error of commission in another class. Omission errors are complementary to the producer’s accuracy.</p>
@@ -1310,7 +1320,7 @@ Note
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="F2/image45.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Fig. F2.2.2 Chart showing accuracy per number of Random Forest trees</figcaption><p></p>
+<figcaption>Fig. F2.2.2 Chart showing accuracy per number of Random Forest trees</figcaption>
 </figure>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -1403,6 +1413,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
   }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
   const toggleColorMode = (alternate) => {
     // Switch the stylesheets
     const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
@@ -1469,13 +1506,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'alternate';
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1510,18 +1549,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1553,11 +1581,48 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1567,8 +1632,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1580,7 +1654,129 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1624,6 +1820,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1649,6 +1846,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1710,12 +1933,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./F1.html" class="pagination-link">
+      <a href="./F1.html" class="pagination-link" aria-label="Getting Started">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Getting Started</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./F4.html" class="pagination-link">
+      <a href="./F4.html" class="pagination-link" aria-label="Image Series">
         <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Image Series</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
@@ -1724,4 +1947,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
-</body></html>
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/oballinger/CASA0025/edit/main/F2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div></div></footer></body></html>

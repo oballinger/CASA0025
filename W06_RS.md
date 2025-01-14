@@ -54,11 +54,23 @@ The Google Maps basemap is very high resolution, available globally, and is free
 
 The **"revisit rate"** is the amount of time it takes for the satellite to pass over the same location twice. For example, the Sentinel-2 constellation's two satellites can achieve a revisit rate of 5 days, as shown in this cool video from the European Space Agency:
 
+
+
 {{< video https://dlmultimedia.esa.int/download/public/videos/2016/08/004/1608_004_AR_EN.mp4 >}}
+
+
+
+
 
 Some satellite constellations are able to achieve much higher revisit rates. Sentinel-2 has a revisit rate of 5 days, but SkySat capable of imaging the same point on earth around 12 times per day! How is that possible? Well, as the video above demonstrated, the Sentinel-2 constellation is composed of two satellites that share the same orbit, 180 degrees apart. In contrast, the SkySat constellation comprises 21 satellites, each with its own orbital path: 
  
+
+
 {{< video https://assets.planet.com/products/hi-res/Planet_Block_3_HD_1080p.mp4 >}}
+
+
+
+
 
 This allows SkySat to achieve a revisit rate of 2-3 *hours*. The catch, however, is that you need to pay for it (and it [ain't cheap](https://apollomapping.com/blog/an-update-on-skysat-tasking-pricing-and-video-capabilities)). Below is a comparison of revisit rates for various other optical satellites:
 
@@ -81,27 +93,42 @@ This section highlights ten categories of geospatial data available natively in 
 
 Optical satellite imagery is the bread and butter of many open source investiagtions. It would be tough to list off all of the possible use cases, so here's a handy flowchart:
 
-```{mermaid}
-%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#FFFFFF' ,'primaryBorderColor':'#000000' , 'lineColor':'#009933'}}}%%
+
+
+:::{.cell}
+
+:::{.cell-output-display}
+
+:::{}
+
+:::{}
+
+<pre class="mermaid mermaid-js">%%{init: {&#39;theme&#39;: &#39;base&#39;, &#39;themeVariables&#39;: { &#39;primaryColor&#39;: &#39;#FFFFFF&#39; ,&#39;primaryBorderColor&#39;:&#39;#000000&#39; , &#39;lineColor&#39;:&#39;#009933&#39;}}}%%
 
 flowchart
   A(Does it happen outside?) 
-  A--> B(Yes)
-  A--> C(No)
+  A--&gt; B(Yes)
+  A--&gt; C(No)
   D(Is it very small?)
-  B-->D
+  B--&gt;D
   E(Yes)
   F(No)
-    D-->F
-    D-->E
+    D--&gt;F
+    D--&gt;E
 G(Use optical satellite imagery)
-H(Don't use optical satellite imagery)
-E-->H
-F-->G
-C-->H
-```
+H(Don&#39;t use optical satellite imagery)
+E--&gt;H
+F--&gt;G
+C--&gt;H
+</pre>
+:::
+:::
+:::
+:::
 
-This is, of course, a bit of an exaggeration. But if you're interested in a visible phenomenon that happens outdoors and that isn't very tiny, chances are an earth-observing satellite has taken a picture of it. What that picture can tell you naturally depends on what you're interested in learning. For a deeper dive into analyzing optical satellite imagery, see the subsection on [multispectral remote sensing.](F2.qmd.qmd#multispectral-remote-sensing-remote_sensing).
+
+
+This is, of course, a bit of an exaggeration. But if you're interested in a visible phenomenon that happens outdoors and that isn't very tiny, chances are an earth-observing satellite has taken a picture of it. What that picture can tell you naturally depends on what you're interested in learning. For a deeper dive into analyzing optical satellite imagery, see the subsection on [multispectral remote sensing.](ch2.qmd#multispectral-remote-sensing-remote_sensing).
 
 There are several different types of optical satellite imagery available in the GEE catalogue. The main collections are the Landsat and Sentinel series of satellites, which are operated by NASA and the European Space Agency, respectively. Landsat satellites have been in orbit since 1972, and Sentinel satellites have been in orbit since 2015. Norway's International Climate and Forest Initiative (NICFI) has also contributed to the GEE catalogue by providing a collection of optical imagery from Planet's PlanetScope satellites. These are higher resolution (4.7 meters per pixel) than Landsat (30m/px) and Sentinel-2 (10m/px), but are only available for the tropics. Even higher resolution imagery (60cm/px) is available from the GEE catalogue from the National Agriculture Imagery Program, but it is only available for the United States. For more details, see the "Datasets" section below.
 
