@@ -16,7 +16,7 @@ book:
         - W05_quiz.qmd
     - part: "B. Google Earth Engine"
       chapters:
-        - W06_RS.qmd
+        - W06_RS.md
         - W07_refineries.qmd
         - W08_ISM.qmd
         - W09_blast.qmd
