@@ -1,4 +1,9 @@
-# Remote Sensing
+---
+title: "Remote Sensing"
+execute:
+  echo: true
+  eval: false   # disables execution of JS/code blocks
+---
 
 Before learning how to load, process, and analyze satellite imagery in Google Earth Engine, it will be helpful to know a few basic principles of remote sensing. This section provides a brief overview of some important concepts and terminology that will be used throughout the course, including active and passive sensors; spatial, spectral, and temporal resolution; and orbits.
 

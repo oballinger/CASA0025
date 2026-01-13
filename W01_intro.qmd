@@ -22,9 +22,6 @@ To learn more about spatial databases, check out the resources below:
 
 DuckDB is a great option if you’re looking for a serverless data analytics database management system. 
 
-![](https://i.imgur.com/BEDGstx.png)
-
-![](https://i.imgur.com/mFpqp5I.png)
 
 
 # Introduction to SQL
